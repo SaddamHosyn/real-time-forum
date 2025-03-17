@@ -349,3 +349,11 @@ a .post-title:hover {
 .dropdown:hover .dropdown-content {
    display: block;
 }
+
+
+/* align the icons and text properly:  */
+.dropdown-content a i {
+   margin-right: 0.5rem; /* Add space between icon and text */
+}
+
+
