@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>BudgetBuzz</title>
+        <link rel="icon" href="../images/favicon.ico">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap">
+        <link rel="stylesheet" href="../css/styles.css">
+        <script src="../js/app.js" defer></script>
+    </head>
+    <body>
+        <header>
+            <h1>BudgetBuzz</h1>
+            <nav>
+                <a href="/" onclick="navigateTo(event, '/')">Home</a>
+                <div class="dropdown">
+                <a href="/products" onclick="navigateTo(event, '/products')">Products</a>
+                <div class="dropdown-content">
+                    <a href="/products/grocery" onclick="navigateTo(event, '/products/grocery')">Grocery</a>
+                    <a href="/products/electronics" onclick="navigateTo(event, '/products/electronics')">Electronics</a>
+                    <a href="/products/clothing" onclick="navigateTo(event, '/products/clothing')">Clothing</a>
+                    <a href="/products/furniture" onclick="navigateTo(event, '/products/furniture')">Furniture</a>
+                    <a href="/products/beauty" onclick="navigateTo(event, '/products/beauty')">Beauty</a>
+                    <a href="/products/auto" onclick="navigateTo(event, '/products/auto')">Auto</a>
+                    <a href="/products/sport" onclick="navigateTo(event, '/products/sport')">Sport</a>
+                    <a href="/products/restaurant" onclick="navigateTo(event, '/products/restaurant')">Restaurant</a>
+                    <a href="/products/services" onclick="navigateTo(event, '/products/services')">Services</a>
+                    <a href="/products/others" onclick="navigateTo(event, '/products/others')">Others</a>
+                </div>
+            </div>
+                <a href="/login" onclick="navigateTo(event, '/login')">Login</a>
+            </nav>
+        </header>
+        
+        <main id="app"></main>
+
+
+
+ <!-- Templates -->
+ <template id="home-template">
+    <h1>Welcome to BudgetBuzz</h1>
+    <p>Discover the best deals and discounts!</p>
+    <button onclick="navigateTo(event, '/products')">View Products</button>
+</template>
+
+<template id="products-template">
+    <h2>Products</h2>
+    <p>Browse products here...</p>
+</template>
+
+<template id="post-template">
+    <h2>Post Title</h2>
+    <p>Post content here...</p>
+    <h2>Products</h2>
+    <p>Browse products here...</p>
+    <button onclick="navigateTo(event, '/products/grocery')">View Grocery</button>
+    <button onclick="navigateTo(event, '/products/electronics')">View Electronics</button>
+    <button onclick="navigateTo(event, '/products/clothing')">View Clothing</button>
+    <button onclick="navigateTo(event, '/products/furniture')">View Furniture</button>
+    <button onclick="navigateTo(event, '/products/beauty')">View Beauty</button>
+    <button onclick="navigateTo(event, '/products/auto')">View Auto</button>
+    <button onclick="navigateTo(event, '/products/sport')">View Sport</button>
+    <button onclick="navigateTo(event, '/products/restaurant')">View Restaurant</button>
+    <button onclick="navigateTo(event, '/products/services')">View Services</button>
+    <button onclick="navigateTo(event, '/products/others')">View Others</button>
+    <button onclick="navigateTo(event, '/')">Go Home</button>
+</template>
+
+<template id="login-template">
+    <h2>Login</h2>
+    <p>Enter your credentials...</p>
+    <button onclick="navigateTo(event, '/')">Go Home</button>
+</template>
+
+<template id="profile-template">
+    <h2>Profile</h2>
+    <p>View your profile...</p>
+    <button onclick="navigateTo(event, '/')">Go Home</button>
+</template>
+
+<template id="about-template">
+    <h2>About</h2>
+    <p>Learn more about us...</p>
+    <button onclick="navigateTo(event, '/')">Go Home</button>
+</template>
+
+<template id="not-found-template">
+    <h2>404 - Page Not Found</h2>
+</template>
+
+
+        <footer>
+            <p>&copy; 2025 BudgetBuzz</p>
+            <p>
+                Created by 
+                <a href="https://github.com/SaddamHosyn" target="_blank">Saddam Hussain <img src="../images/take-off.svg" alt="Saddam's Emoji" style="width: 20px; height: 20px;"></a> and 
+                <a href="https://github.com/Richard-AungKhantMin" target="_blank">Richard <img src="../images/flower-2.svg" alt="Richard's Emoji" style="width: 20px; height: 20px;"></a>
+            </p>
+        </footer>
+        
+    </body>
+</html>

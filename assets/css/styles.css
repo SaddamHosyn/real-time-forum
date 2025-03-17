@@ -1,0 +1,351 @@
+/* ----------------------------------------------------------------------------------
+// General Styles
+// --------------------------------------------------------------------------------*/
+* {
+   box-sizing: border-box;
+}
+
+:root {
+   --bgimage: url(/assets/images/shoppingcart1.jpg);
+}
+
+html {
+   overflow: auto;
+   overscroll-behavior: none;
+}
+
+body {
+   /* background-image: url(/public/images/seatsmovietheater.jpg); */
+   background-image: var(--bgimage);
+   background-attachment: fixed;
+   background-position: center;
+   background-repeat: no-repeat;
+   background-size: cover; 
+   font-family: Arial, sans-serif;
+   margin: 0;
+   display: grid;
+   grid-template-columns: 30% auto ;
+}
+
+/* Blur Effect for Background */
+body::before {
+   content: '';
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background: inherit;
+   filter: blur(2px); /* Adjust blur intensity */
+   z-index: -1;
+}
+
+.title, .products-bar, #post-list {
+   padding: 16px;
+}
+
+/* ----------------------------------------------------------------------------------
+// Title Styles
+// --------------------------------------------------------------------------------*/
+.title {
+   color: white;
+   padding-top: 80px;
+   display: grid;
+   margin-right: 50px;
+   /* grid-template-rows: minmax (60px, auto); */
+   /* position: fixed; */
+}
+
+.title h1 {
+   font-size: 2rem;
+   margin-bottom: 10px;
+   /* text-align: center; */
+}
+
+.title p {
+   font-size: 18px;
+   margin-bottom: 10px;
+   /* text-align: center; */
+}
+
+.title a {
+   text-align: center;
+   font-size: 1rem;
+   color: white;
+   text-decoration: underline;
+}
+
+/* ----------------------------------------------------------------------------------
+// Category Styles
+// --------------------------------------------------------------------------------*/
+.products-bar {
+   grid-template-columns: auto;
+   justify-items: center;
+   align-items: center;
+   background-color: transparent;
+   color: white;                    
+   cursor: pointer;
+   margin-top: 220px;
+   position: sticky;
+   max-height: calc(100vh - 150px);  
+   flex: 1 1 30%;
+   min-width: 80px;
+   padding-left: 50px;
+}
+
+.products-bar h3 {
+   font-size: 20px;
+   margin-bottom: 18px;
+   color: #fff;
+   text-align: center;
+   align-items: center;
+}
+
+.products-bar ul {
+   list-style: none;
+   padding: 0;
+}
+
+.products-bar li {
+   margin: 10px 0;
+}
+
+.products-bar a {
+   text-decoration: none;
+   color: #fff;
+   font-size: 16px;
+   display: flex;
+   align-items: center;
+   /* font-weight: bold; */
+}
+
+.products-bar a:hover {
+   text-decoration: underline;
+   font-weight: bold;
+}
+
+.products-bar span {
+   margin-right: 10px;
+}
+
+/* ----------------------------------------------------------------------------------
+// Post Styles
+// --------------------------------------------------------------------------------*/
+/* Post List Section */
+a {
+   text-decoration: none; /* Remove the default underline from all links */
+   color: inherit; /* Inherit color from the parent element */
+}
+
+a:hover {
+   text-decoration: none;
+}
+
+#post-list {
+   width: 100%; /* Ensure it takes full width on smaller screens */
+   max-width: 1000px;
+   padding: 20px;
+   position: relative;
+   padding-bottom: 200px;
+   flex-grow: 1;
+   border-radius: 8px;
+}
+
+/* Posts */
+.posts {
+   flex: 1 1 1000px;
+   display: grid;
+   grid-template-columns: 1fr; /* One post per row */
+   justify-items: center;
+   margin-right: 70px;
+}
+
+.post-item {
+   width: 100%; /* Take up full width of the container */
+   max-width: 100%;
+   background: white;
+   backdrop-filter: blur(10px);
+   -webkit-backdrop-filter: blur(10px);
+   border: 1px solid rgba(255, 255, 255, 0.3);
+   border-radius: 12px;
+   padding: 20px;
+   margin-bottom: 20px;
+   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+   position: relative;
+   transition: transform 0.3s ease;
+}
+
+#post-list h2 {
+   color:#fff;
+   margin: 0 0 15px;
+}
+
+.post-item p {
+   margin: 0 0 15px;
+   font-size: 14px;
+   color: #333;
+   line-height: 1.5;
+}
+
+.post-item .post-date {
+   font-size: 14px;
+   color: #555;
+   margin: 0 0 15px;
+}
+
+a .post-title {
+   font-size: 1.2rem;
+   margin: 0 0 10px;
+   color: #333;
+   text-align: center;
+   text-decoration: none; /* No underline by default */
+   cursor: pointer;
+   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+a .post-title:hover {
+   text-decoration: underline; /* Underline the link on hover */
+   text-decoration-color: #333; /* Set the underline color to black */
+}
+
+.post-products {
+   font-size: 16px;
+   color: #333;
+   font-style: bold;
+}
+
+/* .post-text {
+   font-size: 18px;
+   color: black;
+   margin: 0 0 15px;
+} */
+
+.post-date {
+   font-size: 14px;
+   color: #777;
+   margin: 0 0 15px;
+} 
+
+.post-actions {
+   display: flex;
+   justify-content: flex-start;
+   gap: 6px;
+   align-items: center;
+}
+
+.like-button, .dislike-button {
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   background-color: transparent;
+   border: 1px solid #fff;
+   border-radius: 4px;
+   padding: 6px 12px;
+   font-size: 14px;
+   color: #333;                    
+   cursor: pointer;
+   transition: background-color 0.3s ease, color 0.3s ease;
+   margin-right: 6px;
+}
+
+.like-button .material-icons, .dislike-button .material-icons {
+   margin-right: 5px;
+   font-size: 14px;
+}
+
+.like-button:hover, .dislike-button:hover {
+   background-color: #fff; 
+   color: #333;             
+}
+
+.like-button:active, .dislike-button:active {
+   background-color: #fff0;
+   color: #333;
+}
+
+.like-button {
+   border-color: #333; 
+}
+
+.dislike-button {
+   border-color: #333; 
+}
+
+.like-button:hover, .dislike-button:hover {
+   opacity: 0.9;
+}
+
+.read-button {
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   font-size: 14px;
+   color: #333;
+   text-decoration: none;
+   cursor: pointer;
+   transition: background-color 0.3s ease, color 0.3s ease;
+   font-weight: bold;
+}
+
+.read-button:hover {
+   text-decoration: underline;
+}
+
+.post-item .products span {
+   display: inline-block;
+   background-color: #f3f3f3;
+   padding: 4px 8px;
+   margin-right: 6px;
+   border-radius: 12px;
+   font-size: 14px;
+}
+
+.products-link {
+   text-decoration: none;
+   color: #333;
+}
+
+.post-card {
+   background-color: #777;
+   max-width: 100%; /* Set width to 70% of the page */
+   width: 70%; /* Ensure it takes full width on smaller screens */
+   padding: 20px;
+   position: relative;
+   padding-top: 100px;
+   padding-bottom: 200px;
+   flex-grow: 1;
+   border-radius: 8px;
+}
+
+
+/* Dropdown styles */
+.dropdown {
+   position: relative;
+   display: inline-block;
+}
+
+.dropdown-content {
+   display: none;
+   position: absolute;
+   background-color: #333;
+   min-width: 160px;
+   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+   z-index: 1;
+   border-radius: 4px;
+}
+
+.dropdown-content a {
+   color: white;
+   padding: 0.5rem 1rem;
+   text-decoration: none;
+   display: block;
+   text-align: left;
+}
+
+.dropdown-content a:hover {
+   background-color: #555;
+}
+
+.dropdown:hover .dropdown-content {
+   display: block;
+}
