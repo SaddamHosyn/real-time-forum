@@ -14,6 +14,50 @@ html {
    overscroll-behavior: none;
 }
 
+
+
+
+
+header {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 1rem 2rem;
+   background-color: #333;
+   color: white;
+}
+
+
+header h1 {
+   font-size: 1.5rem;
+}
+
+nav ul {
+   list-style: none;
+   display: flex;
+   gap: 1rem;
+}
+
+nav ul li {
+   position: relative;
+}
+
+nav ul li a {
+   color: white;
+   text-decoration: none;
+   padding: 0.5rem 1rem;
+   display: block;
+}
+
+nav ul li a:hover {
+   background-color: #555;
+   border-radius: 4px;
+}
+
+
+
+
+
 body {
    /* background-image: url(/public/images/seatsmovietheater.jpg); */
    background-image: var(--bgimage);
@@ -356,4 +400,37 @@ a .post-title:hover {
    margin-right: 0.5rem; /* Add space between icon and text */
 }
 
+/*  footer emoji */
+
+img.footer-icon {
+   width: 20px;
+   height: 20px;
+}
+
+/* footer */
+
+footer {
+   text-align: center;
+   padding: 1rem;
+   background-color: #333;
+   color: white;
+   margin-top: 2rem;
+}
+
+footer a {
+   color: white;
+   text-decoration: none;
+}
+
+footer a:hover {
+   text-decoration: underline;
+}
+
+
+/* Logo Styles */
+header .logo {
+   height: 100px; /* Adjust the height as needed */
+   width: auto; /* Maintain aspect ratio */
+   margin-right: 1rem; /* Add spacing between the logo and the navigation links */
+}
 
