@@ -23,7 +23,7 @@ header {
    justify-content: space-between;
    align-items: center;
    padding: 1rem 2rem;
-   background-color: #333;
+   background-color: #1b6ad8;
    color: white;
 }
 
@@ -47,11 +47,15 @@ nav ul li a {
    text-decoration: none;
    padding: 0.5rem 1rem;
    display: block;
+   font-weight: 700; /* Makes text bold */
+   font-size: 1rem; /* Adjust for readability */
+   font-family: 'Inter', sans-serif; /* Ensures a modern, clean font */
+   transition: color 0.3s ease, background 0.3s ease; /* Smooth hover effect */
 }
 
 nav ul li a:hover {
-   background-color: #555;
-   border-radius: 4px;
+   background: rgba(255, 255, 255, 0.2); /* Subtle background on hover */
+   border-radius: 5px; /* Smooth edges */
 }
 
 
@@ -410,15 +414,20 @@ img.footer-icon {
 /* footer */
 
 footer {
+   position: fixed;
+   bottom: 0;
+   left: 0;
+   width: 100%;
    text-align: center;
-   padding: 1rem;
-   background-color: #333;
+   padding: 0.2rem;
+   background-color: #6f3cc8;
    color: white;
-   margin-top: 2rem;
-}
+ }
+ 
+ 
 
 footer a {
-   color: white;
+   color: rgb(178, 228, 13);
    text-decoration: none;
 }
 
@@ -432,5 +441,20 @@ header .logo {
    height: 100px; /* Adjust the height as needed */
    width: auto; /* Maintain aspect ratio */
    margin-right: 1rem; /* Add spacing between the logo and the navigation links */
+}
+
+/* copyrightsvg   */
+
+.copyrightsvg {
+   width: 15px;  /* Adjust size as needed */
+   height: auto; /* Maintains aspect ratio */
+   vertical-align: middle; /* Aligns it with text */
+   opacity: 0.8; /* Optional: Slight transparency for a subtle look */
+}
+
+ /*make the footer and header span the full width of the grid:  */
+
+header, footer {
+   grid-column: 1 / -1; 
 }
 
