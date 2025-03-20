@@ -20,19 +20,21 @@
   <body>
     <header>
       <a href="/" onclick="navigateTo(event, '/')">
-        <img
-          src="../images/butterfly.svg"
-          alt="BudgetBuzzLogo"
-          class="logo"
-        />
+        <img src="../images/butterfly.svg" alt="BudgetBuzzLogo" class="logo" />
       </a>
       <nav>
         <ul>
-          <li><a href="/" onclick="navigateTo(event, '/')">Home</a></li>
+          <li>
+            <a href="/" onclick="navigateTo(event, '/')">
+              <i class="fas fa-home"></i> Home
+              <!-- Home icon -->
+            </a>
+          </li>
           <li class="dropdown">
-            <a href="/products" onclick="navigateTo(event, '/products')"
-              >Products</a
-            >
+            <a href="/products" onclick="navigateTo(event, '/products')">
+              <i class="fas fa-shopping-cart"></i> Products
+              <!-- Products icon -->
+            </a>
             <div class="dropdown-content">
               <a
                 href="/products/grocery"
@@ -96,8 +98,44 @@
               </a>
             </div>
           </li>
+
           <li>
-            <a href="/login" onclick="navigateTo(event, '/login')">Login</a>
+            <a
+              href="/quick-recipes"
+              onclick="navigateTo(event, '/quick-recipes')"
+            >
+              <i class="fas fa-utensils"></i> QuickRecipes
+            </a>
+          </li>
+          <li>
+            <a
+              href="/nutrition-insight"
+              onclick="navigateTo(event, '/nutrition-insight')"
+            >
+              <i class="fas fa-apple-alt"></i> Nutrition Insight
+            </a>
+          </li>
+          <li>
+            <a
+              href="/find-a-store"
+              onclick="navigateTo(event, '/find-a-store')"
+            >
+              <i class="fas fa-store"></i> Find a Store
+            </a>
+          </li>
+          <li>
+            <a href="/chat" onclick="navigateTo(event, '/chat')">
+              <i class="fas fa-comments"></i> Chat
+            </a>
+          </li>
+
+          <li class="dropdown">
+            <a href="#" onclick="toggleDropdown(event, 'login-dropdown')">
+              <i class="fas fa-user"></i> Sign In
+            </a>
+            <div id="login-dropdown" class="dropdown-content">
+              <iframe src="login.html" class="login-iframe"></iframe>
+            </div>
           </li>
         </ul>
       </nav>
@@ -105,9 +143,6 @@
 
     <main id="app"></main>
 
-   
     <script src="../js/footer.js" defer></script>
-
-    
   </body>
 </html>
