@@ -1,24 +1,26 @@
 import { TEMPLATES } from './templates.js';
 
+// Route configuration
 const routes = {
-    '/': renderHome,
-    '/products': renderProducts,
-    '/viewpost': renderPost,
-    '/login': renderLogin,
-    '/profile': renderProfile,
-    '/about': renderAbout,
-    '/products/grocery': renderGrocery,
-    '/products/electronics': renderElectronics,
-    '/products/clothing': renderClothing,
-    '/products/furniture': renderFurniture,
-    '/products/beauty': renderBeauty,
-    '/products/auto': renderAuto,
-    '/products/sport': renderSport,
-    '/products/restaurant': renderRestaurant,
-    '/products/services': renderServices,
-    '/products/others': renderOthers,
+    '/': TEMPLATES.HOME,
+    '/products': TEMPLATES.PRODUCTS,
+    '/viewpost': TEMPLATES.POST,
+    '/login': TEMPLATES.LOGIN,
+    '/profile': TEMPLATES.PROFILE,
+    '/about': TEMPLATES.ABOUT,
+    '/products/grocery': TEMPLATES.GROCERY,
+    '/products/electronics': TEMPLATES.ELECTRONICS,
+    '/products/clothing': TEMPLATES.CLOTHING,
+    '/products/furniture': TEMPLATES.FURNITURE,
+    '/products/beauty': TEMPLATES.BEAUTY,
+    '/products/auto': TEMPLATES.AUTO,
+    '/products/sport': TEMPLATES.SPORT,
+    '/products/restaurant': TEMPLATES.RESTAURANT,
+    '/products/services': TEMPLATES.SERVICES,
+    '/products/others': TEMPLATES.OTHERS,
 };
 
+// Generic render function
 function renderTemplate(templateId) {
     const template = document.getElementById(templateId);
     const content = template.content.cloneNode(true);
@@ -26,72 +28,11 @@ function renderTemplate(templateId) {
     document.getElementById('app').appendChild(content);
 }
 
-export function renderHome() {
-    renderTemplate(TEMPLATES.HOME);
+// Route handler
+export function route(path) {
+    const templateId = routes[path] || TEMPLATES.NOT_FOUND;
+    renderTemplate(templateId);
 }
 
-export function renderProducts() {
-    renderTemplate(TEMPLATES.PRODUCTS);
-}
-
-export function renderPost() {
-    renderTemplate(TEMPLATES.POST);
-}
-
-export function renderLogin() {
-    renderTemplate(TEMPLATES.LOGIN);
-}
-
-export function renderProfile() {
-    renderTemplate(TEMPLATES.PROFILE);
-}
-
-export function renderAbout() {
-    renderTemplate(TEMPLATES.ABOUT);
-}
-
-export function renderNotFound() {
-    renderTemplate(TEMPLATES.NOT_FOUND);
-}
-
-
-export function renderGrocery() {
-    renderTemplate(TEMPLATES.GROCERY);
-}
-
-export function renderElectronics() {
-      renderTemplate(TEMPLATES.ELECTRONICS);    
-}
-
-export function renderClothing() {
-    renderTemplate(TEMPLATES.CLOTHING);
-}
-
-export function renderFurniture() {
-      renderTemplate(TEMPLATES.FURNITURE);
-}
-
-export function renderBeauty() {
-      renderTemplate(TEMPLATES.BEAUTY);
-}
-
-export function renderAuto() {
-      renderTemplate(TEMPLATES.AUTO);
-}        
-
-export function renderSport() {
-      renderTemplate(TEMPLATES.SPORT);
-}
-
-export function renderRestaurant() {
-      renderTemplate(TEMPLATES.RESTAURANT);
-}
-
-export function renderServices() {
-      renderTemplate(TEMPLATES.SERVICES);
-}
-
-export function renderOthers() {
-      renderTemplate(TEMPLATES.OTHERS);   
-}
-
+// Expose routes for navigation
+export const ROUTES = routes;

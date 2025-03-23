@@ -14,8 +14,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     />
-    <script src="../js/app.js" defer></script>
-    <script src="../js/templates.js" type="module" defer></script>
+    <script type="module" src="../js/main.js"></script>
   </head>
   <body>
     <header>
@@ -27,13 +26,11 @@
           <li>
             <a href="/" onclick="navigateTo(event, '/')">
               <i class="fas fa-home"></i> Home
-              <!-- Home icon -->
             </a>
           </li>
           <li class="dropdown">
             <a href="/products" onclick="navigateTo(event, '/products')">
               <i class="fas fa-shopping-cart"></i> Products
-              <!-- Products icon -->
             </a>
             <div class="dropdown-content">
               <a
@@ -128,13 +125,20 @@
               <i class="fas fa-comments"></i> Chat
             </a>
           </li>
+          <li>
+            <a href="/posts" onclick="navigateTo(event, '/posts')">
+              <i class="fas fa-newspaper"></i> Posts
+            </a>
+          </li>
 
           <li class="dropdown">
             <a href="#" onclick="toggleDropdown(event, 'login-dropdown')">
               <i class="fas fa-user"></i> Sign In
             </a>
             <div id="login-dropdown" class="dropdown-content">
-              <iframe src="login.html" class="login-iframe"></iframe>
+              <a href="#"><i class="fas fa-sign-in-alt"></i> Sign In</a>
+              <a href="#"><i class="fas fa-user-plus"></i> Register</a>
+              <a href="#"><i class="fas fa-user-circle"></i> My Account</a>
             </div>
           </li>
         </ul>
@@ -142,6 +146,94 @@
     </header>
 
     <main id="app"></main>
+
+    <!-- Templates -->
+    <template id="home-template">
+      <h1>Welcome to BudgetBuzz</h1>
+      <p>Discover the best deals and discounts!</p>
+      <button onclick="navigateTo(event, '/products')">View Products</button>
+    </template>
+
+    <template id="products-template">
+      <h2>Products</h2>
+      <p>Browse products here...</p>
+    </template>
+
+    <template id="post-template">
+      <h2>Post</h2>
+      <p>View and interact with posts here...</p>
+    </template>
+
+    <template id="login-template">
+      <h2>Login</h2>
+      <p>Enter your credentials...</p>
+      <button onclick="navigateTo(event, '/')">Go Home</button>
+    </template>
+
+    <template id="profile-template">
+      <h2>Profile</h2>
+      <p>Manage your profile here...</p>
+    </template>
+
+    <template id="about-template">
+      <h2>About Us</h2>
+      <p>Learn more about BudgetBuzz...</p>
+    </template>
+
+    <template id="grocery-template">
+      <h2>Grocery</h2>
+      <p>Explore grocery products...</p>
+    </template>
+
+    <template id="electronics-template">
+      <h2>Electronics</h2>
+      <p>Explore electronics products...</p>
+    </template>
+
+    <template id="clothing-template">
+      <h2>Clothing</h2>
+      <p>Explore clothing products...</p>
+    </template>
+
+    <template id="furniture-template">
+      <h2>Furniture</h2>
+      <p>Explore furniture products...</p>
+    </template>
+
+    <template id="beauty-template">
+      <h2>Beauty</h2>
+      <p>Explore beauty products...</p>
+    </template>
+
+    <template id="auto-template">
+      <h2>Auto</h2>
+      <p>Explore auto products...</p>
+    </template>
+
+    <template id="sport-template">
+      <h2>Sport</h2>
+      <p>Explore sport products...</p>
+    </template>
+
+    <template id="restaurant-template">
+      <h2>Restaurant</h2>
+      <p>Explore restaurant deals...</p>
+    </template>
+
+    <template id="services-template">
+      <h2>Services</h2>
+      <p>Explore service offerings...</p>
+    </template>
+
+    <template id="others-template">
+      <h2>Others</h2>
+      <p>Explore other products...</p>
+    </template>
+
+    <template id="not-found-template">
+      <h2>404 - Page Not Found</h2>
+      <p>The page you're looking for doesn't exist.</p>
+    </template>
 
     <script src="../js/footer.js" defer></script>
   </body>
