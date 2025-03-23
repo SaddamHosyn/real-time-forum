@@ -88,7 +88,7 @@ body::before {
    z-index: -1;
 }
 
-.title, .products-bar, #post-list {
+.title, .topics-bar, #post-list {
    padding: 16px;
 }
 
@@ -126,7 +126,7 @@ body::before {
 /* ----------------------------------------------------------------------------------
 // Category Styles
 // --------------------------------------------------------------------------------*/
-.products-bar {
+.topics-bar {
    grid-template-columns: auto;
    justify-items: center;
    align-items: center;
@@ -141,7 +141,7 @@ body::before {
    padding-left: 50px;
 }
 
-.products-bar h3 {
+.topics-bar h3 {
    font-size: 20px;
    margin-bottom: 18px;
    color: #fff;
@@ -149,16 +149,16 @@ body::before {
    align-items: center;
 }
 
-.products-bar ul {
+.topics-bar ul {
    list-style: none;
    padding: 0;
 }
 
-.products-bar li {
+.topics-bar li {
    margin: 10px 0;
 }
 
-.products-bar a {
+.topics-bar a {
    text-decoration: none;
    color: #fff;
    font-size: 16px;
@@ -167,12 +167,12 @@ body::before {
    /* font-weight: bold; */
 }
 
-.products-bar a:hover {
+.topics-bar a:hover {
    text-decoration: underline;
    font-weight: bold;
 }
 
-.products-bar span {
+.topics-bar span {
    margin-right: 10px;
 }
 
@@ -256,7 +256,7 @@ a .post-title:hover {
    text-decoration-color: #333; /* Set the underline color to black */
 }
 
-.post-products {
+.post-topics {
    font-size: 16px;
    color: #333;
    font-style: bold;
@@ -339,7 +339,7 @@ a .post-title:hover {
    text-decoration: underline;
 }
 
-.post-item .products span {
+.post-item .topics span {
    display: inline-block;
    background-color: #f3f3f3;
    padding: 4px 8px;
@@ -348,7 +348,7 @@ a .post-title:hover {
    font-size: 14px;
 }
 
-.products-link {
+.topics-link {
    text-decoration: none;
    color: #333;
 }
@@ -420,7 +420,7 @@ footer {
    width: 100%;
    text-align: center;
    padding: 0.2rem;
-   background-color: #77757b;
+   background-color: #6c705b;
    color: white;
  }
  
@@ -435,6 +435,9 @@ footer a:hover {
    text-decoration: underline;
 }
 
+header, footer {
+   grid-column: 1 / -1; 
+}
 
 /* Logo Styles */
 header .logo {
@@ -454,9 +457,7 @@ header .logo {
 
  /*make the footer and header span the full width of the grid:  */
 
-header, footer {
-   grid-column: 1 / -1; 
-}
+
 
 
 /* Login Dropdown Styles */
@@ -504,4 +505,155 @@ header, footer {
    width: 100%;
    height: 100%;
    border: none;
+ }
+
+
+/* ---------------------------------------------------------------------------------- */
+
+/* login page*/
+.login-dropdown-content {
+   background: white;
+   padding: 20px;
+   border-radius: 8px;
+   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+   max-width: 400px;
+   width: 100%;
+ }
+ 
+ .login-popup {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background: rgba(0, 0, 0, 0.5);
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   z-index: 1000;
+ }
+ 
+ .form-group {
+   margin-bottom: 15px;
+ }
+ 
+ .form-group label {
+   display: block;
+   margin-bottom: 5px;
+ }
+ 
+ .form-group input {
+   width: 100%;
+   padding: 8px;
+   box-sizing: border-box;
+ }
+ 
+ button {
+   padding: 10px 15px;
+   margin-right: 10px;
+   cursor: pointer;
+ }
+
+
+
+
+
+
+
+
+
+
+
+ /* register page*/
+.register-popup {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background: rgba(0, 0, 0, 0.5);
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   z-index: 1000;
+ }
+ 
+ .register-content {
+   background: white;
+   padding: 20px;
+   border-radius: 8px;
+   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+   max-width: 400px;
+   width: 100%;
+ }
+ 
+ .form-group {
+   margin-bottom: 15px;
+ }
+ 
+ .form-group label {
+   display: block;
+   margin-bottom: 5px;
+ }
+ 
+ .form-group input,
+ .form-group select {
+   width: 100%;
+   padding: 8px;
+   box-sizing: border-box;
+ }
+ 
+ button {
+   padding: 10px 15px;
+   margin-right: 10px;
+   cursor: pointer;
+ }
+
+
+
+
+
+    /* dropdown.css */
+/* Dropdown Styling */
+.dropdown-content {
+   display: none;
+   position: absolute;
+   background-color: #d8d9c9;
+   min-width: 200px;
+   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+   z-index: 1;
+   padding: 10px 0;
+   border-radius: 8px;
+ }
+ 
+ .dropdown-content a {
+   display: flex;
+   align-items: center;
+   padding: 10px 20px;
+   color: #333;
+   text-decoration: none;
+   font-size: 14px;
+   transition: background-color 0.3s ease;
+ }
+ 
+ .dropdown-content a:hover {
+   background-color: #5e83ab;
+ }
+ 
+ .dropdown-content a i {
+   margin-right: 10px;
+   width: 20px;
+   text-align: center;
+ }
+ 
+ .dropdown-content a span {
+   flex: 1;
+ }
+ 
+ .dropdown-content a span strong {
+   font-weight: 600;
+ }
+ 
+ .dropdown:hover .dropdown-content {
+   display: block;
  }
