@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BudgetBuzz</title>
+    <link rel="icon" href="assets/images/favicon.ico" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  </head>
+  <body>
+    <header>
+      <a href="/" class="logo-link" data-link>
+        <img src="assets/images/butterfly.svg" alt="BudgetBuzzLogo" class="logo" />
+      </a>
+      <nav>
+        <ul>
+          <li>
+            <a href="/" data-link><i class="fas fa-home"></i> Home</a>
+          </li>
+
+          <li class="dropdown">
+            <a href="/topics" data-link><i class="fas fa-tags"></i> Topics</a>
+            <div class="dropdown-content">
+              <a href="/topics/food-dining" data-link>
+                <i class="fas fa-utensils"></i> Food & Dining
+              </a>
+              <a href="/topics/technology" data-link>
+                <i class="fas fa-laptop"></i> Technology
+              </a>
+              <a href="/topics/fashion" data-link>
+                <i class="fas fa-tshirt"></i> Fashion
+              </a>
+              <a href="/topics/home-living" data-link>
+                <i class="fas fa-couch"></i> Home & Living
+              </a>
+              <a href="/topics/health-beauty" data-link>
+                <i class="fas fa-spa"></i> Health & Beauty
+              </a>
+              <a href="/topics/automotive" data-link>
+                <i class="fas fa-car"></i> Automotive
+              </a>
+              <a href="/topics/sports-fitness" data-link>
+                <i class="fas fa-football-ball"></i> Sports & Fitness
+              </a>
+              <a href="/topics/travel-leisure" data-link>
+                <i class="fas fa-suitcase"></i> Travel & Leisure
+              </a>
+              <a href="/topics/services" data-link>
+                <i class="fas fa-tools"></i> Services
+              </a>
+              <a href="/topics/miscellaneous" data-link>
+                <i class="fas fa-ellipsis-h"></i> Miscellaneous
+              </a>
+            </div>
+          </li>
+
+          <li>
+            <a href="/quick-recipes" data-link>
+              <i class="fas fa-utensils"></i> QuickRecipes
+            </a>
+          </li>
+          <li>
+            <a href="/nutrition-insight" data-link>
+              <i class="fas fa-apple-alt"></i> Nutrition Insight
+            </a>
+          </li>
+          <li>
+            <a href="/find-a-store" data-link>
+              <i class="fas fa-store"></i> Find a Store
+            </a>
+          </li>
+
+          <li>
+            <a href="/posts" data-link>
+              <i class="fas fa-newspaper"></i> Create Posts
+            </a>
+          </li>
+          <li>
+            <a href="/chat" data-link>
+              <i class="fas fa-comments"></i> Chat
+            </a>
+          </li>
+          <li class="dropdown">
+            <a href="#"><i class="fas fa-user"></i> Sign In</a>
+            <div id="login-dropdown" class="dropdown-content">
+              <a href="#" onclick="openLoginPopup()">
+                <i class="fas fa-sign-in-alt"></i> Sign In
+              </a>
+              <a href="#" onclick="openRegisterPopup()">
+                <i class="fas fa-user-plus"></i> Register
+              </a>
+              <a href="#"><i class="fas fa-user-circle"></i> My Account</a>
+            </div>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main id="app">
+      <!-- Content will be dynamically inserted here by the router -->
+      <div class="main-container">
+        <div class="ad-section">
+          <h2>Advertisement</h2>
+          <div class="ad-container">
+            <img src="assets/images/ad1.jpg" alt="Ad 1" />
+            <img src="assets/images/ad2.jpg" alt="Ad 2" />
+            <img src="assets/images/ad3.jpg" alt="Ad 3" />
+          </div>
+        </div>
+
+        <div class="slider-section">
+          <h2>Recent Posts</h2>
+          <div class="slider-container">
+            <button class="slider-button prev" onclick="moveSlider(-1)">
+              &#10094;
+            </button>
+            <div class="slider">
+              <div class="post">
+                <h3>Post Title 1</h3>
+                <p>This is the content of post 1.</p>
+              </div>
+              <div class="post">
+                <h3>Post Title 2</h3>
+                <p>This is the content of post 2.</p>
+              </div>
+              <div class="post">
+                <h3>Post Title 3</h3>
+                <p>This is the content of post 3.</p>
+              </div>
+              <div class="post">
+                <h3>Post Title 4</h3>
+                <p>This is the content of post 4.</p>
+              </div>
+              <div class="post">
+                <h3>Post Title 5</h3>
+                <p>This is the content of post 5.</p>
+              </div>
+            </div>
+            <button class="slider-button next" onclick="moveSlider(1)">
+              &#10095;
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Templates -->
+    <template id="home-template">
+      <div class="home-view">
+        <h1>Welcome to BudgetBuzz</h1>
+        <p>Discover the best deals and discounts!</p>
+        <button data-link="/topics">View topics</button>
+      </div>
+    </template>
+
+    <template id="topics-template">
+      <div class="topics-view">
+        <h2>Topics</h2>
+        <p>Browse topics here...</p>
+      </div>
+    </template>
+
+    <template id="create-post-template">
+      <div class="create-post-container">
+        <h2>Create a New Post</h2>
+        <form id="create-post-form">
+          <!-- ... (keep your existing form structure) ... -->
+        </form>
+      </div>
+    </template>
+
+    <template id="category-template">
+      <div class="category-view">
+        <h2 class="category-title">{{category}}</h2>
+        <div class="category-content">
+          <div class="posts-container"></div>
+        </div>
+      </div>
+    </template>
+
+    <template id="not-found-template">
+      <div class="not-found-view">
+        <h2>404 - Page Not Found</h2>
+        <p>The page you're looking for doesn't exist.</p>
+        <a href="/" data-link>Return to Home</a>
+      </div>
+    </template>
+
+    <!-- Scripts -->
+    <script src="assets/js/templates.js" type="module"></script>
+    <script src="assets/js/router.js" type="module"></script>
+    <script src="assets/js/app.js" type="module"></script>
+    <script src="assets/js/footer.js" defer></script>
+  </body>
+</html>

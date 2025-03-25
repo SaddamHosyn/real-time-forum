@@ -1,32 +1,67 @@
-import { TEMPLATES } from './templates.js';
+import { TEMPLATES, CATEGORIES } from './templates.js';
 
-const routes = {
+const ROUTES = {
   '/': TEMPLATES.HOME,
-  '/topics': TEMPLATES.topics,
-  '/topics/food-dining': TEMPLATES.FOOD_DINING,
-  '/topics/technology': TEMPLATES.TECHNOLOGY,
-  '/topics/fashion': TEMPLATES.FASHION,
-  '/topics/home-living': TEMPLATES.HOME_LIVING,
-  '/topics/health-beauty': TEMPLATES.HEALTH_BEAUTY,
-  '/topics/automotive': TEMPLATES.AUTOMOTIVE,
-  '/topics/sports-fitness': TEMPLATES.SPORTS_FITNESS,
-  '/topics/travel-leisure': TEMPLATES.TRAVEL_LEISURE,
-  '/topics/services': TEMPLATES.SERVICES,
-  '/topics/miscellaneous': TEMPLATES.MISCELLANEOUS,
+  '/topics': TEMPLATES.TOPICS,
   '/create-post': TEMPLATES.CREATE_POST,
-  // Add other routes as needed
+  ...generateCategoryRoutes() // Dynamic category routes
 };
 
-function renderTemplate(templateId) {
-  const template = document.getElementById(templateId);
-  const content = template.content.cloneNode(true);
-  document.getElementById('app').innerHTML = '';
-  document.getElementById('app').appendChild(content);
+function generateCategoryRoutes() {
+  const routes = {};
+  for (const category of Object.values(CATEGORIES)) {
+    routes[`/topics/${category}`] = TEMPLATES.CATEGORY;
+  }
+  return routes;
 }
 
-export function route(path) {
-  const templateId = routes[path] || TEMPLATES.NOT_FOUND;
-  renderTemplate(templateId);
+export function navigateTo(path) {
+  history.pushState({}, '', path);
+  renderRoute(path);
 }
 
-export const ROUTES = routes;
+function renderRoute(path) {
+  const templateId = ROUTES[path] || TEMPLATES.NOT_FOUND;
+  const app = document.getElementById('app');
+  
+  if (templateId === TEMPLATES.CATEGORY) {
+    renderCategoryPage(path.split('/').pop());
+  } else {
+    app.innerHTML = document.getElementById(templateId).innerHTML;
+  }
+}
+
+function renderCategoryPage(categoryId) {
+  const template = document.getElementById(TEMPLATES.CATEGORY);
+  const categoryName = formatCategoryName(categoryId);
+  
+  document.getElementById('app').innerHTML = 
+    template.innerHTML.replace('{{category}}', categoryName);
+  
+  // Load posts for this category (example)
+  loadCategoryPosts(categoryId);
+}
+
+function formatCategoryName(id) {
+  return id.split('-')
+    .map(word => word[0].toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
+// Initialize router
+window.addEventListener('popstate', () => renderRoute(location.pathname));
+document.addEventListener('DOMContentLoaded', initRouter);
+
+function initRouter() {
+  // Handle all link clicks
+  document.body.addEventListener('click', e => {
+    const link = e.target.closest('[data-link]');
+    if (link) {
+      e.preventDefault();
+      navigateTo(link.href.replace(location.origin, ''));
+    }
+  });
+  
+  // Initial render
+  renderRoute(location.pathname);
+}
