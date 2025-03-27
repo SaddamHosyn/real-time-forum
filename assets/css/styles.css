@@ -1,9 +1,19 @@
+:root {
+   --main-page-background-image: url('../images/account.avif');
+}
 /* Base Styles */
 body {
    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
    display: flex;
    flex-direction: column;
    min-height: 100vh;
+   background-color: rgb(56, 84, 92);
+   background-image: var(--main-page-background-image);
+   background-repeat: no-repeat;       /* Prevents tiling */
+   background-size: cover;             /* Covers entire page element */
+   background-position: center center; /* Centers the image */
+   background-attachment: fixed; 
+
 }
 
 main {
@@ -89,20 +99,21 @@ main {
 
 /* Custom footer styles */
 .my-custom-footer {
-   background-color: #106995; /* Darker background */
-   color: #ffffff; /* Custom text color */
-   border-top: 2px solid #05464f; /* Add a border */
+   background-color: #54718b; /* Darker background */
+   color: #000000; /* Custom text color */
+   border-top: 2px solid #c8c6cc; /* Add a border */
    padding: 2rem 0; /* Adjust padding */
+   font-weight: 500;
 }
 
 
 .my-custom-footer a {
-   color: #030405; /* Match your custom text color */
+   color: #8ec239; /* Match your custom text color */
    text-decoration: none;
    transition: color 0.3s ease;
    transition: all 0.3s ease;
    padding: 0.2rem 0.4rem;
-   border-radius: 4px;
+   border-radius: 5px;
    font-weight: 500;
  }
  
@@ -112,31 +123,35 @@ main {
    transform: translateY(-1px);
 
  }
- /* Responsive adjustments */
+  /* Responsive adjustments */
 @media (max-width: 768px) {
    .my-custom-footer .d-flex {
        flex-direction: column;
        gap: 1rem;
        text-align: center;
    }
+
 }
 
 
 
 /* Custom navbar background */
-/* Custom navbar background */
+/* menu bar */
+
 .navbar-custom {
-   background-color: #2973af; /* Dark blue-gray */
+   background-color: #306090; /* Dark blue-gray */
 }
 
 /* Custom navbar links */
+/* menu bar all options frontpage */
 .navbar-custom .navbar-nav .nav-link {
    color: rgba(255, 255, 255, 0.9);
+   font-weight: 500;
 }
 
-/* Hover effect */
+/* Hover effect for menu bar all options*/
 .navbar-custom .navbar-nav .nav-link:hover {
-   color: #18bc9c; /* Teal */
+   color: #1ca3af; /* Teal */
    transform: translateY(-2px);
 }
 
@@ -148,14 +163,120 @@ main {
 
 /* Dropdown menu */
 .navbar-custom .dropdown-menu {
-   background-color: #1a69b7;
+   background-color: #3a6256;
 }
 
 .navbar-custom .dropdown-item {
    color: rgba(255, 255, 255, 0.8);
+   font-weight: bold;
 }
 
 .navbar-custom .dropdown-item:hover {
-   background-color: #18bc9c;
+   background-color: #585e75;
    color: white;
+   border-radius: 6px;
+   transform: translateY(-2px);
+   box-shadow: 0 3px 6px rgba(0,0,0,0.16);
+   text-decoration: none;
+
 }
+
+
+
+
+
+
+/* Animated navbar logo name */
+/* Animated navbar logo name */
+.navbar-brand {
+   font-family: 'Poppins', sans-serif;
+   font-weight: 700;
+   font-size: 1.8rem;
+   background: linear-gradient(90deg, #bec768, #3f3f2d, #c676d5);
+   background-size: 200% auto;
+   color: transparent;
+   -webkit-background-clip: text;
+   background-clip: text;
+   animation: gradientShift 3s ease infinite;
+   text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+   transition: all 0.3s ease;
+ }
+ 
+ .navbar-brand:hover {
+   transform: scale(1.05);
+   text-shadow: 0 4px 8px rgba(0,0,0,0.15);
+ }
+ 
+ @keyframes gradientShift {
+   0% { background-position: 0% center; }
+   50% { background-position: 100% center; }
+   100% { background-position: 0% center; }
+ }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Sign In Button Styles */
+/* Sign In Button Styles */
+.navbar-custom .btn-light {
+   background-color: #306090; /* Same as navbar color */
+   color: white !important;
+   border: none;
+   font-weight: bold; /* Bold text */
+   transition: all 0.3s ease;
+   padding: 6px 12px;
+   border-radius: 4px;
+ }
+ 
+ /* Hover State of Sign In Button */
+ .navbar-custom .btn-light:hover {
+   background-color: white !important;
+   color: #056072 !important;
+   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+ }
+ 
+ /* Focus/Active States of Sign In Button */
+ .navbar-custom .btn-light:focus,
+ .navbar-custom .btn-light:active {
+   background-color: white !important;
+   color: #056072 !important;
+   box-shadow: none;
+ }
+ 
+ /* Dropdown Arrow Color */
+ .navbar-custom .dropdown-toggle::after {
+   border-top-color: white;
+   transition: border-top-color 0.3s ease;
+   margin-left: 6px; /* Better spacing */
+   vertical-align: middle;
+ }
+
+ 
+ /* Hovered Dropdown Arrow */
+ .navbar-custom .btn-light:hover::after {
+   border-top-color: #306090 !important;
+ }
+
+
+

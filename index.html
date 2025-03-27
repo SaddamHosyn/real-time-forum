@@ -1,208 +1,374 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Forum - Home</title>
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/assets/css/styles.css">
-</head>
-<body>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
     <!-- Header with Navigation -->
     <header>
-        <nav class="navbar navbar-expand-lg navbar-custom">
-            <div class="container">
-                <a class="navbar-brand" href="#">Forum</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
+      <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+          <a class="navbar-brand" href="#">
+            <span class="brand-text">Budget</span>
+            <span class="brand-buzz">Buzz</span>
+            <span class="brand-icon">💰</span>
+          </a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="#" data-page="home">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#" data-page="quick-recipe"
+                  >Quick Recipe</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#" data-page="nutrition"
+                  >Nutrition Insights</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#" data-page="store">Find a Store</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#" data-page="topics">Topics</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#" data-page="posts">Posts</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#" data-page="chat">Chat</a>
+              </li>
+            </ul>
+            <div class="d-flex">
+              <div class="dropdown">
+                <button
+                  class="btn btn-light dropdown-toggle"
+                  type="button"
+                  id="accountDropdown"
+                  data-bs-toggle="dropdown"
+                >
+                  Sign In
                 </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item"><a class="nav-link" href="#" data-page="home">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#" data-page="quick-recipe">Quick Recipe</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#" data-page="nutrition">Nutrition Insights</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#" data-page="store">Find a Store</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#" data-page="topics">Topics</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#" data-page="posts">Posts</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#" data-page="chat">Chat</a></li>
-                    </ul>
-                    <div class="d-flex">
-                        <div class="dropdown">
-                            <button class="btn btn-light dropdown-toggle" type="button" id="accountDropdown" data-bs-toggle="dropdown">
-                                Sign In
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="#" data-page="signin">Sign In</a></li>
-                                <li><a class="dropdown-item" href="#" data-page="register">Register</a></li>
-                                <li><a class="dropdown-item" href="#" data-page="account">My Account</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li>
+                    <a class="dropdown-item" href="#" data-page="signin"
+                      >Sign In</a
+                    >
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="#" data-page="register"
+                      >Register</a
+                    >
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="#" data-page="account"
+                      >My Account</a
+                    >
+                  </li>
+                </ul>
+              </div>
             </div>
-        </nav>
+          </div>
+        </div>
+      </nav>
     </header>
 
     <!-- Main Content - This will be dynamically replaced by router -->
     <main class="container my-4" id="app-content">
-        <!-- Initial content will be loaded from home-template -->
+      <!-- Initial content will be loaded from home-template -->
     </main>
 
     <!-- Footer -->
     <footer class="py-0 my-custom-footer">
       <div class="container">
-          <div class="d-flex justify-content-between align-items-center">
-              <!-- Left side - Creators -->
-              <div class="creator-credits">
-                  Created by 
-                  <a href="https://github.com/SaddamHosyn" target="_blank" rel="noopener noreferrer" class="footer-link">Saddam</a> 
-                  and 
-                  <a href="https://github.com/Richard-AungKhantMin" target="_blank" rel="noopener noreferrer" class="footer-link">Richard</a>
-              </div>
-              
-              <!-- Right side - Copyright -->
-              <div class="copyright">
-                  &copy; <span id="current-year">2025</span> BudgetBuzz - All Rights Reserved
-              </div>
+        <div class="d-flex justify-content-between align-items-center">
+          <!-- Left side - Creators -->
+          <div class="creator-credits">
+            Created by
+            <a
+              href="https://github.com/SaddamHosyn"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="footer-link"
+              >Saddam</a
+            >
+            and
+            <a
+              href="https://github.com/Richard-AungKhantMin"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="footer-link"
+              >Richard</a
+            >
           </div>
+
+          <!-- Right side - Copyright -->
+          <div class="copyright">
+            &copy; <span id="current-year">2025</span> BudgetBuzz - All Rights
+            Reserved
+          </div>
+        </div>
       </div>
-  </footer>
+    </footer>
+
+    <!-- ===== TEMPLATES ===== -->
+    <!-- Topics Grid Template (Shows ALL topics with icons) -->
+    <template id="topics-template">
+      <section class="forum-topics">
+        <h2 class="text-center mb-5">Explore Topics</h2>
+        <div class="container">
+          <div class="row g-4">
+            <!-- Topic 1 -->
+            <div class="col-md-4 col-sm-6">
+              <div class="topic-card p-4 text-center shadow-sm rounded">
+                <i class="fas fa-shopping-basket fa-3x mb-3 text-primary"></i>
+                <h3>Daily Essentials</h3>
+                <p class="text-muted">Discuss everyday must-haves</p>
+              </div>
+            </div>
+
+            <!-- Topic 2 -->
+            <div class="col-md-4 col-sm-6">
+              <div class="topic-card p-4 text-center shadow-sm rounded">
+                <i class="fas fa-home fa-3x mb-3 text-success"></i>
+                <h3>Home & Lifestyle</h3>
+                <p class="text-muted">Home decor, organization tips</p>
+              </div>
+            </div>
+
+            <!-- Topic 3 -->
+            <div class="col-md-4 col-sm-6">
+              <div class="topic-card p-4 text-center shadow-sm rounded">
+                <i class="fas fa-heartbeat fa-3x mb-3 text-danger"></i>
+                <h3>Personal Well-being</h3>
+                <p class="text-muted">Health, fitness, and mindfulness</p>
+              </div>
+            </div>
+
+            <!-- Topic 4 -->
+            <div class="col-md-4 col-sm-6">
+              <div class="topic-card p-4 text-center shadow-sm rounded">
+                <i class="fas fa-microchip fa-3x mb-3 text-info"></i>
+                <h3>Technology & Innovation</h3>
+                <p class="text-muted">Gadgets, software, and future tech</p>
+              </div>
+            </div>
+
+            <!-- Topic 5 -->
+            <div class="col-md-4 col-sm-6">
+              <div class="topic-card p-4 text-center shadow-sm rounded">
+                <i class="fas fa-gamepad fa-3x mb-3 text-warning"></i>
+                <h3>Leisure & Entertainment</h3>
+                <p class="text-muted">Games, movies, and hobbies</p>
+              </div>
+            </div>
+
+            <!-- Topic 6 -->
+            <div class="col-md-4 col-sm-6">
+              <div class="topic-card p-4 text-center shadow-sm rounded">
+                <i class="fas fa-store fa-3x mb-3 text-secondary"></i>
+                <h3>Commerce & Shopping</h3>
+                <p class="text-muted">Deals, reviews, and shopping guides</p>
+              </div>
+            </div>
+
+            <!-- Topic 7 - Mobility & Transportation -->
+            <div class="col-md-4 col-sm-6">
+              <div class="topic-card p-4 text-center shadow-sm rounded">
+                <i class="fas fa-car fa-3x mb-3 text-primary"></i>
+                <h3>Mobility & Transportation</h3>
+                <p class="text-muted">
+                  Vehicles, public transit, and travel solutions
+                </p>
+              </div>
+            </div>
+
+            <!-- Topic 8 - Services & Support -->
+            <div class="col-md-4 col-sm-6">
+              <div class="topic-card p-4 text-center shadow-sm rounded">
+                <i class="fas fa-hands-helping fa-3x mb-3 text-success"></i>
+                <h3>Services & Support</h3>
+                <p class="text-muted">
+                  Professional services and community help
+                </p>
+              </div>
+            </div>
+
+            <!-- Topic 9 - Culture & Community -->
+            <div class="col-md-4 col-sm-6">
+              <div class="topic-card p-4 text-center shadow-sm rounded">
+                <i class="fas fa-globe-americas fa-3x mb-3 text-info"></i>
+                <h3>Culture & Community</h3>
+                <p class="text-muted">
+                  Local events, traditions, and social groups
+                </p>
+              </div>
+            </div>
+
+            <!-- Topic 10 - Information & Learning -->
+            <div class="col-md-4 col-sm-6">
+              <div class="topic-card p-4 text-center shadow-sm rounded">
+                <i class="fas fa-graduation-cap fa-3x mb-3 text-warning"></i>
+                <h3>Information & Learning</h3>
+                <p class="text-muted">
+                  Education, tutorials, and knowledge sharing
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </template>
 
     <!-- Page Templates -->
     <template id="home-template">
-        <!-- Scrolling Advertisements -->
-        <section class="scrolling-ads mb-5">
-            <h2 class="visually-hidden">Featured Advertisements</h2>
-            <div class="scrolling-container">
-                <div class="scrolling-content">
-                    <!-- Content will be added via JavaScript -->
-                </div>
-            </div>
-        </section>
+      <!-- Scrolling Advertisements -->
+      <section class="scrolling-ads mb-5">
+        <h2 class="visually-hidden">Featured Advertisements</h2>
+        <div class="scrolling-container">
+          <div class="scrolling-content">
+            <!-- Content will be added via JavaScript -->
+          </div>
+        </div>
+      </section>
 
-        <!-- Fixed Advertisements -->
-        <section class="fixed-ads">
-            <h2 class="visually-hidden">Sponsored Content</h2>
-            <div class="row">
-                <!-- Content will be added via JavaScript -->
-            </div>
-        </section>
+      <!-- Fixed Advertisements -->
+      <section class="fixed-ads">
+        <h2 class="visually-hidden">Sponsored Content</h2>
+        <div class="row">
+          <!-- Content will be added via JavaScript -->
+        </div>
+      </section>
     </template>
 
     <template id="quick-recipe-template">
-        <section class="quick-recipes">
-            <div class="container">
-                <h2>Quick Recipes</h2>
-                <div class="recipes-container row">
-                    <!-- Recipes will be loaded here -->
-                </div>
-            </div>
-        </section>
+      <section class="quick-recipes">
+        <div class="container">
+          <h2>Quick Recipes</h2>
+          <div class="recipes-container row">
+            <!-- Recipes will be loaded here -->
+          </div>
+        </div>
+      </section>
     </template>
 
     <template id="nutrition-template">
-        <section class="nutrition-insights">
-            <div class="container">
-                <h2>Nutrition Insights</h2>
-                <div class="insights-container row">
-                    <!-- Nutrition content will be loaded here -->
-                </div>
-            </div>
-        </section>
+      <section class="nutrition-insights">
+        <div class="container">
+          <h2>Nutrition Insights</h2>
+          <div class="insights-container row">
+            <!-- Nutrition content will be loaded here -->
+          </div>
+        </div>
+      </section>
     </template>
 
     <template id="store-template">
-        <section class="store-finder">
-            <div class="container">
-                <h2>Find a Store</h2>
-                <div class="store-container row">
-                    <!-- Store content will be loaded here -->
-                </div>
-            </div>
-        </section>
-    </template>
-
-    <template id="topics-template">
-        <section class="forum-topics">
-            <div class="container">
-                <h2>Forum Topics</h2>
-                <div class="topics-container row">
-                    <!-- Topics will be loaded here -->
-                </div>
-            </div>
-        </section>
+      <section class="store-finder">
+        <div class="container">
+          <h2>Find a Store</h2>
+          <div class="store-container row">
+            <!-- Store content will be loaded here -->
+          </div>
+        </div>
+      </section>
     </template>
 
     <template id="posts-template">
-        <section class="forum-posts">
-            <div class="container">
-                <h2>Latest Posts</h2>
-                <div class="posts-container row">
-                    <!-- Posts will be loaded here -->
-                </div>
-            </div>
-        </section>
+      <section class="forum-posts">
+        <div class="container">
+          <h2>Latest Posts</h2>
+          <div class="posts-container row">
+            <!-- Posts will be loaded here -->
+          </div>
+        </div>
+      </section>
     </template>
 
     <template id="chat-template">
-        <section class="forum-chat">
-            <div class="container">
-                <h2>Community Chat</h2>
-                <div class="chat-container row">
-                    <!-- Chat interface will be loaded here -->
-                </div>
-            </div>
-        </section>
+      <section class="forum-chat">
+        <div class="container">
+          <h2>Community Chat</h2>
+          <div class="chat-container row">
+            <!-- Chat interface will be loaded here -->
+          </div>
+        </div>
+      </section>
     </template>
 
     <template id="signin-template">
-        <section class="user-auth">
-            <div class="container">
-                <h2>Sign In</h2>
-                <div class="auth-container row">
-                    <!-- Sign in form will be loaded here -->
-                </div>
-            </div>
-        </section>
+      <section class="user-auth">
+        <div class="container">
+          <h2>Sign In</h2>
+          <div class="auth-container row">
+            <!-- Sign in form will be loaded here -->
+          </div>
+        </div>
+      </section>
     </template>
 
     <template id="register-template">
-        <section class="user-auth">
-            <div class="container">
-                <h2>Register</h2>
-                <div class="auth-container row">
-                    <!-- Registration form will be loaded here -->
-                </div>
-            </div>
-        </section>
+      <section class="user-auth">
+        <div class="container">
+          <h2>Register</h2>
+          <div class="auth-container row">
+            <!-- Registration form will be loaded here -->
+          </div>
+        </div>
+      </section>
     </template>
 
     <template id="account-template">
-        <section class="user-account">
-            <div class="container">
-                <h2>My Account</h2>
-                <div class="account-container row">
-                    <!-- Account details will be loaded here -->
-                </div>
-            </div>
-        </section>
+      <section class="user-account">
+        <div class="container">
+          <h2>My Account</h2>
+          <div class="account-container row">
+            <!-- Account details will be loaded here -->
+          </div>
+        </div>
+      </section>
     </template>
 
     <!-- Component Templates (for dynamic content) -->
     <template id="scrolling-ad-template">
-        <div class="scrolling-item">
-            <img src="" alt="Advertisement" class="img-fluid">
-        </div>
+      <div class="scrolling-item">
+        <img src="" alt="Advertisement" class="img-fluid" />
+      </div>
     </template>
 
     <template id="fixed-ad-template">
-        <div class="col-md-4 mb-4">
-            <div class="fixed-ad-item">
-                <img src="" alt="Advertisement" class="img-fluid rounded">
-            </div>
+      <div class="col-md-4 mb-4">
+        <div class="fixed-ad-item">
+          <img src="" alt="Advertisement" class="img-fluid rounded" />
         </div>
+      </div>
     </template>
 
     <!-- Bootstrap JS Bundle with Popper -->
@@ -211,5 +377,54 @@
     <script src="js/router.js" type="module"></script>
     <!-- Main App -->
     <script src="js/app.js" type="module"></script>
-</body>
+
+    <!-- log in pop up page -->
+    <template id="signin-template">
+      <!-- Modal Structure Only -->
+      <div id="login-modal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Sign In</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <form id="login-form">
+                <div class="mb-3">
+                  <label class="form-label">Email or Username</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="login-identity"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Password</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="login-password"
+                    required
+                  />
+                </div>
+                <button type="submit" class="btn btn-primary w-100">
+                  Sign In
+                </button>
+              </form>
+              <div class="text-center mt-3">
+                <p>
+                  New user? <a href="#" id="show-register">Create account</a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+  </body>
 </html>
