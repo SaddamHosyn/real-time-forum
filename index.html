@@ -21,7 +21,8 @@
     />
   </head>
   <body>
-    <!-- Header with Navigation -->
+    <!-- Header with Navigation menu bar-->
+    <!-- Header with Navigation menu bar-->
     <header>
       <nav class="navbar navbar-expand-lg navbar-custom">
         <div class="container">
@@ -99,6 +100,7 @@
         </div>
       </nav>
     </header>
+    <!-- Header with Navigation menu bar-->
 
     <!-- Main Content - This will be dynamically replaced by router -->
     <main class="container my-4" id="app-content">
@@ -106,6 +108,8 @@
     </main>
 
     <!-- Footer -->
+    <!-- Footer -->
+
     <footer class="py-0 my-custom-footer">
       <div class="container">
         <div class="d-flex justify-content-between align-items-center">
@@ -137,7 +141,10 @@
         </div>
       </div>
     </footer>
+    <!-- Footer -->
 
+    <!-- ===== TEMPLATES ===== -->
+    <!-- Topics Grid Template (Shows ALL topics with icons) -->
     <!-- ===== TEMPLATES ===== -->
     <!-- Topics Grid Template (Shows ALL topics with icons) -->
     <template id="topics-template">
@@ -247,6 +254,8 @@
       </section>
     </template>
 
+    <!-- Topics Grid Template (Shows ALL topics with icons) -->
+
     <!-- Page Templates -->
     <template id="home-template">
       <!-- Scrolling Advertisements -->
@@ -323,29 +332,298 @@
       </section>
     </template>
 
-    <template id="register-template">
-      <section class="user-auth">
-        <div class="container">
-          <h2>Register</h2>
-          <div class="auth-container row">
-            <!-- Registration form will be loaded here -->
-          </div>
-        </div>
-      </section>
-    </template>
+    <!-- my account details( posts, likes, dislikes, my comments) -->
+    <!-- my account details( posts, likes, dislikes, my comments) -->
 
     <template id="account-template">
       <section class="user-account">
         <div class="container">
-          <h2>My Account</h2>
-          <div class="account-container row">
-            <!-- Account details will be loaded here -->
+          <div class="row">
+            <!-- User Profile Sidebar -->
+            <div class="col-md-3 mb-4">
+              <div class="card profile-card shadow-sm">
+                <div class="card-body text-center">
+                  <img
+                    src="https://via.placeholder.com/150"
+                    class="rounded-circle mb-3"
+                    alt="Profile"
+                    width="100"
+                  />
+                  <h4 id="account-username">Username</h4>
+                  <p class="text-muted" id="account-email">user@example.com</p>
+                  <div class="d-flex justify-content-center mb-3">
+                    <span class="badge bg-primary me-2">Member</span>
+                    <span class="badge bg-secondary">Since 2023</span>
+                  </div>
+                  <button class="btn btn-outline-primary btn-sm w-100 mb-2">
+                    Edit Profile
+                  </button>
+                  <button class="btn btn-outline-secondary btn-sm w-100">
+                    Account Settings
+                  </button>
+                </div>
+              </div>
+
+              <!-- Stats Summary -->
+              <div class="card mt-3 shadow-sm">
+                <div class="card-body">
+                  <h6 class="card-title">Activity Summary</h6>
+                  <ul class="list-group list-group-flush">
+                    <li
+                      class="list-group-item d-flex justify-content-between align-items-center"
+                    >
+                      Posts
+                      <span
+                        class="badge bg-primary rounded-pill"
+                        id="post-count"
+                        >0</span
+                      >
+                    </li>
+                    <li
+                      class="list-group-item d-flex justify-content-between align-items-center"
+                    >
+                      Comments
+                      <span
+                        class="badge bg-success rounded-pill"
+                        id="comment-count"
+                        >0</span
+                      >
+                    </li>
+                    <li
+                      class="list-group-item d-flex justify-content-between align-items-center"
+                    >
+                      Likes
+                      <span class="badge bg-info rounded-pill" id="like-count"
+                        >0</span
+                      >
+                    </li>
+                    <li
+                      class="list-group-item d-flex justify-content-between align-items-center"
+                    >
+                      Dislikes
+                      <span
+                        class="badge bg-warning rounded-pill"
+                        id="dislike-count"
+                        >0</span
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="col-md-9">
+              <div class="card shadow-sm">
+                <div class="card-header">
+                  <ul
+                    class="nav nav-tabs card-header-tabs"
+                    id="accountTabs"
+                    role="tablist"
+                  >
+                    <li class="nav-item" role="presentation">
+                      <button
+                        class="nav-link active"
+                        id="posts-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#posts-content"
+                        type="button"
+                        role="tab"
+                      >
+                        My Posts
+                      </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button
+                        class="nav-link"
+                        id="comments-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#comments-content"
+                        type="button"
+                        role="tab"
+                      >
+                        My Comments
+                      </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button
+                        class="nav-link"
+                        id="likes-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#likes-content"
+                        type="button"
+                        role="tab"
+                      >
+                        Liked Posts
+                      </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button
+                        class="nav-link"
+                        id="dislikes-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#dislikes-content"
+                        type="button"
+                        role="tab"
+                      >
+                        Disliked Posts
+                      </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button
+                        class="nav-link"
+                        id="saved-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#saved-content"
+                        type="button"
+                        role="tab"
+                      >
+                        Saved Items
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+
+                <div class="card-body">
+                  <div class="tab-content" id="accountTabContent">
+                    <!-- My Posts Tab -->
+                    <div
+                      class="tab-pane fade show active"
+                      id="posts-content"
+                      role="tabpanel"
+                    >
+                      <h5 class="mb-3">My Recent Posts</h5>
+                      <div class="list-group" id="user-posts-list">
+                        <!-- Posts will be loaded here dynamically -->
+                        <div class="text-center py-4">
+                          <div
+                            class="spinner-border text-primary"
+                            role="status"
+                          >
+                            <span class="visually-hidden">Loading...</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="text-end mt-3">
+                        <a href="#" class="btn btn-sm btn-outline-primary"
+                          >View All Posts</a
+                        >
+                      </div>
+                    </div>
+
+                    <!-- My Comments Tab -->
+                    <div
+                      class="tab-pane fade"
+                      id="comments-content"
+                      role="tabpanel"
+                    >
+                      <h5 class="mb-3">My Recent Comments</h5>
+                      <div class="list-group" id="user-comments-list">
+                        <!-- Comments will be loaded here dynamically -->
+                        <div class="text-center py-4">
+                          <div
+                            class="spinner-border text-primary"
+                            role="status"
+                          >
+                            <span class="visually-hidden">Loading...</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="text-end mt-3">
+                        <a href="#" class="btn btn-sm btn-outline-primary"
+                          >View All Comments</a
+                        >
+                      </div>
+                    </div>
+
+                    <!-- Liked Posts Tab -->
+                    <div
+                      class="tab-pane fade"
+                      id="likes-content"
+                      role="tabpanel"
+                    >
+                      <h5 class="mb-3">Posts I've Liked</h5>
+                      <div class="list-group" id="liked-posts-list">
+                        <!-- Liked posts will be loaded here dynamically -->
+                        <div class="text-center py-4">
+                          <div
+                            class="spinner-border text-primary"
+                            role="status"
+                          >
+                            <span class="visually-hidden">Loading...</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="text-end mt-3">
+                        <a href="#" class="btn btn-sm btn-outline-primary"
+                          >View All Liked Posts</a
+                        >
+                      </div>
+                    </div>
+
+                    <!-- Disliked Posts Tab -->
+                    <div
+                      class="tab-pane fade"
+                      id="dislikes-content"
+                      role="tabpanel"
+                    >
+                      <h5 class="mb-3">Posts I've Disliked</h5>
+                      <div class="list-group" id="disliked-posts-list">
+                        <!-- Disliked posts will be loaded here dynamically -->
+                        <div class="text-center py-4">
+                          <div
+                            class="spinner-border text-primary"
+                            role="status"
+                          >
+                            <span class="visually-hidden">Loading...</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="text-end mt-3">
+                        <a href="#" class="btn btn-sm btn-outline-primary"
+                          >View All Disliked Posts</a
+                        >
+                      </div>
+                    </div>
+
+                    <!-- Saved Items Tab -->
+                    <div
+                      class="tab-pane fade"
+                      id="saved-content"
+                      role="tabpanel"
+                    >
+                      <h5 class="mb-3">My Saved Items</h5>
+                      <div class="list-group" id="saved-items-list">
+                        <!-- Saved items will be loaded here dynamically -->
+                        <div class="text-center py-4">
+                          <div
+                            class="spinner-border text-primary"
+                            role="status"
+                          >
+                            <span class="visually-hidden">Loading...</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="text-end mt-3">
+                        <a href="#" class="btn btn-sm btn-outline-primary"
+                          >View All Saved Items</a
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
     </template>
 
-    <!-- Component Templates (for dynamic content) -->
+    <!-- my account details( posts, likes, dislikes, my comments) -->
+
+    <!-- Component Templates (for dynamic content like advisements on the main page) -->
+
+    <!-- Component Templates (for dynamic content like advisements on the main page) -->
     <template id="scrolling-ad-template">
       <div class="scrolling-item">
         <img src="" alt="Advertisement" class="img-fluid" />
@@ -360,6 +638,9 @@
       </div>
     </template>
 
+    <!-- Component Templates (for dynamic content like advisements on the main page) -->
+
+    <!-- Bootstrap JS Bundle with Popper -->
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Router -->
@@ -367,6 +648,7 @@
     <!-- Main App -->
     <script src="js/app.js" type="module"></script>
 
+    <!-- log in pop up page -->
     <!-- log in pop up page -->
     <template id="signin-template">
       <!-- Modal Structure Only -->
@@ -415,5 +697,309 @@
         </div>
       </div>
     </template>
+
+    <!-- log in pop up page -->
+
+    <!-- Registration Modal page Template -->
+    <!-- Registration Modal page Template -->
+    <template id="register-template">
+      <!-- Modal Structure -->
+      <div id="register-modal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Create Your Account</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <form id="register-form" class="needs-validation" novalidate>
+                <div class="row g-3">
+                  <!-- First Name -->
+                  <div class="col-md-6">
+                    <label for="firstName" class="form-label">First Name</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="firstName"
+                      required
+                      minlength="2"
+                    />
+                    <div class="invalid-feedback">
+                      Please enter a valid first name (at least 2 characters).
+                    </div>
+                  </div>
+
+                  <!-- Last Name -->
+                  <div class="col-md-6">
+                    <label for="lastName" class="form-label">Last Name</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="lastName"
+                      required
+                      minlength="2"
+                    />
+                    <div class="invalid-feedback">
+                      Please enter a valid last name (at least 2 characters).
+                    </div>
+                  </div>
+
+                  <!-- Username -->
+                  <div class="col-md-6">
+                    <label for="username" class="form-label">Username</label>
+                    <div class="input-group">
+                      <span class="input-group-text">@</span>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="username"
+                        required
+                        minlength="4"
+                        pattern="[a-zA-Z0-9_]+"
+                      />
+                    </div>
+                    <div class="invalid-feedback">
+                      Username must be at least 4 characters and contain only
+                      letters, numbers, or underscores.
+                    </div>
+                    <small
+                      class="form-text text-muted"
+                      id="username-availability"
+                    ></small>
+                  </div>
+
+                  <!-- Email -->
+                  <div class="col-md-6">
+                    <label for="email" class="form-label">Email</label>
+                    <input
+                      type="email"
+                      class="form-control"
+                      id="email"
+                      required
+                    />
+                    <div class="invalid-feedback">
+                      Please enter a valid email address.
+                    </div>
+                  </div>
+
+                  <!-- Age -->
+                  <div class="col-md-4">
+                    <label for="age" class="form-label">Age</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="age"
+                      min="13"
+                      max="120"
+                      required
+                    />
+                    <div class="invalid-feedback">
+                      You must be at least 13 years old to register.
+                    </div>
+                  </div>
+
+                  <!-- Gender -->
+                  <div class="col-md-8">
+                    <label class="form-label">Gender</label>
+                    <div class="d-flex gap-3">
+                      <div class="form-check">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="gender"
+                          id="male"
+                          value="male"
+                          checked
+                        />
+                        <label class="form-check-label" for="male">Male</label>
+                      </div>
+                      <div class="form-check">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="gender"
+                          id="female"
+                          value="female"
+                        />
+                        <label class="form-check-label" for="female"
+                          >Female</label
+                        >
+                      </div>
+                      <div class="form-check">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="gender"
+                          id="other"
+                          value="other"
+                        />
+                        <label class="form-check-label" for="other"
+                          >Other</label
+                        >
+                      </div>
+                      <div class="form-check">
+                        <input
+                          class="form-check-input"
+                          type="radio"
+                          name="gender"
+                          id="prefer-not-to-say"
+                          value="prefer-not-to-say"
+                        />
+                        <label class="form-check-label" for="prefer-not-to-say"
+                          >Prefer not to say</label
+                        >
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Password -->
+                  <div class="col-md-6">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-group">
+                      <input
+                        type="password"
+                        class="form-control"
+                        id="password"
+                        required
+                        minlength="8"
+                        pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                      />
+                      <button
+                        class="btn btn-outline-secondary toggle-password"
+                        type="button"
+                      >
+                        <i class="fas fa-eye"></i>
+                      </button>
+                    </div>
+                    <div class="invalid-feedback">
+                      Password must be at least 8 characters with at least one
+                      uppercase, one lowercase, and one number.
+                    </div>
+                    <div class="progress mt-2" style="height: 5px">
+                      <div
+                        id="password-strength"
+                        class="progress-bar"
+                        role="progressbar"
+                        style="width: 0%"
+                      ></div>
+                    </div>
+                    <small
+                      class="form-text text-muted"
+                      id="password-strength-text"
+                    ></small>
+                  </div>
+
+                  <!-- Confirm Password -->
+                  <div class="col-md-6">
+                    <label for="confirmPassword" class="form-label"
+                      >Confirm Password</label
+                    >
+                    <div class="input-group">
+                      <input
+                        type="password"
+                        class="form-control"
+                        id="confirmPassword"
+                        required
+                      />
+                      <button
+                        class="btn btn-outline-secondary toggle-password"
+                        type="button"
+                      >
+                        <i class="fas fa-eye"></i>
+                      </button>
+                    </div>
+                    <div
+                      class="invalid-feedback"
+                      id="confirm-password-feedback"
+                    >
+                      Passwords must match.
+                    </div>
+                  </div>
+
+                  <!-- Terms and Conditions -->
+                  <div class="col-12">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="terms"
+                        required
+                      />
+                      <label class="form-check-label" for="terms">
+                        I agree to the
+                        <a
+                          href="#"
+                          data-bs-toggle="modal"
+                          data-bs-target="#termsModal"
+                          >Terms and Conditions</a
+                        >
+                      </label>
+                      <div class="invalid-feedback">
+                        You must agree before submitting.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="d-grid gap-2 mt-4">
+                  <button type="submit" class="btn btn-primary">
+                    Create Account
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Cancel
+                  </button>
+                </div>
+
+                <div class="text-center mt-3">
+                  <p>
+                    Already have an account?
+                    <a href="#" id="show-login">Sign In</a>
+                  </p>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Terms Modal (hidden until needed) -->
+      <div class="modal fade" id="termsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Terms and Conditions</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <!-- Your terms and conditions content here -->
+              <p>By creating an account on BudgetBuzz, you agree to...</p>
+              <!-- Add more terms content as needed -->
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-dismiss="modal"
+              >
+                I Understand
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+    <!-- Registration Modal page Template -->
   </body>
 </html>
