@@ -192,7 +192,7 @@ main {
    font-family: 'Poppins', sans-serif;
    font-weight: 700;
    font-size: 1.8rem;
-   background: linear-gradient(90deg, #bec768, #3f3f2d, #c676d5);
+   background: linear-gradient(90deg, #db6ab5, #914b4d, #dfdde2);
    background-size: 200% auto;
    color: transparent;
    -webkit-background-clip: text;
@@ -277,6 +277,32 @@ main {
  .navbar-custom .btn-light:hover::after {
    border-top-color: #306090 !important;
  }
+
+
+/* Responsive Sign In Button Styles */
+.navbar-custom .dropdown {
+    display: flex;
+    align-items: center;
+}
+
+@media (max-width: 991.98px) {
+    .navbar-custom .dropdown {
+        position: static;
+        margin-left: auto;
+         transform: translateY(-85%);
+ 
+
+    }
+}
+
+/* Ensure button doesn't wrap or break during smaller screen*/
+.navbar-custom .btn-light {
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+}
 
 
 
