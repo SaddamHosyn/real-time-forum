@@ -1,14 +1,13 @@
-:root {
-   --main-page-background-image: url('../images/lightmoney.avif');
-}
+
 /* Base Styles */
 body {
+
    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
    display: flex;
    flex-direction: column;
    min-height: 100vh;
    background-color: rgb(56, 84, 92);
-   background-image: var(--main-page-background-image);
+   background-image: url('../images/g7.jpg');
    background-repeat: no-repeat;       /* Prevents tiling */
    background-size: cover;             /* Covers entire page element */
    background-position: center center; /* Centers the image */
@@ -20,6 +19,7 @@ main {
    flex: 1;
 }
 
+/* Scrolling Ads */
 /* Scrolling Ads */
 .scrolling-container {
    width: 100%;
@@ -59,7 +59,9 @@ main {
        transform: translateX(-50%);
    }
 }
+/* Scrolling Ads */
 
+/* Fixed Ads */
 /* Fixed Ads */
 .fixed-ad-item {
    height: 250px;
@@ -78,6 +80,7 @@ main {
    width: 100%;
    object-fit: cover;
 }
+/* Fixed Ads */
 
 
 
@@ -99,9 +102,9 @@ main {
 
 /* Custom footer styles */
 .my-custom-footer {
-   background-color: #54718b; /* Darker background */
+   background-color: #393c3f; /* Darker background */
    color: #000000; /* Custom text color */
-   border-top: 2px solid #c8c6cc; /* Add a border */
+   border-top: 2px solid #948e96; /* Add a border */
    padding: 2rem 0; /* Adjust padding */
    font-weight: 500;
 }
@@ -139,7 +142,8 @@ main {
 /* menu bar */
 
 .navbar-custom {
-   background-color: #306090; /* Dark blue-gray */
+   background-color: rgba(48, 96, 144, 0.1); /* Transparent dark blue-gray */
+   backdrop-filter: blur(10px); /* Optional: Adds a subtle blur effect */
 }
 
 /* Custom navbar links */
@@ -161,9 +165,9 @@ main {
    font-weight: bold;
 }
 
-/* Dropdown menu */
+/* sign in Dropdown menu color */
 .navbar-custom .dropdown-menu {
-   background-color: #3a6256;
+   background-color:  rgba(58, 98, 86, 0.5);
 }
 
 .navbar-custom .dropdown-item {
@@ -192,19 +196,26 @@ main {
    font-family: 'Poppins', sans-serif;
    font-weight: 700;
    font-size: 1.8rem;
-   background: linear-gradient(90deg, #db6ab5, #914b4d, #dfdde2);
+   background: linear-gradient(90deg, #6190e8, #087d58);
+
+
+   
+
+
+
    background-size: 200% auto;
    color: transparent;
    -webkit-background-clip: text;
    background-clip: text;
    animation: gradientShift 3s ease infinite;
-   text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+   text-shadow: 0 2px 4px rgba(198, 190, 190, 0.1);
    transition: all 0.3s ease;
  }
  
  .navbar-brand:hover {
    transform: scale(1.05);
-   text-shadow: 0 4px 8px rgba(0,0,0,0.15);
+   text-shadow: 0 4px 8px rgba(255,255,255,0.15);
+   color: white;
  }
  
  @keyframes gradientShift {
@@ -212,6 +223,13 @@ main {
    50% { background-position: 100% center; }
    100% { background-position: 0% center; }
  }
+
+
+ /* text color for the topic option heading styles */
+h2 {
+   color: white;
+}
+
 
 
 
@@ -240,19 +258,30 @@ main {
 /* Sign In Button Styles */
 /* Sign In Button Styles */
 .navbar-custom .btn-light {
-   background-color: #306090; /* Same as navbar color */
+   
    color: white !important;
-   border: none;
+   border: solid 2px transparent;
    font-weight: bold; /* Bold text */
    transition: all 0.3s ease;
    padding: 6px 12px;
    border-radius: 4px;
+   display: grid;
+   position: relative;
+   background: 
+   linear-gradient(to right bottom, var(--slist))border-box;
+     &::after { content: attr(data-ico) }
+     
+   
  }
+
+ .navbar-nav {
+	text-align: left;
+}
  
  /* Hover State of Sign In Button */
  .navbar-custom .btn-light:hover {
-   background-color: white !important;
-   color: #056072 !important;
+   background-color: rgb(12, 129, 165) !important;
+   color: #ebf1f2 !important;
    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
  }
  
@@ -303,6 +332,180 @@ main {
     justify-content: center;
 
 }
+
+
+
+
+
+
+
+
+
+/* all topics options while posting*/
+
+.topics-container {
+   display: flex;
+   gap: 20px;
+   flex-wrap: wrap;
+ }
+ 
+ .topics-column {
+   flex: 1;
+   min-width: 200px;
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+ }
+ 
+ .topics-column label {
+   display: flex;
+   align-items: center;
+   gap: 8px;
+   cursor: pointer;
+ }
+
+ /* For custom images on all options of topics */
+ /* For custom images on all options of topics */
+.img-home-lifestyle {
+   background-image: url('/assets/images/home.avif');
+ }
+ .img-daily {
+   background-image: url('/assets/images/n.webp');
+ }
+ .img-home {
+   background-image: url('/assets/images/furniture.webp');
+ }
+ .img-personal {
+   background-image: url('/assets/images/health.webp');
+ }
+ .img-leisure {
+   background-image: url('/assets/images/enter.webp');
+ }
+ .img-commerce {
+   background-image: url('/assets/images/shopping.webp');
+ }
+.img-mobility {
+   background-image: url('/assets/images/jkk.webp');
+ }
+ .img-services {
+   background-image: url('/assets/images/noun.webp');
+ }
+ .img-culture {
+   background-image: url('/assets/images/cul.webp');
+ }
+ .img-technology {
+   background-image: url('/assets/images/tech.webp');
+ }
+ .img-information {
+   background-image: url('/assets/images/info1.webp');
+ }
+  /* For custom images on all options of topics */
+
+
+  .carousel-item img {
+   width: 100%;
+   height: 100%;
+   object-fit: cover; /* Ensures images cover the area without stretching */
+}
+
+
+  .carousel-item {
+	height: 60vh;
+	min-height: 300px;
+
+}
+.carousel-caption {
+	bottom: 270px;
+}
+.carousel-caption h5 {
+	font-size: 45px;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	margin-top: 25px;
+}
+.carousel-caption p {
+	width: 75%;
+	margin: auto;
+	font-size: 18px;
+	line-height: 1.9;
+}
+
+
+
+
+
+/* css for all topics options and related icons */
+
+/* css for all topics options and related icons */
+
+
+.topic-card {
+   padding: 16px;
+   text-align: center;
+   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+   border-radius: 8px;
+   background-color: rgba(255, 255, 255, 0.1); /* Light transparent background */
+   backdrop-filter: blur(10px); /* Optional: Adds a blur effect */
+   margin: 10px;
+   transition: transform 0.3s ease, box-shadow 0.3s ease;
+ }
+
+ /* Hover effect to make the card pop up */
+.topic-card:hover {
+   transform: translateY(-5px); /* Moves the card slightly up */
+   box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+}
+ 
+ .topic-card i {
+   font-size: 3rem;
+   margin-bottom: 12px;
+ }
+ 
+ .topic-card h3,
+ .topic-card p {
+   color: white;
+ }
+ 
+ .topic-card i.fas {
+   display: block;
+   margin: 0 auto 10px;
+ }
+ 
+ /* Specific colors for icons */
+ .topic-card i.fa-shopping-basket { color: #007bff; }
+ .topic-card i.fa-home { color: #28a745; }
+ .topic-card i.fa-heartbeat { color: #dc3545; }
+ .topic-card i.fa-microchip { color: #17a2b8; }
+ .topic-card i.fa-gamepad { color: #ffc107; }
+ .topic-card i.fa-store { color: #6c757d; }
+ .topic-card i.fa-car { color: #007bff; }
+ .topic-card i.fa-hands-helping { color: #28a745; }
+ .topic-card i.fa-globe-americas { color: #17a2b8; }
+ .topic-card i.fa-graduation-cap { color: #ffc107; }
+ 
+
+/* css for all topics options and related icons */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

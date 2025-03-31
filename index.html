@@ -19,6 +19,10 @@
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap"
       rel="stylesheet"
     />
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   </head>
   <body>
     <!-- Header with Navigation menu bar-->
@@ -42,7 +46,7 @@
           <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
               <li class="nav-item">
-                <a class="nav-link" href="#" data-page="home">Home</a>
+                <a class="nav-link" href="#" data-page="home"> Home</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#" data-page="quick-recipe"
@@ -107,146 +111,102 @@
       <!-- Initial content will be loaded from home-template -->
     </main>
 
-    <!-- Footer -->
-    <!-- Footer -->
-
-    <footer class="py-0 my-custom-footer">
-      <div class="container">
-        <div class="d-flex justify-content-between align-items-center">
-          <!-- Left side - Creators -->
-          <div class="creator-credits">
-            Created by
-            <a
-              href="https://github.com/SaddamHosyn"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="footer-link"
-              >Saddam</a
-            >
-            and
-            <a
-              href="https://github.com/Richard-AungKhantMin"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="footer-link"
-              >Richard</a
-            >
-          </div>
-
-          <!-- Right side - Copyright -->
-          <div class="copyright">
-            &copy; <span id="current-year">2025</span> BudgetBuzz - All Rights
-            Reserved
-          </div>
-        </div>
-      </div>
-    </footer>
-    <!-- Footer -->
-
     <!-- ===== TEMPLATES ===== -->
     <!-- Topics Grid Template (Shows ALL topics with icons) -->
     <!-- ===== TEMPLATES ===== -->
     <!-- Topics Grid Template (Shows ALL topics with icons) -->
     <template id="topics-template">
       <section class="forum-topics">
-        <h2 class="text-center mb-5">Explore Topics</h2>
+        <h2 class="text-center mb-5 fw-bold">Explore Topics</h2>
         <div class="container">
-          <div class="row g-4">
-            <!-- Topic 1 -->
+          <div class="row">
+            <!-- Topic 1 - Daily Essentials -->
             <div class="col-md-4 col-sm-6">
-              <div class="topic-card p-4 text-center shadow-sm rounded">
-                <i class="fas fa-shopping-basket fa-3x mb-3 text-primary"></i>
+              <div class="topic-card">
+                <i class="fas fa-shopping-basket"></i>
                 <h3>Daily Essentials</h3>
-                <p class="text-muted">Discuss everyday must-haves</p>
+                <p>Discuss everyday must-haves</p>
               </div>
             </div>
 
-            <!-- Topic 2 -->
+            <!-- Topic 2 - Home & Lifestyle -->
             <div class="col-md-4 col-sm-6">
-              <div class="topic-card p-4 text-center shadow-sm rounded">
-                <i class="fas fa-home fa-3x mb-3 text-success"></i>
+              <div class="topic-card">
+                <i class="fas fa-home"></i>
                 <h3>Home & Lifestyle</h3>
-                <p class="text-muted">Home decor, organization tips</p>
+                <p>Home decor, organization tips</p>
               </div>
             </div>
 
-            <!-- Topic 3 -->
+            <!-- Topic 3 - Personal Well-being -->
             <div class="col-md-4 col-sm-6">
-              <div class="topic-card p-4 text-center shadow-sm rounded">
-                <i class="fas fa-heartbeat fa-3x mb-3 text-danger"></i>
+              <div class="topic-card">
+                <i class="fas fa-heartbeat"></i>
                 <h3>Personal Well-being</h3>
-                <p class="text-muted">Health, fitness, and mindfulness</p>
+                <p>Health, fitness, and mindfulness</p>
               </div>
             </div>
 
-            <!-- Topic 4 -->
+            <!-- Topic 4 - Technology & Innovation -->
             <div class="col-md-4 col-sm-6">
-              <div class="topic-card p-4 text-center shadow-sm rounded">
-                <i class="fas fa-microchip fa-3x mb-3 text-info"></i>
+              <div class="topic-card">
+                <i class="fas fa-microchip"></i>
                 <h3>Technology & Innovation</h3>
-                <p class="text-muted">Gadgets, software, and future tech</p>
+                <p>Gadgets, software, and future tech</p>
               </div>
             </div>
 
-            <!-- Topic 5 -->
+            <!-- Topic 5 - Leisure & Entertainment -->
             <div class="col-md-4 col-sm-6">
-              <div class="topic-card p-4 text-center shadow-sm rounded">
-                <i class="fas fa-gamepad fa-3x mb-3 text-warning"></i>
+              <div class="topic-card">
+                <i class="fas fa-gamepad"></i>
                 <h3>Leisure & Entertainment</h3>
-                <p class="text-muted">Games, movies, and hobbies</p>
+                <p>Games, movies, and hobbies</p>
               </div>
             </div>
 
-            <!-- Topic 6 -->
+            <!-- Topic 6 - Commerce & Shopping -->
             <div class="col-md-4 col-sm-6">
-              <div class="topic-card p-4 text-center shadow-sm rounded">
-                <i class="fas fa-store fa-3x mb-3 text-secondary"></i>
+              <div class="topic-card">
+                <i class="fas fa-store"></i>
                 <h3>Commerce & Shopping</h3>
-                <p class="text-muted">Deals, reviews, and shopping guides</p>
+                <p>Deals, reviews, and shopping guides</p>
               </div>
             </div>
 
             <!-- Topic 7 - Mobility & Transportation -->
             <div class="col-md-4 col-sm-6">
-              <div class="topic-card p-4 text-center shadow-sm rounded">
-                <i class="fas fa-car fa-3x mb-3 text-primary"></i>
+              <div class="topic-card">
+                <i class="fas fa-car"></i>
                 <h3>Mobility & Transportation</h3>
-                <p class="text-muted">
-                  Vehicles, public transit, and travel solutions
-                </p>
+                <p>Vehicles, public transit, and travel solutions</p>
               </div>
             </div>
 
             <!-- Topic 8 - Services & Support -->
             <div class="col-md-4 col-sm-6">
-              <div class="topic-card p-4 text-center shadow-sm rounded">
-                <i class="fas fa-hands-helping fa-3x mb-3 text-success"></i>
+              <div class="topic-card">
+                <i class="fas fa-hands-helping"></i>
                 <h3>Services & Support</h3>
-                <p class="text-muted">
-                  Professional services and community help
-                </p>
+                <p>Professional services and community help</p>
               </div>
             </div>
 
             <!-- Topic 9 - Culture & Community -->
             <div class="col-md-4 col-sm-6">
-              <div class="topic-card p-4 text-center shadow-sm rounded">
-                <i class="fas fa-globe-americas fa-3x mb-3 text-info"></i>
+              <div class="topic-card">
+                <i class="fas fa-globe-americas"></i>
                 <h3>Culture & Community</h3>
-                <p class="text-muted">
-                  Local events, traditions, and social groups
-                </p>
+                <p>Local events, traditions, and social groups</p>
               </div>
             </div>
 
             <!-- Topic 10 - Information & Learning -->
             <div class="col-md-4 col-sm-6">
-              <div class="topic-card p-4 text-center shadow-sm rounded">
-                <i class="fas fa-graduation-cap fa-3x mb-3 text-warning"></i>
+              <div class="topic-card">
+                <i class="fas fa-graduation-cap"></i>
                 <h3>Information & Learning</h3>
-                <p class="text-muted">
-                  Education, tutorials, and knowledge sharing
-                </p>
+                <p>Education, tutorials, and knowledge sharing</p>
               </div>
             </div>
           </div>
@@ -256,19 +216,88 @@
 
     <!-- Topics Grid Template (Shows ALL topics with icons) -->
 
-    <!-- Page Templates -->
+    <!-- main Page slider Templates -->
+    <!-- main Page slider Templates -->
+
     <template id="home-template">
-      <!-- Scrolling Advertisements -->
-      <section class="scrolling-ads mb-5">
-        <h2 class="visually-hidden">Featured Advertisements</h2>
-        <div class="scrolling-container">
-          <div class="scrolling-content">
-            <!-- Content will be added via JavaScript -->
+      <!-- Bootstrap Carousel Slider -->
+      <section class="mb-5">
+        <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
+          <div class="carousel-indicators">
+            <button
+              type="button"
+              data-bs-target="#mainCarousel"
+              data-bs-slide-to="0"
+              class="active"
+            ></button>
+            <button
+              type="button"
+              data-bs-target="#mainCarousel"
+              data-bs-slide-to="1"
+            ></button>
+            <button
+              type="button"
+              data-bs-target="#mainCarousel"
+              data-bs-slide-to="2"
+            ></button>
           </div>
+          <div class="carousel-inner rounded">
+            <div class="carousel-item active">
+              <img
+                src="/assets/images/shopping.webp"
+                class="d-block w-100"
+                alt="Featured Content 1"
+              />
+              <div class="carousel-caption d-none d-md-block">
+                <h5>Budgeting Tips</h5>
+                <p>Discover smart ways to manage your finances</p>
+              </div>
+            </div>
+            <div class="carousel-item">
+              <img
+                src="/assets/images/pex.webp"
+                class="d-block w-100"
+                alt="Featured Content 2"
+              />
+              <div class="carousel-caption d-none d-md-block">
+                <h5>Quick Recipes</h5>
+                <p>Delicious meals on a budget</p>
+              </div>
+            </div>
+            <div class="carousel-item">
+              <img
+                src="/assets/images/pexels.webp"
+                class="d-block w-100"
+                alt="Featured Content 3"
+              />
+              <div class="carousel-caption d-none d-md-block">
+                <h5>Savings Guide</h5>
+                <p>Learn how to save effectively</p>
+              </div>
+            </div>
+          </div>
+          <button
+            class="carousel-control-prev"
+            type="button"
+            data-bs-target="#mainCarousel"
+            data-bs-slide="prev"
+          >
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button
+            class="carousel-control-next"
+            type="button"
+            data-bs-target="#mainCarousel"
+            data-bs-slide="next"
+          >
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
         </div>
       </section>
 
-      <!-- Fixed Advertisements -->
+      <!-- Fixed Advertisements (keep your existing code) -->
       <section class="fixed-ads">
         <h2 class="visually-hidden">Sponsored Content</h2>
         <div class="row">
@@ -276,6 +305,8 @@
         </div>
       </section>
     </template>
+
+    <!-- main Page slider Templates -->
 
     <template id="quick-recipe-template">
       <section class="quick-recipes">
@@ -310,16 +341,148 @@
       </section>
     </template>
 
-    <template id="posts-template">
-      <section class="forum-posts">
-        <div class="container">
-          <h2>Latest Posts</h2>
-          <div class="posts-container row">
-            <!-- Posts will be loaded here -->
+    <!-- post topics will be loaded here -->
+    <!-- post topics will be loaded here -->
+    <!-- post topics all here-->
+    <!-- post topics all here-->
+
+    <template id="postModalTemplate">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2>Create New Post</h2>
+        <form id="postForm">
+          <div class="form-group">
+            <label for="postTitle">Title:</label>
+            <input type="text" id="postTitle" required />
           </div>
-        </div>
-      </section>
+
+          <div class="form-group">
+            <label>Topics (select at least 3):</label>
+            <div class="topics-container">
+              <!-- Column 1 -->
+              <div class="topics-column">
+                <label>
+                  <input
+                    type="checkbox"
+                    name="topic"
+                    value="Daily Essentials"
+                  />
+                  <span class="topic-icon img-daily"></span>
+                  Daily Essentials
+                </label>
+
+                <label>
+                  <input
+                    type="checkbox"
+                    name="topic"
+                    value="Home & Lifestyle"
+                  />
+                  <span class="topic-icon img-home"></span>
+                  Home & Lifestyle
+                </label>
+
+                <label>
+                  <input
+                    type="checkbox"
+                    name="topic"
+                    value="Personal Well-being"
+                  />
+                  <span class="topic-icon img-personal"></span>
+                  Personal Well-being
+                </label>
+              </div>
+
+              <!-- Column 2 -->
+              <div class="topics-column">
+                <label>
+                  <input
+                    type="checkbox"
+                    name="topic"
+                    value="Leisure & Entertainment"
+                  />
+                  <span class="topic-icon img-leisure"></span>
+                  Leisure & Entertainment
+                </label>
+
+                <label>
+                  <input
+                    type="checkbox"
+                    name="topic"
+                    value="Commerce & Shopping"
+                  />
+                  <span class="topic-icon img-commerce"></span>
+                  Commerce & Shopping
+                </label>
+
+                <label>
+                  <input
+                    type="checkbox"
+                    name="topic"
+                    value="Mobility & Transportation"
+                  />
+                  <span class="topic-icon img-mobility"></span>
+                  Mobility & Transportation
+                </label>
+              </div>
+
+              <!-- Column 3 -->
+              <div class="topics-column">
+                <label>
+                  <input
+                    type="checkbox"
+                    name="topic"
+                    value="Services & Support"
+                  />
+                  <span class="topic-icon img-services"></span>
+                  Services & Support
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    name="topic"
+                    value="Culture & Community"
+                  />
+                  <span class="topic-icon img-culture"></span>
+                  Culture & Community
+                </label>
+
+                <label>
+                  <input
+                    type="checkbox"
+                    name="topic"
+                    value="Technology & Innovation"
+                  />
+                  <span class="topic-icon img-technology"></span>
+                  Technology & Innovation
+                </label>
+
+                <!-- Column 4 -->
+                <div class="topics-column">
+                  <label>
+                    <input
+                      type="checkbox"
+                      name="topic"
+                      value="Information & Learning"
+                    />
+                    <span class="topic-icon img-information"></span>
+                    Information & Learning
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="postContent">Content:</label>
+            <textarea id="postContent" rows="6" required></textarea>
+          </div>
+
+          <button type="submit" class="submit-btn">Submit Post</button>
+        </form>
+      </div>
     </template>
+    <!-- post topics all here-->
+    <!-- post topics will be loaded here-->
 
     <template id="chat-template">
       <section class="forum-chat">
@@ -640,9 +803,6 @@
 
     <!-- Component Templates (for dynamic content like advisements on the main page) -->
 
-    <!-- Bootstrap JS Bundle with Popper -->
-    <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Router -->
     <script src="js/router.js" type="module"></script>
     <!-- Main App -->
@@ -1001,5 +1161,41 @@
       </div>
     </template>
     <!-- Registration Modal page Template -->
+
+    <!-- Footer -->
+    <!-- Footer -->
+
+    <footer class="py-0 my-custom-footer">
+      <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+          <!-- Left side - Creators -->
+          <div class="creator-credits">
+            Created by
+            <a
+              href="https://github.com/SaddamHosyn"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="footer-link"
+              >Saddam</a
+            >
+            and
+            <a
+              href="https://github.com/Richard-AungKhantMin"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="footer-link"
+              >Richard</a
+            >
+          </div>
+
+          <!-- Right side - Copyright -->
+          <div class="copyright">
+            &copy; <span id="current-year">2025</span> BudgetBuzz - All Rights
+            Reserved
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- Footer -->
   </body>
 </html>
