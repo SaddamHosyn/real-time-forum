@@ -7,81 +7,26 @@ body {
    flex-direction: column;
    min-height: 100vh;
    background-color: rgb(56, 84, 92);
-   background-image: url('../images/g7.jpg');
+   background-image: url('../images/bvc.avif');
    background-repeat: no-repeat;       /* Prevents tiling */
    background-size: cover;             /* Covers entire page element */
-   background-position: center center; /* Centers the image */
-   background-attachment: fixed; 
+   background-position: center; /* Centers the image */
+   background-attachment: fixed;
+   margin: 0;
 
 }
 
 main {
-   flex: 1;
+   flex: 1 0 auto;
+   width: 50%;
 }
 
-/* Scrolling Ads */
-/* Scrolling Ads */
-.scrolling-container {
-   width: 100%;
-   overflow: hidden;
-   position: relative;
-   height: 200px;
-   background-color: #f8f9fa;
-   border-radius: 8px;
+.container {
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 0px;
+  
 }
-
-.scrolling-content {
-   display: flex;
-   position: absolute;
-   white-space: nowrap;
-   animation: scroll 30s linear infinite;
-}
-
-.scrolling-item {
-   display: inline-block;
-   margin-right: 20px;
-   height: 200px;
-   width: 300px;
-}
-
-.scrolling-item img {
-   height: 100%;
-   width: 100%;
-   object-fit: cover;
-   border-radius: 8px;
-}
-
-@keyframes scroll {
-   0% {
-       transform: translateX(0);
-   }
-   100% {
-       transform: translateX(-50%);
-   }
-}
-/* Scrolling Ads */
-
-/* Fixed Ads */
-/* Fixed Ads */
-.fixed-ad-item {
-   height: 250px;
-   overflow: hidden;
-   border-radius: 8px;
-   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-   transition: transform 0.3s ease;
-}
-
-.fixed-ad-item:hover {
-   transform: translateY(-5px);
-}
-
-.fixed-ad-item img {
-   height: 100%;
-   width: 100%;
-   object-fit: cover;
-}
-/* Fixed Ads */
-
 
 
 /* Accessibility */
@@ -107,6 +52,7 @@ main {
    border-top: 2px solid #948e96; /* Add a border */
    padding: 2rem 0; /* Adjust padding */
    font-weight: 500;
+   flex-shrink: 0; /* Prevents footer from shrinking */
 }
 
 
@@ -142,8 +88,11 @@ main {
 /* menu bar */
 
 .navbar-custom {
-   background-color: rgba(48, 96, 144, 0.1); /* Transparent dark blue-gray */
+   background-color: rgba(0, 255, 72, 0.1); /* Transparent dark blue-gray */
    backdrop-filter: blur(10px); /* Optional: Adds a subtle blur effect */
+   padding: 0.5rem 1rem; /* Consistent padding */
+   z-index: 1030; /* Standard Bootstrap navbar z-index */
+   
 }
 
 /* Custom navbar links */
@@ -168,6 +117,10 @@ main {
 /* sign in Dropdown menu color */
 .navbar-custom .dropdown-menu {
    background-color:  rgba(58, 98, 86, 0.5);
+   z-index: 1050;
+   transform: translateX(65px) !important; 
+
+
 }
 
 .navbar-custom .dropdown-item {
@@ -176,7 +129,7 @@ main {
 }
 
 .navbar-custom .dropdown-item:hover {
-   background-color: #585e75;
+   background-color: #525d8d;
    color: white;
    border-radius: 6px;
    transform: translateY(-2px);
@@ -184,6 +137,167 @@ main {
    text-decoration: none;
 
 }
+
+
+
+
+
+
+/* Sign In Button Styles */
+/* Sign In Button Styles */
+.navbar-custom .btn-light {
+   
+  color: white !important;
+  border: solid 2px transparent;
+  font-weight: bold; /* Bold text */
+  transition: all 0.3s ease;
+  padding: 6px 12px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  background: 
+  linear-gradient(to right bottom, var(--slist))border-box;
+    
+  
+}
+
+.navbar-nav {
+ text-align: left;
+}
+
+/* Hover State of Sign In Button */
+.navbar-custom .btn-light:hover {
+  background-color: rgb(12, 129, 165) !important;
+  color: #ebf1f2 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Focus/Active States of Sign In Button */
+.navbar-custom .btn-light:focus,
+.navbar-custom .btn-light:active {
+  background-color: white !important;
+  color: #056072 !important;
+  box-shadow: none;
+}
+
+/* Dropdown Arrow Color */
+.navbar-custom .dropdown-toggle::after {
+  border-top-color: white;
+  transition: border-top-color 0.3s ease;
+  margin-left: 6px; /* Better spacing */
+  vertical-align: middle;
+}
+
+
+/* Hovered Dropdown Arrow */
+.navbar-custom .btn-light:hover::after {
+  border-top-color: #306090 !important;
+}
+
+
+/* Responsive Sign In Button Styles */
+.navbar-custom .dropdown {
+   display: flex;
+   align-items: center;
+ 
+}
+
+@media (max-width: 991.98px) {
+   .navbar-custom .dropdown {
+       position: relative;
+       margin-left: auto;
+     
+        transform: none;
+        margin: 0.5rem 0;
+        
+
+
+   }
+}
+
+/* Ensure button doesn't wrap or break during smaller screen*/
+.navbar-custom .btn-light {
+   white-space: nowrap;
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+
+}
+
+
+
+
+
+
+
+/* Register Button Styles */
+
+/* Register Button Styles */
+.navbar-custom .btn-register {
+ color: white !important;
+ border: solid 2px transparent !important;
+ font-weight: bold;
+ transition: all 0.3s ease;
+ padding: 6px 12px;
+ border-radius: 4px;
+ display: inline-flex;
+ position: relative;
+ background: linear-gradient(to right bottom, var(--rlist)) border-box;
+ justify-content: center;
+ align-items: center;
+ white-space: nowrap;
+}
+
+/* Hover State of Register Button */
+.navbar-custom .btn-register:hover {
+ background-color: rgb(18, 124, 124) !important; /* Different hover color */
+ color: #f2ebf0 !important;
+ box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Focus/Active States of Register Button */
+.navbar-custom .btn-register:focus,
+.navbar-custom .btn-register:active {
+ background-color: white !important;
+ color: #296d1a !important; /* Different active color */
+ box-shadow: none;
+}
+
+/* Responsive Behavior */
+@media (max-width: 991.98px) {
+ .navbar-custom .btn-register {
+   width: auto; /* Prevent unwanted stretching */
+   padding: 6px 10px; /* Slightly reduced padding */
+   font-size: 0.9rem; /* Optional: adjust font size */
+   margin: 0.5rem 0;
+ }
+ .navbar-custom .navbar-collapse {
+  min-height: 1vh; /* Full viewport height */
+  padding-bottom: 3rem; /* Extra space at bottom */
+}
+}
+
+/* Register Button Styles */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -245,190 +359,318 @@ h2 {
 
 
 
-
-
-
-
-
-
-
-
-
-
-/* Sign In Button Styles */
-/* Sign In Button Styles */
-.navbar-custom .btn-light {
-   
-   color: white !important;
-   border: solid 2px transparent;
-   font-weight: bold; /* Bold text */
-   transition: all 0.3s ease;
-   padding: 6px 12px;
-   border-radius: 4px;
-   display: grid;
-   position: relative;
-   background: 
-   linear-gradient(to right bottom, var(--slist))border-box;
-     &::after { content: attr(data-ico) }
-     
-   
- }
-
- .navbar-nav {
-	text-align: left;
-}
- 
- /* Hover State of Sign In Button */
- .navbar-custom .btn-light:hover {
-   background-color: rgb(12, 129, 165) !important;
-   color: #ebf1f2 !important;
-   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
- }
- 
- /* Focus/Active States of Sign In Button */
- .navbar-custom .btn-light:focus,
- .navbar-custom .btn-light:active {
-   background-color: white !important;
-   color: #056072 !important;
-   box-shadow: none;
- }
- 
- /* Dropdown Arrow Color */
- .navbar-custom .dropdown-toggle::after {
-   border-top-color: white;
-   transition: border-top-color 0.3s ease;
-   margin-left: 6px; /* Better spacing */
-   vertical-align: middle;
- }
-
- 
- /* Hovered Dropdown Arrow */
- .navbar-custom .btn-light:hover::after {
-   border-top-color: #306090 !important;
- }
-
-
-/* Responsive Sign In Button Styles */
-.navbar-custom .dropdown {
-    display: flex;
-    align-items: center;
-}
-
-@media (max-width: 991.98px) {
-    .navbar-custom .dropdown {
-        position: static;
-        margin-left: auto;
-         transform: translateY(-85%);
- 
-
-    }
-}
-
-/* Ensure button doesn't wrap or break during smaller screen*/
-.navbar-custom .btn-light {
-    white-space: nowrap;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-}
-
-
-
-
-
-
-
-
-
 /* all topics options while posting*/
+/* Modal Content Styles */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 800px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.close-modal {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close-modal:hover {
+  color: black;
+}
+
+/* Form Group Styles */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+}
+
+.form-group input[type="text"],
+.form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+
+
+
+
+
+
+ /* all topic options while posting*/
+  /* all topic options while posting*/
 
 .topics-container {
-   display: flex;
-   gap: 20px;
-   flex-wrap: wrap;
- }
- 
- .topics-column {
-   flex: 1;
-   min-width: 200px;
-   display: flex;
-   flex-direction: column;
-   gap: 10px;
- }
- 
- .topics-column label {
-   display: flex;
-   align-items: center;
-   gap: 8px;
-   cursor: pointer;
- }
+  display: flex;
+  gap: 60px;
+  flex-wrap: wrap;
+}
 
- /* For custom images on all options of topics */
- /* For custom images on all options of topics */
-.img-home-lifestyle {
-   background-image: url('/assets/images/home.avif');
- }
- .img-daily {
-   background-image: url('/assets/images/n.webp');
- }
- .img-home {
-   background-image: url('/assets/images/furniture.webp');
- }
- .img-personal {
-   background-image: url('/assets/images/health.webp');
- }
- .img-leisure {
-   background-image: url('/assets/images/enter.webp');
- }
- .img-commerce {
-   background-image: url('/assets/images/shopping.webp');
- }
+.topics-column {
+  flex: 1;
+  min-width: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+
+.topics-column label:hover {
+  background-color: #d1d4c9;
+  border-radius: 10px;
+}
+
+/* Topic Icon Styles */
+.topic-icon {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+/* Specific icon images */
+.img-daily {
+  background-image: url('/assets/images/n.webp');
+}
+
+.img-home {
+  background-image: url('/assets/images/furniture.webp');
+}
+
+.img-personal {
+  background-image: url('/assets/images/health.webp');
+}
+
+.img-leisure {
+  background-image: url('/assets/images/enter.webp');
+}
+
+.img-commerce {
+  background-image: url('/assets/images/shopping.webp');
+}
+
 .img-mobility {
-   background-image: url('/assets/images/jkk.webp');
- }
- .img-services {
-   background-image: url('/assets/images/noun.webp');
- }
- .img-culture {
-   background-image: url('/assets/images/cul.webp');
- }
- .img-technology {
-   background-image: url('/assets/images/tech.webp');
- }
- .img-information {
-   background-image: url('/assets/images/info1.webp');
- }
-  /* For custom images on all options of topics */
+  background-image: url('/assets/images/jkk.webp');
+}
+
+.img-services {
+  background-image: url('/assets/images/noun.webp');
+}
+
+.img-culture {
+  background-image: url('/assets/images/cul.webp');
+}
+
+.img-technology {
+  background-image: url('/assets/images/tech.svg');
+}
+
+.img-information {
+  background-image: url('/assets/images/info1.webp');
+}
+
+.img-recipes {
+  background-image: url('/assets/images/chop.svg'); /* Add your recipe icon path */
+}
+
+.img-nutrition {
+  background-image: url('/assets/images/nut.svg'); /* Add your nutrition icon path */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .topics-column {
+    min-width: 100%;
+  }
+  .topics-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+/* Submit Button Styles */
+.submit-btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+  background-color: #326134;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .topics-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .topics-column {
+    min-width: 100%;
+  }
+  
+  .modal-content {
+    width: 95%;
+    padding: 15px;
+  }
+}  
+
+/* Improved Checkbox Styling */
+.topics-column input[type="checkbox"] {
+  /* Hide the default checkbox */
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #e0981c;
+  border-radius: 4px;
+  margin-right: 10px;
+  position: relative;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.topics-column input[type="checkbox"]:checked {
+  background-color: #5e5581;
+}
+
+
+/* Checkmark for checked state */
+.topics-column input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  color: white;
+  font-size: 14px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ /* all topic options while posting*/
+
+
+
+  /* main page slider*/
+    /* main page slider*/
+    #mainCarousel {
+      width: 95vw;
+      max-width: 95vw; /* Optional: Set a max width */
+      position: relative;
+      overflow: hidden;
+      margin: 0px auto; /* Centers the element horizontally */
+      padding: 0 15px;
+      
+    
+  }
+  
 
 
   .carousel-item img {
    width: 100%;
    height: 100%;
-   object-fit: cover; /* Ensures images cover the area without stretching */
+   object-fit: center; /* Ensures images cover the area without stretching */
+
+   object-position: center; /* Always center images */
+   position: absolute;
+   top: 0;
+   left: 0;
+}
+/* Carousel Inner Container */
+.carousel-inner {
+  width: 100%;
+  height: 15vw; /* Match item height */
+  min-height: 65vh;
+  z-index: 1; /* Lower than navbar */
 }
 
 
   .carousel-item {
-	height: 60vh;
-	min-height: 300px;
+	height: 100%;
+  width: 100%;
+  position: relative;
 
 }
-.carousel-caption {
-	bottom: 270px;
+  /* Carousel Indicators, its color and size */
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-color: rgba(10, 141, 189, 0.3);
+  border-radius: 50%;
+  padding: 10px; /* Reduced from 15px */
+  background-size: 60%;
+  width: 30px; /* Fixed size */
+  height: 30px; /* Fixed size */
 }
-.carousel-caption h5 {
-	font-size: 45px;
-	text-transform: uppercase;
-	letter-spacing: 2px;
-	margin-top: 25px;
+/* Navigation Controls placement on the slider */
+.carousel-control-prev,
+.carousel-control-next {
+  width: 5%;
+  z-index: 10;
+  
 }
-.carousel-caption p {
-	width: 75%;
-	margin: auto;
-	font-size: 18px;
-	line-height: 1.9;
+.carousel-control-prev {
+  left: 15px; /* Adjust as needed */
 }
+
+.carousel-control-next {
+  right: 15px; /* Adjust as needed */
+}
+@media (min-width: 768px) {
+  .carousel-control-prev-icon,
+  .carousel-control-next-icon {
+    padding: 15px;
+    width: 40px;
+    height: 40px;
+  }
+}
+
+  /* main page slider*/
+
+
+
+
 
 
 
@@ -502,6 +744,157 @@ h2 {
 
 
 
+/* Store Results Container */
+.store-results {
+  display: none;
+  width: 100%;
+  padding: 2rem 1rem;
+}
+
+/* Center the container and cards */
+#storesList {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* This centers the cards horizontally */
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+
+
+
+
+.store-results h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-family: 'Poppins', sans-serif;
+  color: #502c37;
+  font-size: 2.2rem;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.store-results h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, #3498db, #9b59b6);
+}
+
+/* Store Cards */
+.store-card {
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  border-left: 4px solid #3498db;
+  overflow: hidden;
+  position: relative;
+
+  animation: fadeInUp 0.6s ease forwards;
+  opacity: 0;
+  
+
+  width: 100%;
+  max-width: 500px; /* Adjust this to control card width */
+}
+
+.store-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12);
+}
+
+.store-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(155, 89, 182, 0.1) 100%);
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.store-card:hover::before {
+  opacity: 1;
+}
+
+.store-name {
+  font-size: 1.4rem;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 1;
+  font-weight: 600;
+}
+
+.store-card p {
+  margin: 0.8rem 0;
+  color: #34495e;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+}
+
+.store-card i {
+  width: 20px;
+  text-align: center;
+  color: #3498db;
+  margin-right: 0.5rem;
+}
+
+.store-address {
+  font-weight: 500;
+}
+
+.store-hours {
+  color: #27ae60;
+  font-weight: 500;
+}
+
+
+.container h2 {
+  text-align: center;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  color: #dca735;
+}
+
+
+
+
+
+/* Animation for when stores load */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+
+/* Delay animations for each card */
+.store-card:nth-child(1) { animation-delay: 0.1s; }
+.store-card:nth-child(2) { animation-delay: 0.2s; }
+.store-card:nth-child(3) { animation-delay: 0.3s; }
+.store-card:nth-child(4) { animation-delay: 0.4s; }
+.store-card:nth-child(5) { animation-delay: 0.5s; }
 
 
 
@@ -509,3 +902,368 @@ h2 {
 
 
 
+
+
+/* ===== Chat Base Styles ===== */
+/* ===== Chat Base Styles ===== */
+.forum-chat {
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  width: 85%; /* Reduced from full width */
+  max-width: 1200px; /* Maximum width like Discord */
+  height: 75vh; /* Reduced height */
+  min-height: 500px; /* Minimum height */
+  margin: 20px auto; /* Centered with margin */
+  background-color: #36393f;
+  color: #dcddde;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+}
+
+.forum-chat-title {
+  color: #fff;
+  padding: 15px 20px;
+  margin: 0 0 10px 0;           /* Adds slight bottom margin */
+  font-size: 1.3rem;            /* Or use clamp() for responsiveness */
+  font-weight: 600;             /* Bold (optional) */
+  border-bottom: 1px solid #36393f; /* Visible border */
+  background-color: #2f3136;
+}
+/* ===== Chat Layout ===== */
+.chat-container {
+  flex-grow: 1;
+  margin: 0;
+  display: flex;
+  min-height: 0; /* Important for flex children */
+}
+
+.chat-users {
+  background-color: #2f3136;
+  border-right: 1px solid #26282c;
+  width: 240px; /* Fixed width like Discord */
+  min-width: 240px; /* Prevent shrinking */
+  overflow-y: auto;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-messages {
+  background-color: #36393f;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* Important for flex children */
+}
+
+/* ===== Users List ===== */
+.chat-users-header {
+  padding: 12px 15px; /* Slightly reduced padding */
+  border-bottom: 1px solid #26282c;
+  position: sticky;
+  top: 0;
+  background-color: #2f3136;
+  z-index: 1;
+}
+
+
+.online-status {
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem; /* Slightly smaller */
+  color: #b9bbbe;
+  margin-top: 5px;
+}
+
+.status-indicator {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.status-indicator.online {
+  background-color: #3ba55c;
+}
+
+.users-list {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 5px 0;
+}
+
+.user-template {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px; /* More compact padding */
+  margin: 0 8px; /* Added side margin */
+  border-radius: 4px; /* Rounded corners */
+  cursor: pointer;
+  transition: background-color 0.2s;
+  position: relative;
+}
+
+.user-template:hover {
+  background-color: rgba(79, 84, 92, 0.4);
+}
+
+.user-template.active {
+  background-color: rgba(79, 84, 92, 0.6);
+}
+
+.user-avatar {
+  width: 32px; /* Smaller avatar */
+  height: 32px;
+  font-size: 0.9rem; /* Smaller text */
+  margin-right: 10px; /* Reduced margin */
+}
+
+.user-info {
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.user-name {
+  display: block;
+  font-weight: 500;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.95rem; 
+}
+
+.last-message {
+  font-size: 0.8rem;
+  color: #a3a6aa;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.message-time {
+  font-size: 0.7rem;
+  color: #72767d;
+  margin-top: 2px;
+}
+
+.unread-count {
+  background-color: #f04747;
+  color: white;
+  border-radius: 10px;
+  padding: 1px 4px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  min-width: 16px;
+  text-align: center;
+}
+
+/* ===== Messages Area ===== */
+.chat-header {
+  padding: 12px 15px; /* More compact */
+  border-bottom: 1px solid #26282c;
+  position: sticky;
+  top: 0;
+  background-color: #36393f;
+  z-index: 1;
+}
+
+.current-chat-user {
+  display: flex;
+  align-items: center;
+}
+
+.user-status {
+  font-size: 0.85rem;
+  margin-left: 10px;
+  color: #b9bbbe;
+}
+
+.user-status.online {
+  color: #3ba55c;
+}
+
+.messages-container {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 15px 20px;
+  background-color: #36393f;
+}
+
+.no-chat-selected {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #72767d;
+  font-size: 1.1rem;
+}
+
+/* ===== Message Styles ===== */
+.message-template {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  max-width: 80%;
+}
+
+.message-content {
+  padding: 8px 12px;
+  border-radius: 18px;
+  line-height: 1.4;
+  word-wrap: break-word;
+  position: relative;
+  font-size: 0,95rem;
+}
+
+.message-template[data-sender-id="current-user"] {
+  align-self: flex-end;
+}
+
+.message-template[data-sender-id="current-user"] .message-content {
+  background-color: #7289da;
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.message-template:not([data-sender-id="current-user"]) .message-content {
+  background-color: #40444b;
+  border-bottom-left-radius: 4px;
+}
+
+.message-info {
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+  font-size: 0.7rem;
+  color: #72767d;
+}
+
+.message-time {
+  margin-right: 8px;
+}
+
+.message-status {
+  color: #3ba55c;
+}
+
+/* ===== Message Input ===== */
+.message-input {
+  padding: 12px;
+  background-color: #40444b;
+  border-radius: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+  position: sticky;
+  bottom: 0;
+}
+
+.message-input textarea {
+  flex-grow: 1;
+  background-color: #40444b;
+  border: 1px solid #202225;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #dcddde;
+  resize: none;
+  max-height: 150px;
+  outline: none;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.message-input textarea:focus {
+  border-color: #7289da;
+}
+
+.send-button {
+  background-color: #7289da;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  margin-left: 10px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  font-size: 0.9rem;
+}
+
+.send-button:hover {
+  background-color: #677bc4;
+}
+
+/* ===== Loading Indicators ===== */
+.load-more {
+  text-align: center;
+  padding: 10px;
+}
+
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #7289da;
+  animation: spin 1s ease-in-out infinite;
+  border-width: 2px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ===== Scrollbars ===== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #2e3338;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #202225;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #1f1a1a;
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width: 1024px) {
+  .forum-chat {
+    width: 95%; /* More width on smaller screens */
+    height: 85vh;
+  }
+}
+
+
+@media (max-width: 768px) {
+  .forum-chat {
+    width: 100%;
+    height: 100vh;
+    margin: 0;
+    border-radius: 0;
+  }
+  
+  .chat-container {
+    flex-direction: column;
+  }
+  
+  .chat-users {
+    border-right: none;
+    border-bottom: 1px solid #26282c;
+    height: 200px;
+    width: 100;
+  }
+}
+
+/* ===== Chat Base Styles ===== */

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
     <title>Forum - Home</title>
     <!-- Bootstrap CSS -->
     <link
@@ -20,9 +20,11 @@
       rel="stylesheet"
     />
 
-    <!-- Bootstrap JS Bundle with Popper -->
-    <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+
+
   </head>
   <body>
     <!-- Header with Navigation menu bar-->
@@ -48,15 +50,8 @@
               <li class="nav-item">
                 <a class="nav-link" href="#" data-page="home"> Home</a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#" data-page="quick-recipe"
-                  >Quick Recipe</a
-                >
               </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#" data-page="nutrition"
-                  >Nutrition Insights</a
-                >
+         
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#" data-page="store">Find a Store</a>
@@ -65,13 +60,31 @@
                 <a class="nav-link" href="#" data-page="topics">Topics</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#" data-page="posts">Posts</a>
+                <a class="nav-link" href="#" data-page="posts">Create Post</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#" data-page="chat">Chat</a>
               </li>
             </ul>
-            <div class="d-flex">
+
+ 
+ 
+
+
+   
+
+
+
+
+
+
+            <div class="d-flex gap-2">  <!-- Added gap-2 for spacing -->
+              <!-- Register Button (now first) -->
+              <a class="btn btn-register" href="#" data-page="register">
+                Register
+              </a>
+            
+              <!-- Sign In Dropdown (now second) -->
               <div class="dropdown">
                 <button
                   class="btn btn-light dropdown-toggle"
@@ -83,22 +96,17 @@
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
                   <li>
-                    <a class="dropdown-item" href="#" data-page="signin"
-                      >Sign In</a
-                    >
+                    <a class="dropdown-item" href="#" data-page="signin">Sign In</a>
                   </li>
                   <li>
-                    <a class="dropdown-item" href="#" data-page="register"
-                      >Register</a
-                    >
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#" data-page="account"
-                      >My Account</a
-                    >
+                    <a class="dropdown-item" href="#" data-page="account">My Account</a>
                   </li>
                 </ul>
               </div>
+            </div>
+
+
+
             </div>
           </div>
         </div>
@@ -107,22 +115,67 @@
     <!-- Header with Navigation menu bar-->
 
     <!-- Main Content - This will be dynamically replaced by router -->
+   
     <main class="container my-4" id="app-content">
       <!-- Initial content will be loaded from home-template -->
+
+          
+      
+
+
+
+
+
     </main>
+
+
+<!-- Add this container for store results -->
+<div id="storeResults" style="display: none;" aria-live="polite">
+  <div class="container my-4">
+      <h2 class="mb-4">Available Stores</h2>
+      <div id="storesList" class="row"></div>
+  </div>
+</div>
+
+     <!-- find a Store template container -->
+  <template id="storeTemplate">
+    <div class="store-card">
+    <h3 class="store-name"></h3>
+    <p class="store-address-line">
+      <i class="fas fa-map-marker-alt"></i>
+      <span class="store-address"></span>
+    </p>
+    <p class="store-phone-line">
+      <i class="fas fa-phone"></i>
+      <span class="store-phone"></span>
+    </p>
+    <p class="store-hours-line">
+      <i class="fas fa-clock"></i>
+      <span class="store-hours"></span>
+    </p>
+  </div>
+</template>
+ <!-- find a Store template container -->
+
+
+
+
+
 
     <!-- ===== TEMPLATES ===== -->
     <!-- Topics Grid Template (Shows ALL topics with icons) -->
     <!-- ===== TEMPLATES ===== -->
     <!-- Topics Grid Template (Shows ALL topics with icons) -->
+   
     <template id="topics-template">
       <section class="forum-topics">
         <h2 class="text-center mb-5 fw-bold">Explore Topics</h2>
+        <div class="row justify-content-center">  <!-- Added justify-content-center -->
         <div class="container">
-          <div class="row">
+          <div class="row g-2">
             <!-- Topic 1 - Daily Essentials -->
             <div class="col-md-4 col-sm-6">
-              <div class="topic-card">
+              <div class="topic-card h-100">
                 <i class="fas fa-shopping-basket"></i>
                 <h3>Daily Essentials</h3>
                 <p>Discuss everyday must-haves</p>
@@ -131,7 +184,7 @@
 
             <!-- Topic 2 - Home & Lifestyle -->
             <div class="col-md-4 col-sm-6">
-              <div class="topic-card">
+              <div class="topic-card h-100">
                 <i class="fas fa-home"></i>
                 <h3>Home & Lifestyle</h3>
                 <p>Home decor, organization tips</p>
@@ -140,7 +193,7 @@
 
             <!-- Topic 3 - Personal Well-being -->
             <div class="col-md-4 col-sm-6">
-              <div class="topic-card">
+              <div class="topic-card h-100">
                 <i class="fas fa-heartbeat"></i>
                 <h3>Personal Well-being</h3>
                 <p>Health, fitness, and mindfulness</p>
@@ -149,7 +202,7 @@
 
             <!-- Topic 4 - Technology & Innovation -->
             <div class="col-md-4 col-sm-6">
-              <div class="topic-card">
+              <div class="topic-card h-100">
                 <i class="fas fa-microchip"></i>
                 <h3>Technology & Innovation</h3>
                 <p>Gadgets, software, and future tech</p>
@@ -158,7 +211,7 @@
 
             <!-- Topic 5 - Leisure & Entertainment -->
             <div class="col-md-4 col-sm-6">
-              <div class="topic-card">
+              <div class="topic-card h-100">
                 <i class="fas fa-gamepad"></i>
                 <h3>Leisure & Entertainment</h3>
                 <p>Games, movies, and hobbies</p>
@@ -167,7 +220,7 @@
 
             <!-- Topic 6 - Commerce & Shopping -->
             <div class="col-md-4 col-sm-6">
-              <div class="topic-card">
+              <div class="topic-card h-100">
                 <i class="fas fa-store"></i>
                 <h3>Commerce & Shopping</h3>
                 <p>Deals, reviews, and shopping guides</p>
@@ -176,7 +229,7 @@
 
             <!-- Topic 7 - Mobility & Transportation -->
             <div class="col-md-4 col-sm-6">
-              <div class="topic-card">
+              <div class="topic-card h-100">
                 <i class="fas fa-car"></i>
                 <h3>Mobility & Transportation</h3>
                 <p>Vehicles, public transit, and travel solutions</p>
@@ -185,7 +238,7 @@
 
             <!-- Topic 8 - Services & Support -->
             <div class="col-md-4 col-sm-6">
-              <div class="topic-card">
+              <div class="topic-card h-100">
                 <i class="fas fa-hands-helping"></i>
                 <h3>Services & Support</h3>
                 <p>Professional services and community help</p>
@@ -194,7 +247,7 @@
 
             <!-- Topic 9 - Culture & Community -->
             <div class="col-md-4 col-sm-6">
-              <div class="topic-card">
+              <div class="topic-card h-100">
                 <i class="fas fa-globe-americas"></i>
                 <h3>Culture & Community</h3>
                 <p>Local events, traditions, and social groups</p>
@@ -203,12 +256,29 @@
 
             <!-- Topic 10 - Information & Learning -->
             <div class="col-md-4 col-sm-6">
-              <div class="topic-card">
+              <div class="topic-card h-100">
                 <i class="fas fa-graduation-cap"></i>
                 <h3>Information & Learning</h3>
                 <p>Education, tutorials, and knowledge sharing</p>
               </div>
             </div>
+   <!-- Topic 11 - Quick Recipes -->
+<div class="col-md-4 col-sm-6">
+  <div class="topic-card h-100">
+    <i class="fas fa-utensils fa-2x text-danger"></i>  <!-- Red color -->
+    <h3>Quick Recipes</h3>
+    <p>Make food quickly</p>
+  </div>
+</div>
+
+<!-- Topic 12 - Nutrition Insights -->
+<div class="col-md-4 col-sm-6">
+  <div class="topic-card h-100">
+    <i class="fas fa-apple-alt fa-2x text-success"></i>  <!-- Green color -->
+    <h3>Nutrition Insights</h3>
+    <p>Healthy eating tips</p>
+  </div>
+</div>
           </div>
         </div>
       </section>
@@ -219,62 +289,105 @@
     <!-- main Page slider Templates -->
     <!-- main Page slider Templates -->
 
-    <template id="home-template">
+   
       <!-- Bootstrap Carousel Slider -->
+      <template id="home-template">
       <section class="mb-5">
-        <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div
+          id="mainCarousel"
+          class="carousel slide"
+          data-bs-ride="carousel"
+          data-bs-interval="3000"
+          data-bs-wrap="true"
+        >
           <div class="carousel-indicators">
             <button
               type="button"
               data-bs-target="#mainCarousel"
               data-bs-slide-to="0"
               class="active"
+              aria-current="true"  
+              aria-label="Slide 1"
             ></button>
             <button
               type="button"
               data-bs-target="#mainCarousel"
               data-bs-slide-to="1"
+              aria-label="Slide 2"
             ></button>
             <button
               type="button"
               data-bs-target="#mainCarousel"
               data-bs-slide-to="2"
+              aria-label="Slide 3"
+              
             ></button>
+            <button
+              type="button"
+              data-bs-target="#mainCarousel"
+              data-bs-slide-to="3"
+              aria-label="Slide 4"
+            ></button>
+            <button
+              type="button"
+              data-bs-target="#mainCarousel"
+              data-bs-slide-to="4"
+              aria-label="Slide 5"
+            ></button>
+            <button
+            type="button"
+            data-bs-target="#mainCarousel"
+            data-bs-slide-to="5"
+            aria-label="Slide 6"
+          ></button>
+       
           </div>
+
           <div class="carousel-inner rounded">
             <div class="carousel-item active">
               <img
-                src="/assets/images/shopping.webp"
+                src="assets/images/mar.webp"
                 class="d-block w-100"
                 alt="Featured Content 1"
               />
-              <div class="carousel-caption d-none d-md-block">
-                <h5>Budgeting Tips</h5>
-                <p>Discover smart ways to manage your finances</p>
-              </div>
             </div>
             <div class="carousel-item">
               <img
-                src="/assets/images/pex.webp"
+                src="assets/images/pqr.webp"
                 class="d-block w-100"
                 alt="Featured Content 2"
               />
-              <div class="carousel-caption d-none d-md-block">
-                <h5>Quick Recipes</h5>
-                <p>Delicious meals on a budget</p>
-              </div>
             </div>
+          
             <div class="carousel-item">
               <img
-                src="/assets/images/pexels.webp"
+                src="assets/images/mike.webp"
                 class="d-block w-100"
                 alt="Featured Content 3"
               />
-              <div class="carousel-caption d-none d-md-block">
-                <h5>Savings Guide</h5>
-                <p>Learn how to save effectively</p>
-              </div>
             </div>
+            <div class="carousel-item">
+              <img
+                src="assets/images/mno.webp"
+                class="d-block w-100"
+                alt="Featured Content 4"
+              />
+            </div>
+            <div class="carousel-item">
+              <img
+                src="assets/images/vbc.avif"
+                class="d-block w-100"
+                alt="Featured Content 5"
+              />
+            </div>
+            <div class="carousel-item">
+              <img
+                src="assets/images/def.webp"
+                class="d-block w-100"
+                alt="Featured Content 6"
+              />
+            </div>
+        
           </div>
           <button
             class="carousel-control-prev"
@@ -296,6 +409,7 @@
           </button>
         </div>
       </section>
+      </template>
 
       <!-- Fixed Advertisements (keep your existing code) -->
       <section class="fixed-ads">
@@ -308,192 +422,223 @@
 
     <!-- main Page slider Templates -->
 
-    <template id="quick-recipe-template">
-      <section class="quick-recipes">
-        <div class="container">
-          <h2>Quick Recipes</h2>
-          <div class="recipes-container row">
-            <!-- Recipes will be loaded here -->
-          </div>
-        </div>
-      </section>
-    </template>
+   <!-- Store Finder Template -->
 
-    <template id="nutrition-template">
-      <section class="nutrition-insights">
-        <div class="container">
-          <h2>Nutrition Insights</h2>
-          <div class="insights-container row">
-            <!-- Nutrition content will be loaded here -->
-          </div>
-        </div>
-      </section>
-    </template>
 
-    <template id="store-template">
-      <section class="store-finder">
-        <div class="container">
-          <h2>Find a Store</h2>
-          <div class="store-container row">
-            <!-- Store content will be loaded here -->
-          </div>
-        </div>
-      </section>
-    </template>
+ <!-- Store Finder Template should be here-->
+ 
+
+
+    <!-- Store Finder Template -->
+ 
+ 
+
 
     <!-- post topics will be loaded here -->
     <!-- post topics will be loaded here -->
     <!-- post topics all here-->
     <!-- post topics all here-->
-
     <template id="postModalTemplate">
-      <div class="modal-content">
-        <span class="close-modal">&times;</span>
-        <h2>Create New Post</h2>
-        <form id="postForm">
-          <div class="form-group">
-            <label for="postTitle">Title:</label>
-            <input type="text" id="postTitle" required />
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2>Create New Post</h2>
+      <form id="postForm">
+        <div class="form-group">
+          <label for="postTitle">Title:</label>
+          <input type="text" id="postTitle" required />
+        </div>
+    
+        <div class="form-group">
+          <label>Topics (select at least 3):</label>
+          <div class="topics-container">
+            <!-- Column 1 -->
+            <div class="topics-column">
+              <label>
+                <input type="checkbox" name="topic" value="Daily Essentials" />
+                <span class="topic-icon img-daily"></span>
+                Daily Essentials
+              </label>
+    
+              <label>
+                <input type="checkbox" name="topic" value="Home & Lifestyle" />
+                <span class="topic-icon img-home"></span>
+                Home & Lifestyle
+              </label>
+    
+              <label>
+                <input type="checkbox" name="topic" value="Personal Well-being" />
+                <span class="topic-icon img-personal"></span>
+                Personal Well-being
+              </label>
+            </div>
+    
+            <!-- Column 2 -->
+            <div class="topics-column">
+              <label>
+                <input type="checkbox" name="topic" value="Leisure & Entertainment" />
+                <span class="topic-icon img-leisure"></span>
+                Leisure & Entertainment
+              </label>
+    
+              <label>
+                <input type="checkbox" name="topic" value="Commerce & Shopping" />
+                <span class="topic-icon img-commerce"></span>
+                Commerce & Shopping
+              </label>
+    
+              <label>
+                <input type="checkbox" name="topic" value="Mobility & Transportation" />
+                <span class="topic-icon img-mobility"></span>
+                Mobility & Transportation
+              </label>
+            </div>
+    
+            <!-- Column 3 -->
+            <div class="topics-column">
+              <label>
+                <input type="checkbox" name="topic" value="Services & Support" />
+                <span class="topic-icon img-services"></span>
+                Services & Support
+              </label>
+              <label>
+                <input type="checkbox" name="topic" value="Culture & Community" />
+                <span class="topic-icon img-culture"></span>
+                Culture & Community
+              </label>
+    
+              <label>
+                <input type="checkbox" name="topic" value="Technology & Innovation" />
+                <span class="topic-icon img-technology"></span>
+                Technology & Innovation
+              </label>
+            </div>
+    
+            <!-- Column 4 -->
+            <div class="topics-column">
+              <label>
+                <input type="checkbox" name="topic" value="Information & Learning" />
+                <span class="topic-icon img-information"></span>
+                Information & Learning
+              </label>
+              <label>
+                <input type="checkbox" name="topic" value="Quick Recipes" />
+                <span class="topic-icon img-recipes"></span>
+                Quick Recipes
+              </label>
+              <label>
+                <input type="checkbox" name="topic" value="Nutrition Insights" />
+                <span class="topic-icon img-nutrition"></span>
+                Nutrition Insights
+              </label>
+            </div>
           </div>
+        </div>
+    
+        <div class="form-group">
+          <label for="postContent">Content:</label>
+          <textarea id="postContent" rows="6" required></textarea>
+        </div>
+    
+        <button type="submit" class="submit-btn">Submit Post</button>
+      </form>
+    </div>
+    </template>
+    <!-- post topics all here-->
+    <!-- post topics will be loaded here-->
+    
+    <!-- chat template here-->
+      <!-- chat template here-->
 
-          <div class="form-group">
-            <label>Topics (select at least 3):</label>
-            <div class="topics-container">
-              <!-- Column 1 -->
-              <div class="topics-column">
-                <label>
-                  <input
-                    type="checkbox"
-                    name="topic"
-                    value="Daily Essentials"
-                  />
-                  <span class="topic-icon img-daily"></span>
-                  Daily Essentials
-                </label>
 
-                <label>
-                  <input
-                    type="checkbox"
-                    name="topic"
-                    value="Home & Lifestyle"
-                  />
-                  <span class="topic-icon img-home"></span>
-                  Home & Lifestyle
-                </label>
 
-                <label>
-                  <input
-                    type="checkbox"
-                    name="topic"
-                    value="Personal Well-being"
-                  />
-                  <span class="topic-icon img-personal"></span>
-                  Personal Well-being
-                </label>
+      
+        <section class="forum-chat">
+          <div class="container">
+            <h2 class="forum-chat-title">Community Chat</h2>
+            <div class="chat-container row">
+              <!-- Users List (Left) -->
+              <div class="chat-users col-md-4">
+                <div class="chat-users-header">
+                  <h3>Private Messages</h3>
+                  <div class="online-status">
+                    <span class="status-indicator online"></span>
+                    <span>Online: <span class="online-count">0</span></span>
+                  </div>
+                </div>
+                
+                <div class="users-list" id="users-list">
+                  <!-- Template for sorted users -->
+                  <div class="user-template" 
+                       style="display: none;"
+                       data-user-id=""
+                       data-last-message-time=""
+                       data-is-new="false"
+                       data-username="">
+                    <span class="user-avatar"></span>
+                    <div class="user-info">
+                      <span class="user-name"></span>
+                      <span class="last-message"></span>
+                      <span class="message-time"></span>
+                    </div>
+                    <span class="unread-count""></span>
+                  </div>
+                </div>
               </div>
-
-              <!-- Column 2 -->
-              <div class="topics-column">
-                <label>
-                  <input
-                    type="checkbox"
-                    name="topic"
-                    value="Leisure & Entertainment"
-                  />
-                  <span class="topic-icon img-leisure"></span>
-                  Leisure & Entertainment
-                </label>
-
-                <label>
-                  <input
-                    type="checkbox"
-                    name="topic"
-                    value="Commerce & Shopping"
-                  />
-                  <span class="topic-icon img-commerce"></span>
-                  Commerce & Shopping
-                </label>
-
-                <label>
-                  <input
-                    type="checkbox"
-                    name="topic"
-                    value="Mobility & Transportation"
-                  />
-                  <span class="topic-icon img-mobility"></span>
-                  Mobility & Transportation
-                </label>
-              </div>
-
-              <!-- Column 3 -->
-              <div class="topics-column">
-                <label>
-                  <input
-                    type="checkbox"
-                    name="topic"
-                    value="Services & Support"
-                  />
-                  <span class="topic-icon img-services"></span>
-                  Services & Support
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    name="topic"
-                    value="Culture & Community"
-                  />
-                  <span class="topic-icon img-culture"></span>
-                  Culture & Community
-                </label>
-
-                <label>
-                  <input
-                    type="checkbox"
-                    name="topic"
-                    value="Technology & Innovation"
-                  />
-                  <span class="topic-icon img-technology"></span>
-                  Technology & Innovation
-                </label>
-
-                <!-- Column 4 -->
-                <div class="topics-column">
-                  <label>
-                    <input
-                      type="checkbox"
-                      name="topic"
-                      value="Information & Learning"
-                    />
-                    <span class="topic-icon img-information"></span>
-                    Information & Learning
-                  </label>
+              
+              <!-- Chat Area (Right) -->
+              <div class="chat-messages col-md-8">
+                <div class="chat-header">
+                  <div class="current-chat-user">
+                    <span class="user-avatar"></span>
+                    <span class="user-name">Select a conversation</span>
+                    <span class="user-status"></span>
+                  </div>
+                </div>
+                
+                <!-- Message History -->
+                <div class="messages-container" id="messages-scrollable">
+                  <div class="no-chat-selected">
+                    <p>Please select a user to start chatting</p>
+                  </div>
+                  
+                  <!-- Message Batch (for infinite scroll) -->
+                  <div class="message-batch" data-batch-size="10"">
+                    <!-- Messages load here -->
+                  </div>
+                  
+                  <!-- Message Template -->
+                  <div class="message-template"
+                       data-sender-id=""
+                       data-timestamp="">
+                    <div class="message-content">
+                      <p></p>
+                    </div>
+                    <div class="message-info">
+                      <span class="message-time"></span>
+                      <span class="message-status"></span>
+                    </div>
+                  </div>
+                  
+                  <!-- Loading Indicator -->
+                  <div class="load-more"">
+                    <div class="spinner"></div>
+                  </div>
+                </div>
+                
+                <!-- Message Input -->
+                <div class="message-input">
+                  <textarea placeholder="Type your message here..." rows="1"></textarea>
+                  <button class="send-button">Send</button>
                 </div>
               </div>
             </div>
           </div>
+        </section>
+      </template>
 
-          <div class="form-group">
-            <label for="postContent">Content:</label>
-            <textarea id="postContent" rows="6" required></textarea>
-          </div>
+     <!-- chat template here-->
 
-          <button type="submit" class="submit-btn">Submit Post</button>
-        </form>
-      </div>
-    </template>
-    <!-- post topics all here-->
-    <!-- post topics will be loaded here-->
 
-    <template id="chat-template">
-      <section class="forum-chat">
-        <div class="container">
-          <h2>Community Chat</h2>
-          <div class="chat-container row">
-            <!-- Chat interface will be loaded here -->
-          </div>
-        </div>
-      </section>
-    </template>
 
     <!-- my account details( posts, likes, dislikes, my comments) -->
     <!-- my account details( posts, likes, dislikes, my comments) -->
@@ -784,22 +929,7 @@
 
     <!-- my account details( posts, likes, dislikes, my comments) -->
 
-    <!-- Component Templates (for dynamic content like advisements on the main page) -->
 
-    <!-- Component Templates (for dynamic content like advisements on the main page) -->
-    <template id="scrolling-ad-template">
-      <div class="scrolling-item">
-        <img src="" alt="Advertisement" class="img-fluid" />
-      </div>
-    </template>
-
-    <template id="fixed-ad-template">
-      <div class="col-md-4 mb-4">
-        <div class="fixed-ad-item">
-          <img src="" alt="Advertisement" class="img-fluid rounded" />
-        </div>
-      </div>
-    </template>
 
     <!-- Component Templates (for dynamic content like advisements on the main page) -->
 
@@ -1165,7 +1295,7 @@
     <!-- Footer -->
     <!-- Footer -->
 
-    <footer class="py-0 my-custom-footer">
+    <footer class="py-0 mt-5 my-custom-footer">
       <div class="container">
         <div class="d-flex justify-content-between align-items-center">
           <!-- Left side - Creators -->
@@ -1197,5 +1327,14 @@
       </div>
     </footer>
     <!-- Footer -->
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+  <!-- If your HTML is inside real-time-forum directory -->
+  <script src="./script.js" defer></script>
+
   </body>
 </html>
