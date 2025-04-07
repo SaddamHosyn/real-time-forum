@@ -67,24 +67,14 @@
               </li>
             </ul>
 
- 
- 
-
-
-   
-
-
-
-
-
-
-            <div class="d-flex gap-2">  <!-- Added gap-2 for spacing -->
+            <div class="d-flex gap-2">  
               <!-- Register Button (now first) -->
-              <a class="btn btn-register" href="#" data-page="register">
+              <button type="button" class="btn btn-register" data-bs-toggle="modal" data-bs-target="#register-modal">
                 Register
-              </a>
+              </button>
             
-              <!-- Sign In Dropdown (now second) -->
+              <!-- Sign In Dropdown -->
+               <!-- Sign In Dropdown -->
               <div class="dropdown">
                 <button
                   class="btn btn-light dropdown-toggle"
@@ -104,9 +94,6 @@
                 </ul>
               </div>
             </div>
-
-
-
             </div>
           </div>
         </div>
@@ -129,7 +116,9 @@
     </main>
 
 
-<!-- Add this container for store results -->
+<!-- container for store results -->
+ <!-- container for store results -->
+
 <div id="storeResults" style="display: none;" aria-live="polite">
   <div class="container my-4">
       <h2 class="mb-4">Available Stores</h2>
@@ -551,15 +540,15 @@
 
 
 
-      
+      <template id="chat-template">
         <section class="forum-chat">
           <div class="container">
             <h2 class="forum-chat-title">Community Chat</h2>
             <div class="chat-container row">
               <!-- Users List (Left) -->
-              <div class="chat-users col-md-4">
+              <div class="chat-users">
                 <div class="chat-users-header">
-                  <h3>Private Messages</h3>
+                  <h3>Members</h3>
                   <div class="online-status">
                     <span class="status-indicator online"></span>
                     <span>Online: <span class="online-count">0</span></span>
@@ -580,17 +569,17 @@
                       <span class="last-message"></span>
                       <span class="message-time"></span>
                     </div>
-                    <span class="unread-count""></span>
+                    <span class="unread-count"></span>
                   </div>
                 </div>
               </div>
               
               <!-- Chat Area (Right) -->
-              <div class="chat-messages col-md-8">
+              <div class="chat-messages">
                 <div class="chat-header">
                   <div class="current-chat-user">
                     <span class="user-avatar"></span>
-                    <span class="user-name">Select a conversation</span>
+                    <span class="user-name">Inbox</span>
                     <span class="user-status"></span>
                   </div>
                 </div>
@@ -602,7 +591,7 @@
                   </div>
                   
                   <!-- Message Batch (for infinite scroll) -->
-                  <div class="message-batch" data-batch-size="10"">
+                  <div class="message-batch" data-batch-size="10">
                     <!-- Messages load here -->
                   </div>
                   
@@ -940,8 +929,9 @@
 
     <!-- log in pop up page -->
     <!-- log in pop up page -->
-    <template id="signin-template">
+   
       <!-- Modal Structure Only -->
+   <template id="signin-template">
       <div id="login-modal" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -992,305 +982,249 @@
 
     <!-- Registration Modal page Template -->
     <!-- Registration Modal page Template -->
-    <template id="register-template">
+   
       <!-- Modal Structure -->
-      <div id="register-modal" class="modal fade" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Create Your Account</h5>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-              ></button>
+      <template id="register-modal-template">
+        <div id="register-modal" class="custom-modal">
+          <div class="custom-modal-content">
+            <div class="custom-modal-header">
+              <h2>Create Your Account</h2>
+              <button type="button" class="custom-close-btn" onclick="closeModal()">×</button>
             </div>
-            <div class="modal-body">
+            <div class="custom-modal-body">
               <form id="register-form" class="needs-validation" novalidate>
-                <div class="row g-3">
+                <div class="custom-row">
                   <!-- First Name -->
-                  <div class="col-md-6">
-                    <label for="firstName" class="form-label">First Name</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="firstName"
-                      required
-                      minlength="2"
-                    />
-                    <div class="invalid-feedback">
-                      Please enter a valid first name (at least 2 characters).
+                  <div class="custom-col-md-6">
+                    <div class="custom-form-group">
+                      <label for="firstName" class="custom-form-label">First Name</label>
+                      <input type="text" class="custom-form-control" id="firstName" required minlength="2">
+                      <div class="invalid-feedback">Please enter a valid first name (at least 2 characters).</div>
                     </div>
                   </div>
-
+                  
                   <!-- Last Name -->
-                  <div class="col-md-6">
-                    <label for="lastName" class="form-label">Last Name</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="lastName"
-                      required
-                      minlength="2"
-                    />
-                    <div class="invalid-feedback">
-                      Please enter a valid last name (at least 2 characters).
+                  <div class="custom-col-md-6">
+                    <div class="custom-form-group">
+                      <label for="lastName" class="custom-form-label">Last Name</label>
+                      <input type="text" class="custom-form-control" id="lastName" required minlength="2">
+                      <div class="invalid-feedback">Please enter a valid last name (at least 2 characters).</div>
                     </div>
                   </div>
-
-                  <!-- Username -->
-                  <div class="col-md-6">
-                    <label for="username" class="form-label">Username</label>
-                    <div class="input-group">
-                      <span class="input-group-text">@</span>
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="username"
-                        required
-                        minlength="4"
-                        pattern="[a-zA-Z0-9_]+"
-                      />
-                    </div>
-                    <div class="invalid-feedback">
-                      Username must be at least 4 characters and contain only
-                      letters, numbers, or underscores.
-                    </div>
-                    <small
-                      class="form-text text-muted"
-                      id="username-availability"
-                    ></small>
-                  </div>
-
-                  <!-- Email -->
-                  <div class="col-md-6">
-                    <label for="email" class="form-label">Email</label>
-                    <input
-                      type="email"
-                      class="form-control"
-                      id="email"
-                      required
-                    />
-                    <div class="invalid-feedback">
-                      Please enter a valid email address.
-                    </div>
-                  </div>
-
-                  <!-- Age -->
-                  <div class="col-md-4">
-                    <label for="age" class="form-label">Age</label>
-                    <input
-                      type="number"
-                      class="form-control"
-                      id="age"
-                      min="13"
-                      max="120"
-                      required
-                    />
-                    <div class="invalid-feedback">
-                      You must be at least 13 years old to register.
-                    </div>
-                  </div>
-
-                  <!-- Gender -->
-                  <div class="col-md-8">
-                    <label class="form-label">Gender</label>
-                    <div class="d-flex gap-3">
-                      <div class="form-check">
-                        <input
-                          class="form-check-input"
-                          type="radio"
-                          name="gender"
-                          id="male"
-                          value="male"
-                          checked
-                        />
-                        <label class="form-check-label" for="male">Male</label>
-                      </div>
-                      <div class="form-check">
-                        <input
-                          class="form-check-input"
-                          type="radio"
-                          name="gender"
-                          id="female"
-                          value="female"
-                        />
-                        <label class="form-check-label" for="female"
-                          >Female</label
-                        >
-                      </div>
-                      <div class="form-check">
-                        <input
-                          class="form-check-input"
-                          type="radio"
-                          name="gender"
-                          id="other"
-                          value="other"
-                        />
-                        <label class="form-check-label" for="other"
-                          >Other</label
-                        >
-                      </div>
-                      <div class="form-check">
-                        <input
-                          class="form-check-input"
-                          type="radio"
-                          name="gender"
-                          id="prefer-not-to-say"
-                          value="prefer-not-to-say"
-                        />
-                        <label class="form-check-label" for="prefer-not-to-say"
-                          >Prefer not to say</label
-                        >
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Password -->
-                  <div class="col-md-6">
-                    <label for="password" class="form-label">Password</label>
-                    <div class="input-group">
-                      <input
-                        type="password"
-                        class="form-control"
-                        id="password"
-                        required
-                        minlength="8"
-                        pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-                      />
-                      <button
-                        class="btn btn-outline-secondary toggle-password"
-                        type="button"
-                      >
-                        <i class="fas fa-eye"></i>
-                      </button>
-                    </div>
-                    <div class="invalid-feedback">
-                      Password must be at least 8 characters with at least one
-                      uppercase, one lowercase, and one number.
-                    </div>
-                    <div class="progress mt-2" style="height: 5px">
-                      <div
-                        id="password-strength"
-                        class="progress-bar"
-                        role="progressbar"
-                        style="width: 0%"
-                      ></div>
-                    </div>
-                    <small
-                      class="form-text text-muted"
-                      id="password-strength-text"
-                    ></small>
-                  </div>
-
-                  <!-- Confirm Password -->
-                  <div class="col-md-6">
-                    <label for="confirmPassword" class="form-label"
-                      >Confirm Password</label
-                    >
-                    <div class="input-group">
-                      <input
-                        type="password"
-                        class="form-control"
-                        id="confirmPassword"
-                        required
-                      />
-                      <button
-                        class="btn btn-outline-secondary toggle-password"
-                        type="button"
-                      >
-                        <i class="fas fa-eye"></i>
-                      </button>
-                    </div>
-                    <div
-                      class="invalid-feedback"
-                      id="confirm-password-feedback"
-                    >
-                      Passwords must match.
-                    </div>
-                  </div>
-
-                  <!-- Terms and Conditions -->
-                  <div class="col-12">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        id="terms"
-                        required
-                      />
-                      <label class="form-check-label" for="terms">
-                        I agree to the
-                        <a
-                          href="#"
-                          data-bs-toggle="modal"
-                          data-bs-target="#termsModal"
-                          >Terms and Conditions</a
-                        >
-                      </label>
-                      <div class="invalid-feedback">
-                        You must agree before submitting.
-                      </div>
-                    </div>
-                  </div>
+      
+                 <!-- Username -->
+            <div class="custom-col-md-6">
+              <div class="custom-form-group">
+                <label for="username" class="custom-form-label">Username</label>
+                <div class="custom-input-group">
+                  <span class="custom-input-group-text">@</span>
+                  <input type="text" class="custom-form-control" id="username" required minlength="4" pattern="[a-zA-Z0-9_]+">
                 </div>
-
-                <div class="d-grid gap-2 mt-4">
-                  <button type="submit" class="btn btn-primary">
-                    Create Account
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-outline-secondary"
-                    data-bs-dismiss="modal"
-                  >
-                    Cancel
-                  </button>
+                <div class="custom-invalid-feedback">
+                  Username must be at least 4 characters and contain only letters, numbers, or underscores.
                 </div>
-
-                <div class="text-center mt-3">
-                  <p>
-                    Already have an account?
-                    <a href="#" id="show-login">Sign In</a>
-                  </p>
-                </div>
-              </form>
+                <small class="custom-help-text" id="username-availability"></small>
+              </div>
             </div>
+            
+            <!-- Email -->
+            <div class="custom-col-md-6">
+              <div class="custom-form-group">
+                <label for="email" class="custom-form-label">Email</label>
+                <input type="email" class="custom-form-control" id="email" required>
+                <div class="custom-invalid-feedback">
+                  Please enter a valid email address.
+                </div>
+              </div>
+            </div>
+            
+            <!-- Age -->
+            <div class="custom-col-md-4">
+              <div class="custom-form-group">
+                <label for="age" class="custom-form-label">Age</label>
+                <input type="number" class="custom-form-control" id="age" min="13" max="120" required>
+                <div class="custom-invalid-feedback">
+                  You must be at least 13 years old to register.
+                </div>
+              </div>
+            </div>
+            
+            <!-- Gender -->
+            <div class="custom-col-md-8">
+              <div class="custom-form-group">
+                <label class="custom-form-label">Gender</label>
+                <div class="custom-radio-group">
+                  <div class="custom-radio-option">
+                    <input type="radio" name="gender" id="male" value="male" checked>
+                    <label for="male">Male</label>
+                  </div>
+                  <div class="custom-radio-option">
+                    <input type="radio" name="gender" id="female" value="female">
+                    <label for="female">Female</label>
+                  </div>
+                  <div class="custom-radio-option">
+                    <input type="radio" name="gender" id="other" value="other">
+                    <label for="other">Other</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Password -->
+            <div class="custom-col-md-6">
+              <div class="custom-form-group">
+                <label for="password" class="custom-form-label">Password</label>
+                <div class="custom-input-group">
+                  <input type="password" class="custom-form-control" id="password" required minlength="8" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}">
+                  <button class="custom-password-toggle" type="button">
+                    Show
+                  </button>
+                </div>
+                <div class="custom-invalid-feedback">
+                  Password must be at least 8 characters with at least one uppercase, one lowercase, and one number.
+                </div>
+                <div class="custom-password-strength">
+                  <div class="custom-strength-meter">
+                    <div id="password-strength" class="custom-strength-bar"></div>
+                  </div>
+                </div>
+                <small class="custom-help-text" id="password-strength-text"></small>
+              </div>
+            </div>
+            
+            <!-- Confirm Password -->
+            <div class="custom-col-md-6">
+              <div class="custom-form-group">
+                <label for="confirmPassword" class="custom-form-label">Confirm Password</label>
+                <div class="custom-input-group">
+                  <input type="password" class="custom-form-control" id="confirmPassword" required>
+                  <button class="custom-password-toggle" type="button">
+                    Show
+                  </button>
+                </div>
+                <div class="custom-invalid-feedback" id="confirm-password-feedback">
+                  Passwords must match.
+                </div>
+              </div>
+            </div>
+            
+            <!-- Terms and Conditions -->
+            <div class="custom-col-12">
+              <div class="custom-checkbox">
+                <input type="checkbox" id="terms" required>
+                <label for="terms">
+                  I agree to the <a href="#" id="terms-link">Terms and Conditions</a>
+                </label>
+                <div class="custom-invalid-feedback">
+                  You must agree before submitting.
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="custom-form-actions">
+            <button type="submit" class="custom-btn custom-btn-primary">
+              Create Account
+            </button>
+            <button type="button" class="custom-btn custom-btn-secondary" onclick="closeModal()">
+              Cancel
+            </button>
+          </div>
+          
+          <div class="custom-auth-redirect">
+            <p>
+              Already have an account?
+              <a href="#" id="show-login">Sign In</a>
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</template>
+     <!-- Registration Modal page Template -->
+    
+
+      <!-- ===== Terms Modal Template ===== -->
+       <!-- ===== Terms Modal Template ===== -->
+
+
+<template id="terms-modal-template">
+  
+<div class="modal fade" id="termsModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Community Guidelines & Terms</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="terms-content">
+          <h4>Welcome to Our Community!</h4>
+          <p>By creating an account, you agree to follow these guidelines:</p>
+          
+          <div class="terms-section">
+            <h5><i class="fas fa-handshake me-2"></i>Be Respectful</h5>
+            <ul>
+              <li>Treat all members with kindness and respect</li>
+              <li>No harassment, hate speech, or discrimination</li>
+              <li>Be polite even in disagreements</li>
+            </ul>
+          </div>
+          
+          <div class="terms-section">
+            <h5><i class="fas fa-comment me-2"></i>Communication Rules</h5>
+            <ul>
+              <li>No offensive language or personal attacks</li>
+              <li>Keep discussions constructive</li>
+              <li>No spamming or excessive self-promotion</li>
+            </ul>
+          </div>
+          
+          <div class="terms-section">
+            <h5><i class="fas fa-shield-alt me-2"></i>Content Policy</h5>
+            <ul>
+              <li>No illegal or harmful content</li>
+              <li>Respect copyright and intellectual property</li>
+              <li>No NSFW (Not Safe For Work) content</li>
+            </ul>
+          </div>
+          
+          <div class="terms-section">
+            <h5><i class="fas fa-user-shield me-2"></i>Account Responsibility</h5>
+            <ul>
+              <li>You're responsible for your account activity</li>
+              <li>Keep your login credentials secure</li>
+              <li>Report suspicious behavior to moderators</li>
+            </ul>
+          </div>
+          
+          <div class="alert alert-warning mt-4">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            Violations may result in content removal, account suspension, or permanent banning.
           </div>
         </div>
       </div>
-
-      <!-- Terms Modal (hidden until needed) -->
-      <div class="modal fade" id="termsModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Terms and Conditions</h5>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-              ></button>
-            </div>
-            <div class="modal-body">
-              <!-- Your terms and conditions content here -->
-              <p>By creating an account on BudgetBuzz, you agree to...</p>
-              <!-- Add more terms content as needed -->
-            </div>
-            <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-primary"
-                data-bs-dismiss="modal"
-              >
-                I Understand
-              </button>
-            </div>
-          </div>
-        </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+          I Understand and Agree
+        </button>
       </div>
-    </template>
-    <!-- Registration Modal page Template -->
+    </div>
+  </div>
+</div>
+  </template>
+<!-- Terms and conditions Modal -->
+
+
+
+
+
+
+
+
+
+
 
     <!-- Footer -->
     <!-- Footer -->
