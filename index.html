@@ -67,11 +67,9 @@
               </li>
             </ul>
 
-            <div class="d-flex gap-2">  
-              <!-- Register Button (now first) -->
-              <button type="button" class="btn btn-register" data-bs-toggle="modal" data-bs-target="#register-modal">
-                Register
-              </button>
+            <button type="button" class="btn btn-register" data-action="open-register">
+              Register
+            </button>
             
               <!-- Sign In Dropdown -->
                <!-- Sign In Dropdown -->
@@ -984,12 +982,20 @@
     <!-- Registration Modal page Template -->
    
       <!-- Modal Structure -->
+     
+
+
+
+
+      
       <template id="register-modal-template">
-        <div id="register-modal" class="custom-modal">
+    
+          <dialog class="custom-modal" data-modal="register"> 
+
           <div class="custom-modal-content">
             <div class="custom-modal-header">
               <h2>Create Your Account</h2>
-              <button type="button" class="custom-close-btn" onclick="closeModal()">×</button>
+              <a href="#" class="custom-close-btn" data-action="close-modal">×</a>
             </div>
             <div class="custom-modal-body">
               <form id="register-form" class="needs-validation" novalidate>
@@ -1011,210 +1017,141 @@
                       <div class="invalid-feedback">Please enter a valid last name (at least 2 characters).</div>
                     </div>
                   </div>
-      
-                 <!-- Username -->
-            <div class="custom-col-md-6">
-              <div class="custom-form-group">
-                <label for="username" class="custom-form-label">Username</label>
-                <div class="custom-input-group">
-                  <span class="custom-input-group-text">@</span>
-                  <input type="text" class="custom-form-control" id="username" required minlength="4" pattern="[a-zA-Z0-9_]+">
-                </div>
-                <div class="custom-invalid-feedback">
-                  Username must be at least 4 characters and contain only letters, numbers, or underscores.
-                </div>
-                <small class="custom-help-text" id="username-availability"></small>
-              </div>
-            </div>
-            
-            <!-- Email -->
-            <div class="custom-col-md-6">
-              <div class="custom-form-group">
-                <label for="email" class="custom-form-label">Email</label>
-                <input type="email" class="custom-form-control" id="email" required>
-                <div class="custom-invalid-feedback">
-                  Please enter a valid email address.
-                </div>
-              </div>
-            </div>
-            
-            <!-- Age -->
-            <div class="custom-col-md-4">
-              <div class="custom-form-group">
-                <label for="age" class="custom-form-label">Age</label>
-                <input type="number" class="custom-form-control" id="age" min="13" max="120" required>
-                <div class="custom-invalid-feedback">
-                  You must be at least 13 years old to register.
-                </div>
-              </div>
-            </div>
-            
-            <!-- Gender -->
-            <div class="custom-col-md-8">
-              <div class="custom-form-group">
-                <label class="custom-form-label">Gender</label>
-                <div class="custom-radio-group">
-                  <div class="custom-radio-option">
-                    <input type="radio" name="gender" id="male" value="male" checked>
-                    <label for="male">Male</label>
+        
+                  <!-- Username -->
+                  <div class="custom-col-md-6">
+                    <div class="custom-form-group">
+                      <label for="username" class="custom-form-label">Username</label>
+                      <div class="custom-input-group">
+                        <span class="custom-input-group-text">@</span>
+                        <input type="text" class="custom-form-control" id="username" required minlength="4" pattern="[a-zA-Z0-9_]+">
+                      </div>
+                      <div class="custom-invalid-feedback">
+                        Username must be at least 4 characters and contain only letters, numbers, or underscores.
+                      </div>
+                      <small class="custom-help-text" id="username-availability"></small>
+                    </div>
                   </div>
-                  <div class="custom-radio-option">
-                    <input type="radio" name="gender" id="female" value="female">
-                    <label for="female">Female</label>
+                  
+                  <!-- Email -->
+                  <div class="custom-col-md-6">
+                    <div class="custom-form-group">
+                      <label for="email" class="custom-form-label">Email</label>
+                      <input type="email" class="custom-form-control" id="email" required>
+                      <div class="custom-invalid-feedback">
+                        Please enter a valid email address.
+                      </div>
+                    </div>
                   </div>
-                  <div class="custom-radio-option">
-                    <input type="radio" name="gender" id="other" value="other">
-                    <label for="other">Other</label>
+                  
+                  <!-- Age -->
+                  <div class="custom-col-md-4">
+                    <div class="custom-form-group">
+                      <label for="age" class="custom-form-label">Age</label>
+                      <input type="number" class="custom-form-control" id="age" min="13" max="120" required>
+                      <div class="custom-invalid-feedback">
+                        You must be at least 13 years old to register.
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Gender -->
+                  <div class="custom-col-md-8">
+                    <div class="custom-form-group">
+                      <label class="custom-form-label">Gender</label>
+                      <div class="custom-radio-group">
+                        <div class="custom-radio-option">
+                          <input type="radio" name="gender" id="male" value="male" checked>
+                          <label for="male">Male</label>
+                        </div>
+                        <div class="custom-radio-option">
+                          <input type="radio" name="gender" id="female" value="female">
+                          <label for="female">Female</label>
+                        </div>
+                        <div class="custom-radio-option">
+                          <input type="radio" name="gender" id="other" value="other">
+                          <label for="other">Other</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Password -->
+                  <div class="custom-col-md-6">
+                    <div class="custom-form-group">
+                      <label for="password" class="custom-form-label">Password</label>
+                      <div class="custom-input-group">
+                        <input type="password" class="custom-form-control" id="password" required minlength="8" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}">
+                        <!-- NOTE: Password toggle would still need a tiny bit of JS -->
+                        <button class="custom-password-toggle" type="button">Show</button>
+                      </div>
+                      <div class="custom-invalid-feedback">
+                        Password must be at least 8 characters with at least one uppercase, one lowercase, and one number.
+                      </div>
+                      <div class="custom-password-strength">
+                        <div class="custom-strength-meter">
+                          <div id="password-strength" class="custom-strength-bar"></div>
+                        </div>
+                      </div>
+                      <small class="custom-help-text" id="password-strength-text"></small>
+                    </div>
+                  </div>
+                  
+                  <!-- Confirm Password -->
+                  <div class="custom-col-md-6">
+                    <div class="custom-form-group">
+                      <label for="confirmPassword" class="custom-form-label">Confirm Password</label>
+                      <div class="custom-input-group">
+                        <input type="password" class="custom-form-control" id="confirmPassword" required>
+                        <!-- NOTE: Password toggle would still need a tiny bit of JS -->
+                        <button class="custom-password-toggle" type="button">Show</button>
+                      </div>
+                      <div class="custom-invalid-feedback" id="confirm-password-feedback">
+                        Passwords must match.
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Terms and Conditions -->
+                  <div class="custom-col-12">
+                    <div class="custom-checkbox">
+                      <input type="checkbox" id="terms" required>
+                      <label for="terms">
+                        I agree to the <a href="#termsModal">Terms and Conditions</a>
+                      </label>
+                      <div class="custom-invalid-feedback">
+                        You must agree before submitting.
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-            
-            <!-- Password -->
-            <div class="custom-col-md-6">
-              <div class="custom-form-group">
-                <label for="password" class="custom-form-label">Password</label>
-                <div class="custom-input-group">
-                  <input type="password" class="custom-form-control" id="password" required minlength="8" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}">
-                  <button class="custom-password-toggle" type="button">
-                    Show
+                
+                <div class="custom-form-actions">
+                  <button type="submit" class="custom-btn custom-btn-primary">
+                    Create Account
                   </button>
+                  <a href="#" class="custom-btn custom-btn-secondary">
+                    Cancel
+                  </a>
                 </div>
-                <div class="custom-invalid-feedback">
-                  Password must be at least 8 characters with at least one uppercase, one lowercase, and one number.
+                
+                <div class="custom-auth-redirect">
+                  <p>
+                    Already have an account?
+                    <a href="#login-modal" id="show-login">Sign In</a>
+                  </p>
                 </div>
-                <div class="custom-password-strength">
-                  <div class="custom-strength-meter">
-                    <div id="password-strength" class="custom-strength-bar"></div>
-                  </div>
-                </div>
-                <small class="custom-help-text" id="password-strength-text"></small>
-              </div>
-            </div>
-            
-            <!-- Confirm Password -->
-            <div class="custom-col-md-6">
-              <div class="custom-form-group">
-                <label for="confirmPassword" class="custom-form-label">Confirm Password</label>
-                <div class="custom-input-group">
-                  <input type="password" class="custom-form-control" id="confirmPassword" required>
-                  <button class="custom-password-toggle" type="button">
-                    Show
-                  </button>
-                </div>
-                <div class="custom-invalid-feedback" id="confirm-password-feedback">
-                  Passwords must match.
-                </div>
-              </div>
-            </div>
-            
-            <!-- Terms and Conditions -->
-            <div class="custom-col-12">
-              <div class="custom-checkbox">
-                <input type="checkbox" id="terms" required>
-                <label for="terms">
-                  I agree to the <a href="#" id="terms-link">Terms and Conditions</a>
-                </label>
-                <div class="custom-invalid-feedback">
-                  You must agree before submitting.
-                </div>
-              </div>
+              </form>
             </div>
           </div>
-          
-          <div class="custom-form-actions">
-            <button type="submit" class="custom-btn custom-btn-primary">
-              Create Account
-            </button>
-            <button type="button" class="custom-btn custom-btn-secondary" onclick="closeModal()">
-              Cancel
-            </button>
-          </div>
-          
-          <div class="custom-auth-redirect">
-            <p>
-              Already have an account?
-              <a href="#" id="show-login">Sign In</a>
-            </p>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
+        </div>
+        </dialog>
+
 </template>
      <!-- Registration Modal page Template -->
     
 
-      <!-- ===== Terms Modal Template ===== -->
-       <!-- ===== Terms Modal Template ===== -->
 
-
-<template id="terms-modal-template">
-  
-<div class="modal fade" id="termsModal" tabindex="-1">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Community Guidelines & Terms</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <div class="terms-content">
-          <h4>Welcome to Our Community!</h4>
-          <p>By creating an account, you agree to follow these guidelines:</p>
-          
-          <div class="terms-section">
-            <h5><i class="fas fa-handshake me-2"></i>Be Respectful</h5>
-            <ul>
-              <li>Treat all members with kindness and respect</li>
-              <li>No harassment, hate speech, or discrimination</li>
-              <li>Be polite even in disagreements</li>
-            </ul>
-          </div>
-          
-          <div class="terms-section">
-            <h5><i class="fas fa-comment me-2"></i>Communication Rules</h5>
-            <ul>
-              <li>No offensive language or personal attacks</li>
-              <li>Keep discussions constructive</li>
-              <li>No spamming or excessive self-promotion</li>
-            </ul>
-          </div>
-          
-          <div class="terms-section">
-            <h5><i class="fas fa-shield-alt me-2"></i>Content Policy</h5>
-            <ul>
-              <li>No illegal or harmful content</li>
-              <li>Respect copyright and intellectual property</li>
-              <li>No NSFW (Not Safe For Work) content</li>
-            </ul>
-          </div>
-          
-          <div class="terms-section">
-            <h5><i class="fas fa-user-shield me-2"></i>Account Responsibility</h5>
-            <ul>
-              <li>You're responsible for your account activity</li>
-              <li>Keep your login credentials secure</li>
-              <li>Report suspicious behavior to moderators</li>
-            </ul>
-          </div>
-          
-          <div class="alert alert-warning mt-4">
-            <i class="fas fa-exclamation-triangle me-2"></i>
-            Violations may result in content removal, account suspension, or permanent banning.
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
-          I Understand and Agree
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-  </template>
-<!-- Terms and conditions Modal -->
 
 
 
@@ -1268,7 +1205,9 @@
 
 
   <!-- If your HTML is inside real-time-forum directory -->
-  <script src="./script.js" defer></script>
+  <script src="./assets/js/script.js" defer></script>
+  <script src="./assets/js/passwordtoggle.js"></script>
+  <script src="./assets/js/main.js" defer></script>
 
   </body>
 </html>
