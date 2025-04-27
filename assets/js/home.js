@@ -1,4 +1,7 @@
 // slider.js
+
+(function() {
+
 let carouselInterval = null;
 let currentCarouselIndex = 0;
 
@@ -348,3 +351,4 @@ document.addEventListener('DOMContentLoaded', () => {
   setupHamburgerMenu();
   loadPage('home');
 });
+})();

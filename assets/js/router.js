@@ -2,58 +2,22 @@
 
 // Route configuration
 const routes = {
-  'home': { 
-    template: 'home-template', 
-    authRequired: false,
-    script: '/assets/js/home.js'
-  },
-  'store': { 
-    template: 'storeTemplate', 
-    authRequired: false
-  },
-  'topicsbar': { 
-    template: 'topicsbar-template', 
-    authRequired: false
-  },
-  'account': { 
-    template: 'account-template', 
-    authRequired: true,
-    init: showAccountPage,
-    script: '/assets/js/account.js'
-  },
-  'signin': { 
-    template: 'signin-template', 
-    authRequired: false,
-    init: showSignInForm,
-    script: '/assets/js/signinpage.js'
-  },
-  'register': {
-    template: 'register-modal-template',
-    authRequired: false,
-    init: showRegisterForm,
-    script: '/assets/js/registerfront.js'
-  },
-  'feed': {
-    template: 'feed-template',
-    authRequired: false
-  },
-  'template-create-post-modal': {
-    template: 'template-create-post-modal',
-    authRequired: true,
-    isModal: true
-  }
+  'home': { template: 'home-template', authRequired: false, script: '/assets/js/home.js' },
+  'store': { template: 'storeTemplate', authRequired: false },
+  'topicsbar': { template: 'topicsbar-template', authRequired: false },
+  'account': { template: 'account-template', authRequired: true, init: showAccountPage, script: '/assets/js/account.js' },
+  'signin': { template: 'signin-template', authRequired: false, init: showSignInForm, script: '/assets/js/signinpage.js' },
+  'register': { template: 'register-modal-template', authRequired: false, init: showRegisterForm, script: '/assets/js/registerfront.js' },
+  'feed': { template: 'feed-template', authRequired: false },
+  'template-create-post-modal': { template: 'template-create-post-modal', authRequired: true, isModal: true }
 };
 
-// Track loaded scripts to prevent duplicate loading
 const loadedScripts = new Set();
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Set up initial route
-  handleRoute(window.location.pathname);
-  
-  // Event delegation for navigation
+  handleRoute(getCurrentRoute());
+
   document.body.addEventListener('click', (e) => {
-    // Handle regular page links
     if (e.target.matches('.nav-link[data-page]')) {
       e.preventDefault();
       const page = e.target.dataset.page;
@@ -66,34 +30,52 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Handle auth redirect links
+    // Handle Register button click
+    if (e.target.matches('#open-register-modal')) {
+      e.preventDefault();
+      navigateTo('register');
+    }
+
+    // Handle Sign In button click
+    if (e.target.matches('#open-signin-page')) {
+      e.preventDefault();
+      navigateTo('signin');
+    }
+
+    // Handle other login button if exists
     if (e.target.matches('#show-login')) {
       e.preventDefault();
       navigateTo('signin');
     }
   });
 
-  // Listen to back/forward navigation
-  window.addEventListener('popstate', () => {
-    handleRoute(window.location.pathname);
+  // Listen for hash changes instead of popstate
+  window.addEventListener('hashchange', () => {
+    handleRoute(getCurrentRoute());
   });
 });
 
+// Get current route from hash
+function getCurrentRoute() {
+  const hash = window.location.hash || '#/home'; // Default to home
+  const route = hash.slice(2); // Remove "#/"
+  return route || 'home';
+}
+
 // Main route handler
 function handleRoute(route) {
-  // Hide all sections first
   const allSections = document.querySelectorAll('.view');
   allSections.forEach(section => section.classList.add('d-none'));
 
   const [page] = route.split('/').filter(Boolean);
-  const routeConfig = routes[page] || routes['home']; // Default to home
-  
-  // Check authentication if required
+  const routeConfig = routes[page] || routes['home'];
+
   if (routeConfig.authRequired && !isLoggedIn()) {
+    // Store the intended page before redirecting to login
+    localStorage.setItem('redirectAfterLogin', page);
     return navigateTo('signin');
   }
 
-  // Handle modal routes differently
   if (routeConfig.isModal) {
     showModal(page);
     return;
@@ -104,8 +86,7 @@ function handleRoute(route) {
 
 // Navigation function
 function navigateTo(page) {
-  window.history.pushState({}, '', `/${page}`);
-  handleRoute(`/${page}`);
+  window.location.hash = `#/${page}`;
 }
 
 // Page loader
@@ -121,27 +102,23 @@ function loadPage(page, routeConfig = routes[page]) {
     return navigateTo('home');
   }
 
-  // Inject template content
   injectTemplateContent(template);
-  
-  // Call init function if specified
+
   if (routeConfig.init) {
     routeConfig.init();
   }
 
-  // Load associated script if specified
   if (routeConfig.script && !loadedScripts.has(routeConfig.script)) {
     loadScript(routeConfig.script);
     loadedScripts.add(routeConfig.script);
   }
 
-  // Update UI based on auth state
   updateAuthUI();
 }
 
 // Template injection
 function injectTemplateContent(template) {
-  const container = document.getElementById('main-content');
+  const container = document.getElementById('app-content');
   if (!container) {
     console.error('Main content container not found');
     return;
@@ -153,31 +130,52 @@ function injectTemplateContent(template) {
 }
 
 // Modal handling
+// Modal handling - Updated version
 function showModal(modalId) {
   const routeConfig = routes[modalId];
   if (!routeConfig) return;
 
+  // Check if authentication is required and user is not logged in
   if (routeConfig.authRequired && !isLoggedIn()) {
-    return navigateTo('signin');
+    // Store the intended modal ID in localStorage before redirecting
+    localStorage.setItem('redirectAfterLogin', modalId);
+    
+    // Show a message to the user (optional)
+    alert('Please sign in to create a post');
+    
+    // Redirect to signin page
+    navigateTo('signin');
+    return;
   }
 
+  // If we get here, either no auth is required or user is logged in
   const template = document.getElementById(routeConfig.template);
   if (!template) return;
 
+  // Create modal container
   const modalContainer = document.createElement('div');
   modalContainer.className = 'modal-overlay';
-  modalContainer.innerHTML = '';
+  
+  // Add modal content
   const clone = document.importNode(template.content, true);
   modalContainer.appendChild(clone);
   
+  // Add to DOM
   document.body.appendChild(modalContainer);
-  
-  // Add close handler
+
+  // Handle close buttons
   const closeButtons = modalContainer.querySelectorAll('[data-modal-close]');
   closeButtons.forEach(btn => {
     btn.addEventListener('click', () => {
       document.body.removeChild(modalContainer);
     });
+  });
+
+  // Close modal when clicking outside content (optional)
+  modalContainer.addEventListener('click', (e) => {
+    if (e.target === modalContainer) {
+      document.body.removeChild(modalContainer);
+    }
   });
 }
 
@@ -212,15 +210,14 @@ function loadScript(src) {
 }
 
 // Page-specific functions
-function showRegisterForm() {
-  // Additional register form setup if needed
+function showRegisterForm() { 
+  // This will be implemented in your registerfront.js
 }
 
-function showSignInForm() {
-  // Additional signin form setup if needed
+function showSignInForm() { 
+  // This will be implemented in your signinpage.js
 }
 
-function showAccountPage() {
-  // Additional account page setup if needed
+function showAccountPage() { 
+  // This will be implemented in your account.js
 }
-initializeRouter();
