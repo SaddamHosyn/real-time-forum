@@ -5,9 +5,11 @@ import (
 	"log"
 	"realtimeforum/database"
 	"realtimeforum/model"
+	"realtimeforum/server"
 )
 
 func main() {
+	server.StartServer()
 	db, err := database.InitDatabase()
 	if err != nil {
 		log.Fatal("Database initialization failed:", err)
@@ -16,4 +18,5 @@ func main() {
 
 	model.DB = db
 	fmt.Println("Connected and initialized DB!")
+	server.StartServer() 
 }

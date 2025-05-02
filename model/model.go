@@ -57,7 +57,7 @@ type Post struct {
 	Title     string    `json:"title"`
 	Content   string    `json:"content"`
 	UserID    int       `json:"user_id"`
-	Topics    string    `json:"topics"`
+	Topics    []string   `json:"topics"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 	Upvotes   int       `json:"upvotes"`

@@ -40,19 +40,22 @@ function setupEventListeners() {
 }
 
 function checkUserSession() {
-  const userData = localStorage.getItem('user');
-  appState.user = userData ? JSON.parse(userData) : null;
+  try {
+    const userData = localStorage.getItem('user');
+    appState.user = userData ? JSON.parse(userData) : null;
+  } catch (error) {
+    console.error('Failed to parse user data from localStorage', error);
+    appState.user = null;
+  }
   
-  // Specific UI updates
+  // Update UI
   if (appState.user) {
     document.getElementById('account-buttons').classList.remove('d-none');
     document.getElementById('registerlogin-buttons').classList.add('d-none');
   }
   
-  // Generic auth-aware UI updates
   updateUIForAuthState();
 }
-
 function updateUIForAuthState() {
   const authElements = document.querySelectorAll('[data-auth]');
   authElements.forEach(el => {
