@@ -825,7 +825,7 @@
 
 
 
-    <!-- Component Templates (for dynamic content like advisements on the main page) -->
+    
 
     <!-- log in pop up page -->
     <!-- log in pop up page -->
@@ -1084,6 +1084,66 @@
 
 
 
+   <!-- SINGLE POST TEMPLATE -->
+<template id="single-post-template">
+  <div class="single-post-container">
+    <!-- Post Content -->
+    <div class="post">
+      <h1 class="post-title"></h1>
+      <div class="post-meta">
+        <span class="post-author"></span>
+        <span class="post-date"></span>
+      </div>
+      <div class="post-content"></div>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="comments-section">
+      <h2>Comments (<span class="comment-count">0</span>)</h2>
+      
+      <!-- Existing Comments List -->
+      <div class="comments-list">
+        <!-- Comments will be inserted here -->
+      </div>
+
+      <!-- Add Comment Form -->
+      <form class="add-comment-form">
+        <textarea placeholder="Write your comment..." required></textarea>
+        <button type="submit" class="btn btn-primary">Post Comment</button>
+      </form>
+    </div>
+  </div>
+</template>
+
+<!-- SINGLE COMMENT TEMPLATE -->
+<template id="single-comment-template">
+  <div class="comment">
+    <div class="comment-author"></div>
+    <div class="comment-date"></div>
+    <div class="comment-content"></div>
+  </div>
+</template>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1101,6 +1161,8 @@
   <script src="/assets/js/home.js" defer></script>
   <script src="/assets/js/app.js" defer></script>
   <script src="/assets/js/router.js" defer></script>
+  <script src="/assets/js/comment.js" defer></script>
+  <script src="/assets/js/profile.js" defer></script>
 
  
    
