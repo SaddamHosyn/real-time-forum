@@ -794,6 +794,28 @@ h2 {
 
 
 
+/* NOT-ALLOWED WHEN MORE THAN 3 TOPICS ARE SELECTED */
+.create-post-topics-container label.blurred-topic {
+  opacity: 0.5;
+  filter: blur(2px);
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.create-post-topics-container label.blurred-topic * {
+  filter: blur(2px);
+}
+
+.create-post-topics-container input[name="create-post-topic"]:disabled {
+  cursor: not-allowed;
+}
+
+.create-post-topics-container input[name="create-post-topic"]:disabled + span {
+  cursor: not-allowed;
+}
+
+
+
 
 
 
@@ -801,7 +823,7 @@ h2 {
 
 
  /* all topic options while posting*/
-
+ /* all topic options while posting*/
 
 
   /* main page slider*/
@@ -1981,3 +2003,7 @@ h2 {
 }
 
 /* Single Post with comments Styles */
+
+
+
+

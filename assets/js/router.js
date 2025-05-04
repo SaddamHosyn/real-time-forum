@@ -4,7 +4,7 @@
 const routes = {
   'home': { template: 'home-template', authRequired: false, script: '/assets/js/home.js' },
   'store': { template: 'storeTemplate', authRequired: false },
-  'topicsbar': { template: 'topicsbar-template', authRequired: false },
+  'topicsbar': { template: 'topicsbar-template', authRequired: true },
   'account': { template: 'account-template', authRequired: true, init: showAccountPage, script: '/assets/js/account.js' },
   'signin': { template: 'signin-template', authRequired: false, init: showSignInForm, script: '/assets/js/signinpage.js' },
   'register': { template: 'register-modal-template', authRequired: false, init: showRegisterForm, script: '/assets/js/registerfront.js' },
@@ -42,12 +42,22 @@ document.addEventListener('DOMContentLoaded', () => {
       navigateTo('signin');
     }
 
-    // Handle other login button if exists
-    if (e.target.matches('#show-login')) {
-      e.preventDefault();
-      navigateTo('signin');
-    }
-  });
+   // Combined handler for sign-in/register toggle links
+   if (e.target.matches('#show-register, #show-login')) {
+    e.preventDefault();
+    const modal = e.target.closest('.modal-overlay, .signin-modal');
+    if (modal) modal.remove();
+    navigateTo(e.target.id === 'show-register' ? 'register' : 'signin');
+  }
+
+  // Old login button handler (can be removed if no longer needed)
+  if (e.target.matches('#show-login')) {
+    e.preventDefault();
+    const modal = e.target.closest('.modal-overlay');
+    if (modal) modal.remove();
+    navigateTo('signin');
+  }
+});
 
   // Listen for hash changes instead of popstate
   window.addEventListener('hashchange', () => {
@@ -73,6 +83,9 @@ function handleRoute(route) {
   if (routeConfig.authRequired && !isLoggedIn()) {
     // Store the intended page before redirecting to login
     localStorage.setItem('redirectAfterLogin', page);
+    const action = page === 'template-create-post-modal' ? 'create a post' : 'access topics';
+    alert(`Please sign in to ${action}`);
+
     return navigateTo('signin');
   }
 
