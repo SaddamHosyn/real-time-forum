@@ -6,7 +6,7 @@ import (
 	"net/http"
 	
 	"realtimeforum/auth"
-	"realtimeforum/model"
+	"realtimeforum/database"
 	"realtimeforum/utils"
 )
 
@@ -42,13 +42,13 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if existingID, _ := auth.UserExists(model.DB, req.Username); existingID != "" {
+	if existingID, _ := auth.UserExist(database.DB, req.Username); existingID != "" {
 		respondWithJSON(w, http.StatusConflict, map[string]string{"error": "username already exists"})
 		return
 	}
 
 	if err := auth.AddUser(
-		model.DB,
+		database.DB,
 		req.Username,
 		req.Email,
 		req.Password,

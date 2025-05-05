@@ -1,17 +1,24 @@
 package utils
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"errors"
-	"math/rand"
-	"realtimeforum/model"
+	"fmt"
 	"regexp"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
+	"realtimeforum/model"
 )
 
 const (
 	SessionDuration = 24 * time.Hour
+)
+
+var (
+	usernameRegex = regexp.MustCompile(`^[a-zA-Z0-9_]+$`)
+	emailRegex    = regexp.MustCompile(`^[^@]+@[^@]+\.[^@]+$`)
 )
 
 // ValidateInputs checks if the provided inputs are valid
@@ -19,10 +26,10 @@ func ValidateInputs(username, email, password, firstName, lastName string, age i
 	if len(username) < 4 {
 		return errors.New("username must be at least 4 characters")
 	}
-	if !regexp.MustCompile(`^[a-zA-Z0-9_]+$`).MatchString(username) {
+	if !usernameRegex.MatchString(username) {
 		return errors.New("username can only contain letters, numbers and underscores")
 	}
-	if !regexp.MustCompile(`^[^@]+@[^@]+\.[^@]+$`).MatchString(email) {
+	if !emailRegex.MatchString(email) {
 		return errors.New("invalid email format")
 	}
 	if len(password) < 8 {
@@ -52,33 +59,19 @@ func CheckPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
-// For hashing passwords during registration
+// HashPassword hashes the password using bcrypt
 func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	return string(bytes), err
 }
 
-// GenerateSessionToken generates a session token (simple random string)
+// GenerateSessionToken generates a secure random session token
 func GenerateSessionToken(user *model.User) (string, error) {
-	// Generate a random session ID
-	rand.Seed(time.Now().UnixNano())
-	sessionToken := randSeq(64) // Longer random string for better security
-
-	// Optionally, set an expiration time for the session in the database
-	// expiration := time.Now().Add(time.Hour * 24) // 1-day expiration
-
-	// Store sessionToken and expiration time in the user's session (in the DB)
-	return sessionToken, nil
-}
-
-// randSeq generates a random string of a given length
-func randSeq(n int) string {
-	const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	var result []byte
-	for i := 0; i < n; i++ {
-		result = append(result, letters[rand.Intn(len(letters))])
+	b := make([]byte, 32) // 256-bit token
+	if _, err := rand.Read(b); err != nil {
+		return "", fmt.Errorf("failed to generate token: %w", err)
 	}
-	return string(result)
+	return base64.URLEncoding.EncodeToString(b), nil
 }
 
 // GetCurrentTime returns the current time in UTC
@@ -86,8 +79,7 @@ func GetCurrentTime() time.Time {
 	return time.Now().UTC()
 }
 
-// GetSessionExpiry returns the session expiry time (e.g., 24 hours from now)
-// SessionExpiry calculates when a session should expire
+// SessionExpiry returns the expiry time for a session
 func SessionExpiry() time.Time {
 	return GetCurrentTime().Add(SessionDuration)
 }

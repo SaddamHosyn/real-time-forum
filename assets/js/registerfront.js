@@ -5,22 +5,28 @@ document.addEventListener('DOMContentLoaded', () => {
   
     // Event: Open modal when button is clicked
     registerBtn.addEventListener('click', () => {
-      if (!modal) {
-        const clone = document.importNode(template.content, true);
-        document.body.appendChild(clone);
-        modal = document.getElementById('registerModal');
+// Clean up any existing modal and overlay before creating new ones
+const existingModal = document.getElementById('registerModal');
+if (existingModal) existingModal.remove();
 
-    // Add blur overlay if not already there
-    if (!document.getElementById('page-blur-overlay')) {
-      const blurDiv = document.createElement('div');
-      blurDiv.id = 'page-blur-overlay';
-      document.body.appendChild(blurDiv);
-    }
+const existingBlur = document.getElementById('page-blur-overlay');
+if (existingBlur) existingBlur.remove();
+
+// Now create a fresh one
+const clone = document.importNode(template.content, true);
+document.body.appendChild(clone);
+modal = document.getElementById('registerModal');
+
+// Add new blur overlay
+const blurDiv = document.createElement('div');
+blurDiv.id = 'page-blur-overlay';
+document.body.appendChild(blurDiv);
+
+setupModalLogic(modal);
 
 
-  
-        setupModalLogic(modal); // hook up events inside the modal
-      }
+
+
   
       modal.style.display = 'block';
 
@@ -39,6 +45,21 @@ document.addEventListener('DOMContentLoaded', () => {
       const closeButtons = modal.querySelectorAll('#close-modal');
       const passwordInput = modal.querySelector('#password');
       const confirmPasswordInput = modal.querySelector('#confirmPassword');
+      // Prevent clipboard actions on confirmPassword input
+      ['copy', 'paste', 'cut', 'drop'].forEach(evt =>
+        confirmPasswordInput.addEventListener(evt, (e) => {
+          e.preventDefault();
+          confirmPasswordInput.value = ''; // Clear field if paste/drop attempted
+        })
+      );
+
+      // Disable dragover just in case
+      confirmPasswordInput.addEventListener('dragover', e => e.preventDefault());
+
+
+
+
+
       const passwordToggles = modal.querySelectorAll('.password-toggle');
       const passwordStrengthBar = modal.querySelector('#password-strength');
       const passwordStrengthText = modal.querySelector('#password-strength-text');
@@ -97,6 +118,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Confirm password match (Real-time validation)
   function validatePasswords() {
     const feedback = modal.querySelector('#confirm-password-feedback');
+
+    
     if (confirmPasswordInput.value !== passwordInput.value) {
       confirmPasswordInput.setCustomValidity('Passwords do not match');
       feedback.style.display = 'block';

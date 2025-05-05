@@ -1,11 +1,10 @@
 package model
 
 import (
-	"database/sql"
 	"time"
 )
 
-var DB *sql.DB
+
 
 type HomePageData struct {
 	Posts      []Post   `json:"posts"`
@@ -37,7 +36,7 @@ type Topic struct {
 }
 
 type User struct {
-	ID            int        `json:"id"`
+	ID            string        `json:"id"`
 	FirstName     string     `json:"first_name"`
 	LastName      string     `json:"last_name"`
 	Username      string     `json:"username"`
@@ -56,7 +55,7 @@ type Post struct {
 	Author    string    `json:"author"`
 	Title     string    `json:"title"`
 	Content   string    `json:"content"`
-	UserID    int       `json:"user_id"`
+	UserID    string       `json:"user_id"`
 	Topics    []string   `json:"topics"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
@@ -69,7 +68,7 @@ type Comment struct {
 	ID        int       `json:"id"`
 	Content   string    `json:"content"`
 	Author    string    `json:"author"`
-	UserID    int       `json:"user_id"`
+	UserID    string       `json:"user_id"`
 	PostID    int       `json:"post_id"`
 	CreatedAt time.Time `json:"created_at"`
 	Upvotes   int       `json:"upvotes"`
@@ -80,6 +79,6 @@ type Comment struct {
 type Votes struct {
 	ID     int `json:"id"`
 	Vote   int `json:"vote"`
-	UserID int `json:"user_id"`
+	UserID string `json:"user_id"`
 	PostID int `json:"post_id"`
 }

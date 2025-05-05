@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"realtimeforum/database"
-	"realtimeforum/model"
 	"realtimeforum/server"
 )
 
@@ -16,7 +15,7 @@ func main() {
 	}
 	defer db.Close()
 
-	model.DB = db
+	database.DB = db
 	fmt.Println("Connected and initialized DB!")
 	server.StartServer() 
 }

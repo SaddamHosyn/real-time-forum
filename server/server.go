@@ -2,10 +2,11 @@ package server
 
 import (
 	"database/sql"
-	"realtimeforum/auth"
-	"realtimeforum/model"
 	"log"
 	"net/http"
+	"realtimeforum/database"
+
+	"realtimeforum/handler"
 
 	_ "github.com/mattn/go-sqlite3" // or your database driver
 )
@@ -14,15 +15,15 @@ import (
 func StartServer() {
 	// Connect to the database
 	var err error
-	model.DB, err = sql.Open("sqlite3", "./forum.db") // Adjust path if needed
+	database.DB, err = sql.Open("sqlite3", "./forum.db") // Adjust path if needed
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}
-	defer model.DB.Close()
+	defer database.DB.Close()
 
 	// Define routes
-	http.HandleFunc("/api/login", auth.LoginHandler)
-
+	http.HandleFunc("/api/login", handler.LoginHandler)
+	http.HandleFunc("/api/create-post", handler.CreatePostHandler)
 
 	// Start the server
 	log.Println("Server started on http://localhost:8080")
