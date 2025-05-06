@@ -812,16 +812,18 @@
     <!-- log in pop up page -->
     <!-- log in pop up page -->
    
-      <!-- Modal Structure Only -->
-      <template id="signin-template">
-        <div id="login-modal" class="signin-modal hidden">
-          <div class="signin-dialog">
-            <div class="signin-content">
-              <div class="signin-header">
-                <h5 class="signin-title">Sign In</h5>
-                <button type="button" class="signin-close" id="close-login-modal">&times;</button>
+    <template id="signin-template">
+      <div class="container mt-5">
+        <div class="row justify-content-center">
+          <div class="col-md-6">
+            <div class="signin-card">
+              <div class="signin-card-header">
+                <h5 class="signin-card-title mb-0">Sign In</h5>
+                  <!-- Close button (x) -->
+            <button type="button" id="close-signin" class="btn btn-light">×</button>
+
               </div>
-              <div class="signin-body">
+              <div class="signin-card-body">
                 <form id="login-form">
                   <div class="mb-3">
                     <label class="form-label">Email or Username</label>
@@ -854,7 +856,8 @@
             </div>
           </div>
         </div>
-      </template>
+      </div>
+    </template>
       
       
 

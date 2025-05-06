@@ -305,48 +305,53 @@ body {
 
 
 
-/* Only apply to Sign In modal */
-.signin-modal.hidden {
-  display: none;
+/* Only apply to Sign In  */
+/* Only apply to Sign In  */
+/* Signin Card Container */
+.signin-card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
 }
 
-.signin-modal {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1050;
-}
-
-.signin-dialog {
-  background-color: white;
-  border-radius: 8px;
-  max-width: 500px;
-  width: 90%;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-}
-
-.signin-header,
-.signin-body {
-  padding: 1rem;
-}
-
-.signin-header {
+/* Header Section */
+.signin-card-header {
+  position: relative; /* Add this */
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #dee2e6;
+  padding: 1rem 1.25rem;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #ddd;
 }
 
-.signin-close {
+.signin-card-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.signin-card-body {
+  padding: 1.25rem;
+}
+
+#close-signin {
   background: none;
   border: none;
   font-size: 1.5rem;
   line-height: 1;
   cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }
+
+#close-signin:hover {
+  color: #e30c0c;
+}
+
 
 /* Sign In Button Styles */
 
