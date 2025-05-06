@@ -116,9 +116,11 @@ function loadPage(page, routeConfig = routes[page]) {
   if (routeConfig.script && !loadedScripts.has(routeConfig.script)) {
     loadScript(routeConfig.script)
       .then(() => {
+        console.log(`Script ${routeConfig.script} loaded.`);
         // After script is loaded, check if there's an init function
-        if (typeof window[routeConfig.init?.name] === 'function') {
-          window[routeConfig.init?.name]();
+        if (page === 'register' && typeof window.setupRegisterPage === 'function') {
+          console.log('Calling setupRegisterPage after script load.');
+          window.setupRegisterPage();
         } else if (routeConfig.init) {
           routeConfig.init();
         }
@@ -127,9 +129,12 @@ function loadPage(page, routeConfig = routes[page]) {
     
     loadedScripts.add(routeConfig.script);
   } else {
-    // If script already loaded or not needed, just run init if present
-    if (routeConfig.init) {
-      routeConfig.init();
+    // If script already loaded or not needed
+    if (page === 'register' && typeof window.setupRegisterPage === 'function') {
+        console.log('Calling setupRegisterPage as script was already loaded.');
+        window.setupRegisterPage();
+    } else if (routeConfig.init) {
+        routeConfig.init();
     }
   }
 

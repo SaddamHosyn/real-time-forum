@@ -1557,7 +1557,8 @@ h2 {
 
 
 /* Register Modal Styles */
-#register-modal.custom-modal {
+/* Register Page Styles */
+.register-page-container {
   position: relative;
   width: 100%;
   max-width: 800px;
@@ -1568,7 +1569,7 @@ h2 {
   overflow: hidden;
 }
 
-.custom-modal-content {
+.register-page-content {
   background: white;
   margin: 5% auto;
   padding: 20px;
@@ -1578,7 +1579,7 @@ h2 {
   
 }
 
-.custom-modal-header {
+.register-page-header {
   background-color: #f8f9fa;
   padding: 20px 30px;
   border-bottom: 1px solid #dee2e6;
@@ -1587,7 +1588,7 @@ h2 {
   align-items: center;
 }
 
-.custom-modal-header h2 {
+.register-page-header h2 {
   margin: 0;
   font-weight: 600;
   color: #343a40;
@@ -1603,9 +1604,7 @@ h2 {
   transition: all 0.3s ease;
 }
 
-.close-btn:hover {
-  color: #ee1919;
-}
+
 
 .custom-modal-body {
    overflow-y: auto;
@@ -1644,9 +1643,9 @@ h2 {
 }
 
 @media (max-width: 768px) {
-  .custom-col-md-4,
-  .custom-col-md-6,
-  .custom-col-md-8 {
+  .col-md-4,
+  .col-md-6,
+  .col-md-8 {
     width: 100%;
   }
 
@@ -1772,7 +1771,7 @@ h2 {
 
 /* create account and cancle button custom styles */
 
-.modal-buttons-row {
+.register-page-buttons {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1781,14 +1780,14 @@ h2 {
   padding-bottom: 1rem;
 }
 
-.modalaccount-footer,
-.modal-footer {
+.register-account-footer,
+.register-cancel-footer {
   margin: 0;
   padding: 0;
 }
 
-.modalaccount-footer .btn,
-.modal-footer .btn {
+.register-account-footer .btn,
+.register-cancel-footer .btn {
   margin: 0;
 }
 /* create account and cancle button custom styles */
@@ -1799,6 +1798,8 @@ h2 {
   text-align: left;      /* Aligns text to the left */
   margin-left: 1rem;     /* Pushes it slightly from the left side */
   margin-right: 1rem;    /* Prevents it from hugging the right edge */
+  color: rgb(76, 76, 228);
+
 }
 /* auth custom styles */
 
@@ -1813,7 +1814,7 @@ h2 {
 
 
 /* password hide and show toggle custom styles */
-.password-input-group .password-toggle {
+.password-input-group .password-toggle-btn {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   height: calc(3.5rem + 2px); /* Match .form-floating input height */
@@ -1821,13 +1822,11 @@ h2 {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.password-input-group .password-toggle:hover {
+.password-input-group .password-toggle-btn:hover {
   background-color: #447e7a;
   color: #17180f;
 }
 /* password hide and show toggle custom styles */
-
-
 
 
 

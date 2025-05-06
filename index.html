@@ -893,172 +893,139 @@
 
 
 
-  <template id="register-modal-template">
-  <!-- Custom Modal Structure -->
-  <div id="registerModal" class="custom-modal">
-    <div class="custom-modal-content">
-      <div class="custom-modal-header">
-        <h2>Create Your Account</h2>
-        <button type="button" class="close-btn" id="close-modal">x</button>
-      </div>
-
-      <div class="custom-modal-body">
-        <!-- Registration Form -->
-        <form id="register-form" class="needs-validation" novalidate>
-          <div class="row">
-            <!-- First Name -->
-            <div class="col-md-6">
-              <div class="form-floating">
-                <input type="text" class="form-control" id="firstName" placeholder="First Name" required minlength="2">
-                <label for="firstName">First Name</label>
-                <div class="invalid-feedback">
-                  Please enter a valid first name (at least 2 characters).
-                </div>
-              </div>
+  <template id="register-template">
+    <div id="register-page" class="register-page-container">
+       <div class="register-page-content">
+            <div class="register-page-header d-flex justify-content-between align-items-center">
+                <h2>Create Your Account</h2>
+                <button type="button" class="btn-close" aria-label="Close" id="close-register"></button>
             </div>
-
-            <!-- Last Name -->
-            <div class="col-md-6">
-              <div class="form-floating">
-                <input type="text" class="form-control" id="lastName" placeholder="Last Name" required minlength="2">
-                <label for="lastName">Last Name</label>
-                <div class="invalid-feedback">
-                  Please enter a valid last name (at least 2 characters).
-                </div>
-              </div>
+            <div class="register-page-body">
+                <form id="registerForm" class="needs-validation" novalidate>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="firstNameInput" placeholder="First Name" required minlength="2">
+                                <label for="firstNameInput">First Name</label>
+                                <div class="invalid-feedback">
+                                    Please enter a valid first name (at least 2 characters).
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="lastNameInput" placeholder="Last Name" required minlength="2">
+                                <label for="lastNameInput">Last Name</label>
+                                <div class="invalid-feedback">
+                                    Please enter a valid last name (at least 2 characters).
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">@</span>
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="usernameInput" placeholder="Username" required minlength="4" pattern="[a-zA-Z0-9_]+">
+                                    <label for="usernameInput">Username</label>
+                                </div>
+                            </div>
+                            <div class="invalid-feedback">
+                                Username must be at least 4 characters and contain only letters, numbers, or underscores.
+                            </div>
+                            <small class="form-text text-muted" id="usernameAvailability"></small>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="email" class="form-control" id="emailInput" placeholder="Email" required>
+                                <label for="emailInput">Email</label>
+                                <div class="invalid-feedback">
+                                    Please enter a valid email address.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-floating">
+                                <input type="number" class="form-control" id="ageInput" placeholder="Age" min="13" max="120" required>
+                                <label for="ageInput">Age</label>
+                                <div class="invalid-feedback">
+                                    You must be at least 13 years old to register.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label">Gender</label>
+                            <div class="d-flex gap-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="gender" id="maleRadio" value="male" checked>
+                                    <label class="form-check-label" for="maleRadio">Male</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="gender" id="femaleRadio" value="female">
+                                    <label class="form-check-label" for="femaleRadio">Female</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="gender" id="otherRadio" value="other">
+                                    <label class="form-check-label" for="otherRadio">Other</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group mb-3 password-input-group">
+                                <div class="form-floating flex-grow-1">
+                                    <input type="password" class="form-control" id="passwordInput" placeholder="Password" required minlength="8" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}">
+                                    <label for="passwordInput">Password</label>
+                                </div>
+                                <button class="btn btn-outline-secondary password-toggle-btn" type="button">Show</button>
+                            </div>
+                            <div class="invalid-feedback">
+                                Password must be at least 8 characters with at least one uppercase, one lowercase, and one number.
+                            </div>
+                            <div class="progress mb-2 password-strength-wrapper">
+                                <div id="passwordStrength" class="progress-bar" role="progressbar"></div>
+                            </div>
+                            <small class="form-text text-muted" id="passwordStrengthText"></small>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group mb-3">
+                                <div class="form-floating">
+                                    <input type="password" class="form-control" id="confirmPasswordInput" placeholder="Confirm Password" autocomplete="new-password" required>
+                                    <label for="confirmPasswordInput">Confirm Password</label>
+                                </div>
+                                <div class="invalid-feedback" id="confirmPasswordFeedback">
+                                    Passwords must match.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="termsCheckbox" required>
+                                <label class="form-check-label" for="termsCheckbox">
+                                    I agree to the <a href="#termsModal">Terms and Conditions</a>
+                                </label>
+                                <div class="invalid-feedback">
+                                    You must agree before submitting.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="register-page-buttons">
+                        <div class="register-account-footer">
+                            <button type="submit" class="btn btn-primary">Create Account</button>
+                        </div>
+                        <div class="register-cancel-footer">
+                            <button type="button" class="btn btn-secondary" data-page="home" class="nav-link">Cancel</button>
+                        </div>
+                    </div>
+                    <div class="auth-redirect mt-3">
+                        <p class="mb-0">
+                            Already have an account?
+                            <a href="#/signin" data-page="signin" class="nav-link" id="show-login">Sign In</a>
+                        </p>
+                    </div>
+                </form>
             </div>
-
-            <!-- Username -->
-            <div class="col-md-6">
-            
-              <div class="input-group mb-3">
-                <span class="input-group-text">@</span>
-                <div class="form-floating">
-                  <input type="text" class="form-control" id="username" placeholder="Username" required minlength="4" pattern="[a-zA-Z0-9_]+">
-                  <label for="username">Username</label>
-                </div>
-              </div>
-              <div class="invalid-feedback">
-                Username must be at least 4 characters and contain only letters, numbers, or underscores.
-              </div>
-              <small class="form-text text-muted" id="username-availability"></small>
-            </div>
-
-            <!-- Email -->
-            <div class="col-md-6">
-              <div class="form-floating">
-                <input type="email" class="form-control" id="email" placeholder="Email" required>
-                <label for="email">Email</label>
-                <div class="invalid-feedback">
-                  Please enter a valid email address.
-                </div>
-              </div>
-            </div>
-
-            <!-- Age -->
-            <div class="col-md-4">
-              <div class="form-floating">
-                <input type="number" class="form-control" id="age" placeholder="Age" min="13" max="120" required>
-                <label for="age">Age</label>
-                <div class="invalid-feedback">
-                  You must be at least 13 years old to register.
-                </div>
-              </div>
-            </div>
-
-            <!-- Gender -->
-            <div class="col-md-8">
-              <label class="form-label">Gender</label>
-              <div class="d-flex gap-3">
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="gender" id="male" value="male" checked>
-                  <label class="form-check-label" for="male">Male</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="gender" id="female" value="female">
-                  <label class="form-check-label" for="female">Female</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="gender" id="other" value="other">
-                  <label class="form-check-label" for="other">Other</label>
-                </div>
-              </div>
-            </div>
-
-            <!-- Password -->
-            <div class="col-md-6">
-              
-              <div class="input-group mb-3 password-input-group">
-                <div class="form-floating flex-grow-1">
-                  <input type="password" class="form-control" id="password" placeholder="Password" required minlength="8" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}">
-                  <label for="password">Password</label>
-                </div>
-                <button class="btn btn-outline-secondary password-toggle" type="button">Show</button>
-              </div>
-              
-              <div class="invalid-feedback">
-                Password must be at least 8 characters with at least one uppercase, one lowercase, and one number.
-              </div>
-              <div class="progress mb-2 password-strength-wrapper">
-                <div id="password-strength" class="progress-bar" role="progressbar"></div>
-              </div>
-              
-              <small class="form-text text-muted" id="password-strength-text"></small>
-            </div>
-
-            <!-- Confirm Password -->
-            <div class="col-md-6">
-            
-              <div class="input-group mb-3">
-                <div class="form-floating">
-                  <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password" autocomplete= "new-password" required>
-                  <label for="confirmPassword">Confirm Password</label>
-               
-              <div class="invalid-feedback" id="confirm-password-feedback">
-                Passwords must match.
-              </div>
-            </div>
-
-            <!-- Terms and Conditions -->
-            <div class="col-12">
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="terms" required>
-                <label class="form-check-label" for="terms">
-                  I agree to the <a href="#termsModal">Terms and Conditions</a>
-                </label>
-                <div class="invalid-feedback">
-                  You must agree before submitting.
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Form Actions -->
-          <div class="modal-buttons-row">
-         
-          <div class="modalaccount-footer">
-            <button type="submit" class="btn btn-primary">Create Account</button>
-          </div>
-
-
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" id="close-modal">Cancel</button>
-          </div>
         </div>
-
-          <!-- Auth Redirect -->
-      <!-- Auth Redirect -->
-    <div class="auth-redirect mt-3">
-       <p class="mb-0">
-          Already have an account?
-         <a href="#login-modal" id="show-login">Sign In</a>
-        </p>
-      </div>
-
-        </form>
-      </div>
     </div>
-  </div>
 </template>
      <!-- Registration Modal page Template -->
     
