@@ -19,8 +19,7 @@ async function loadUserProfile() {
     // 3. Load stats
     document.getElementById('post-count').textContent = user.stats.posts;
     document.getElementById('comment-count').textContent = user.stats.comments;
-    document.getElementById('like-count').textContent = user.stats.likes;
-    document.getElementById('dislike-count').textContent = user.stats.dislikes;
+   
     
     // 4. Load initial tab content (My Posts)
     loadTabContent('posts');
@@ -115,7 +114,7 @@ function createListItem(type, data) {
       `;
       break;
       
-    // Add cases for likes, dislikes, saved items
+
     default:
       item.textContent = JSON.stringify(data);
   }

@@ -62,16 +62,8 @@ CREATE TABLE IF NOT EXISTS sessions (
     session_expiry DATETIME NOT NULL,
     FOREIGN KEY(user_id) REFERENCES users(id)
 );
--- Votes table
-CREATE TABLE IF NOT EXISTS votes (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
-    post_id INTEGER,
-    vote INTEGER NOT NULL CHECK (vote IN (1, 0, -1)),
-    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY(post_id) REFERENCES posts(id) ON DELETE CASCADE,
-    UNIQUE(user_id, post_id)
-);
+
+
 -- Chat_Messages table to store private messages between users
 CREATE TABLE IF NOT EXISTS chat_messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

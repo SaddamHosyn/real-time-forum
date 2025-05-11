@@ -115,13 +115,55 @@ function setupRegisterPage() {
   });
 
   // Form validation
-  registerForm.addEventListener('submit', (e) => {
-      if (!registerForm.checkValidity()) {
-          e.preventDefault();
-          e.stopPropagation();
-      }
-      registerForm.classList.add('was-validated');
-  });
+
+
+registerForm.addEventListener('submit', async (e) => {
+    e.preventDefault(); // 🔴 prevent default form submission
+    registerForm.classList.add('was-validated');
+
+    if (!registerForm.checkValidity()) {
+        return;
+    }
+
+    const formData = {
+        firstName: document.getElementById('firstNameInput').value,
+        lastName: document.getElementById('lastNameInput').value,
+        username: document.getElementById('usernameInput').value,
+        email: document.getElementById('emailInput').value,
+        age: parseInt(document.getElementById('ageInput').value, 10),
+        gender: document.querySelector('input[name="gender"]:checked')?.value,
+        password: document.getElementById('passwordInput').value,
+        termsAccepted: document.getElementById('termsCheckbox').checked
+    };
+
+    try {
+        const response = await fetch('/api/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert(result.message);
+            window.navigateTo('login'); // Or another page in your router
+        } else {
+            alert(result.error || 'Registration failed');
+        }
+    } catch (error) {
+        console.error('Registration error:', error);
+        alert('An error occurred. Please try again.');
+    }
+});
+
+
+
+
+
+
 }
 
 // The initializeRegisterPage function in router.js will trigger setupRegisterPage

@@ -118,16 +118,6 @@
 
 
 
- <!-- container for store results -->
- <!-- container for store results -->
-
-      <div id="storeResults" style="display: none;"   aria-live="polite">
-        <div class="container my-4">
-          <h2 class="mb-4">Available Stores</h2>
-        <div id="storesList" class="row"></div>
-     </div>
-  </div>
-</div>
 
 
 
@@ -217,18 +207,27 @@
 
 
 
+ <!-- container for store results -->
+ <!-- container for store results -->
+  
+  <!-- find a Store template container -->
 
- 
+<!-- Store Results Section -->
+<div id="storeResults" class="view d-none" aria-live="polite">
+  <div class="container my-4">
+    <h2 class="mb-4">Available Stores</h2>
+    <div id="storesList" class="row"></div>
+  </div>
+</div>
 
-     <!-- find a Store template container -->
- <!-- Store template -->
-  <template id="storeTemplate">
-    <div class="store-card col-12 col-md-4 mb-4">
-      <h3 class="store-name"></h3>
-      <p class="store-address-line">
-        <i class="fas fa-map-marker-alt"></i>
-        <span class="store-address"></span>
-     </p>
+<!-- Store Template -->
+<template id="storetemplate">
+  <div class="store-card col-12 col-md-4 mb-4">
+    <h3 class="store-name"></h3>
+    <p class="store-address-line">
+      <i class="fas fa-map-marker-alt"></i>
+      <span class="store-address"></span>
+    </p>
     <p class="store-phone-line">
       <i class="fas fa-phone"></i>
       <span class="store-phone"></span>
@@ -237,11 +236,8 @@
       <i class="fas fa-clock"></i>
       <span class="store-hours"></span>
     </p>
-   </div>
-  </template>
-  <!-- find a Store template container -->
-
-
+  </div>
+</template>
 
 
 
@@ -534,8 +530,8 @@
 
 
 
-    <!-- my account details( posts, likes, dislikes, my comments) -->
-    <!-- my account details( posts, likes, dislikes, my comments) -->
+    <!-- my account details( posts, my comments) -->
+    <!-- my account details( posts, my comments) -->
 
     <template id="account-template">
       <section class="user-account">
@@ -559,64 +555,30 @@
                   </div>
                 </div>
               </div>
-
+        
               <!-- Stats Summary -->
               <div class="card mt-3 shadow-sm">
                 <div class="card-body">
                   <h6 class="card-title">Activity Summary</h6>
                   <ul class="list-group list-group-flush">
-                    <li
-                      class="list-group-item d-flex justify-content-between align-items-center"
-                    >
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
                       Posts
-                      <span
-                        class="badge bg-primary rounded-pill"
-                        id="post-count"
-                        >0</span
-                      >
+                      <span class="badge bg-primary rounded-pill" id="post-count">0</span>
                     </li>
-                    <li
-                      class="list-group-item d-flex justify-content-between align-items-center"
-                    >
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
                       Comments
-                      <span
-                        class="badge bg-success rounded-pill"
-                        id="comment-count"
-                        >0</span
-                      >
-                    </li>
-                    <li
-                      class="list-group-item d-flex justify-content-between align-items-center"
-                    >
-                      Likes
-                      <span class="badge bg-info rounded-pill" id="like-count"
-                        >0</span
-                      >
-                    </li>
-                    <li
-                      class="list-group-item d-flex justify-content-between align-items-center"
-                    >
-                      Dislikes
-                      <span
-                        class="badge bg-warning rounded-pill"
-                        id="dislike-count"
-                        >0</span
-                      >
+                      <span class="badge bg-success rounded-pill" id="comment-count">0</span>
                     </li>
                   </ul>
                 </div>
               </div>
             </div>
-
+        
             <!-- Main Content Area -->
             <div class="col-md-9">
               <div class="card shadow-sm">
                 <div class="card-header">
-                  <ul
-                    class="nav nav-tabs card-header-tabs"
-                    id="accountTabs"
-                    role="tablist"
-                  >
+                  <ul class="nav nav-tabs card-header-tabs" id="accountTabs" role="tablist">
                     <li class="nav-item" role="presentation">
                       <button
                         class="nav-link active"
@@ -644,166 +606,78 @@
                     <li class="nav-item" role="presentation">
                       <button
                         class="nav-link"
-                        id="likes-tab"
+                        id="saved-tab"
                         data-bs-toggle="tab"
-                        data-bs-target="#likes-content"
+                        data-bs-target="#saved-content"
                         type="button"
                         role="tab"
                       >
-                        Liked Posts
-                      </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                      <button
-                        class="nav-link"
-                        id="dislikes-tab"
-                        data-bs-toggle="tab"
-                        data-bs-target="#dislikes-content"
-                        type="button"
-                        role="tab"
-                      >
-                        Disliked Posts
+                        Saved Items
                       </button>
                     </li>
                   </ul>
                 </div>
-
+        
                 <div class="card-body">
                   <div class="tab-content" id="accountTabContent">
                     <!-- My Posts Tab -->
-                    <div
-                      class="tab-pane fade show active"
-                      id="posts-content"
-                      role="tabpanel"
-                    >
+                    <div class="tab-pane fade show active" id="posts-content" role="tabpanel">
                       <h5 class="mb-3">My Recent Posts</h5>
                       <div class="list-group" id="user-posts-list">
                         <!-- Posts will be loaded here dynamically -->
                         <div class="text-center py-4">
-                          <div
-                            class="spinner-border text-primary"
-                            role="status"
-                          >
+                          <div class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
                           </div>
                         </div>
                       </div>
                       <div class="text-end mt-3">
-                        <a href="#" class="btn btn-sm btn-outline-primary"
-                          >View All Posts</a
-                        >
+                        <a href="#" class="btn btn-sm btn-outline-primary">View All Posts</a>
                       </div>
                     </div>
-
+        
                     <!-- My Comments Tab -->
-                    <div
-                      class="tab-pane fade"
-                      id="comments-content"
-                      role="tabpanel"
-                    >
+                    <div class="tab-pane fade" id="comments-content" role="tabpanel">
                       <h5 class="mb-3">My Recent Comments</h5>
                       <div class="list-group" id="user-comments-list">
                         <!-- Comments will be loaded here dynamically -->
                         <div class="text-center py-4">
-                          <div
-                            class="spinner-border text-primary"
-                            role="status"
-                          >
+                          <div class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
                           </div>
                         </div>
                       </div>
                       <div class="text-end mt-3">
-                        <a href="#" class="btn btn-sm btn-outline-primary"
-                          >View All Comments</a
-                        >
+                        <a href="#" class="btn btn-sm btn-outline-primary">View All Comments</a>
                       </div>
                     </div>
-
-                    <!-- Liked Posts Tab -->
-                    <div
-                      class="tab-pane fade"
-                      id="likes-content"
-                      role="tabpanel"
-                    >
-                      <h5 class="mb-3">Posts I've Liked</h5>
-                      <div class="list-group" id="liked-posts-list">
-                        <!-- Liked posts will be loaded here dynamically -->
-                        <div class="text-center py-4">
-                          <div
-                            class="spinner-border text-primary"
-                            role="status"
-                          >
-                            <span class="visually-hidden">Loading...</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="text-end mt-3">
-                        <a href="#" class="btn btn-sm btn-outline-primary"
-                          >View All Liked Posts</a
-                        >
-                      </div>
-                    </div>
-
-                    <!-- Disliked Posts Tab -->
-                    <div
-                      class="tab-pane fade"
-                      id="dislikes-content"
-                      role="tabpanel"
-                    >
-                      <h5 class="mb-3">Posts I've Disliked</h5>
-                      <div class="list-group" id="disliked-posts-list">
-                        <!-- Disliked posts will be loaded here dynamically -->
-                        <div class="text-center py-4">
-                          <div
-                            class="spinner-border text-primary"
-                            role="status"
-                          >
-                            <span class="visually-hidden">Loading...</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="text-end mt-3">
-                        <a href="#" class="btn btn-sm btn-outline-primary"
-                          >View All Disliked Posts</a
-                        >
-                      </div>
-                    </div>
-
+        
                     <!-- Saved Items Tab -->
-                    <div
-                      class="tab-pane fade"
-                      id="saved-content"
-                      role="tabpanel"
-                    >
+                    <div class="tab-pane fade" id="saved-content" role="tabpanel">
                       <h5 class="mb-3">My Saved Items</h5>
                       <div class="list-group" id="saved-items-list">
                         <!-- Saved items will be loaded here dynamically -->
                         <div class="text-center py-4">
-                          <div
-                            class="spinner-border text-primary"
-                            role="status"
-                          >
+                          <div class="spinner-border text-primary" role="status">
                             <span class="visually-hidden">Loading...</span>
                           </div>
                         </div>
                       </div>
                       <div class="text-end mt-3">
-                        <a href="#" class="btn btn-sm btn-outline-primary"
-                          >View All Saved Items</a
-                        >
+                        <a href="#" class="btn btn-sm btn-outline-primary">View All Saved Items</a>
                       </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+                  </div> <!-- /.tab-content -->
+                </div> <!-- /.card-body -->
+              </div> <!-- /.card -->
+            </div> <!-- /.col-md-9 -->
+          </div> <!-- /.row -->
+        </div> <!-- /.container -->
+        
       </section>
     </template>
 
-    <!-- my account details( posts, likes, dislikes, my comments) -->
+    <!-- my account details( posts,  my comments) -->
 
 
 
@@ -1146,11 +1020,15 @@
   <script src="/assets/js/loginlogout.js" defer></script>
   <script src="/assets/js/signinpage.js" defer></script>
   <script src="/assets/js/home.js" defer></script>
-  <script src="/assets/js/app.js" defer></script>
-  <script src="/assets/js/router.js" defer></script>
+  <script src="/assets/js/findastore.js" defer></script>
+  <script src="/assets/js/topicsbar.js" defer></script>
+ 
   <script src="/assets/js/comment.js" defer></script>
   <script src="/assets/js/profile.js" defer></script>
   <script src="/assets/js/error.js" defer></script>
+  <script src="/assets/js/createpost.js" defer></script>
+  <script src="/assets/js/app.js" defer></script>
+  <script src="/assets/js/router.js" defer></script>
 
  
    

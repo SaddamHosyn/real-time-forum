@@ -1352,7 +1352,7 @@ h2 {
 }
 
 .user:hover {
-  background-color: #e0e7ff; /* Light blue on hover */
+  background-color: #263053; /* Light blue on hover */
 }
 
 .user.online .username {

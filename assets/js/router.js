@@ -2,7 +2,7 @@
 
 const routes = {
   'home': { template: 'home-template', authRequired: false, script: '/assets/js/home.js' },
-  'store': { template: 'storeTemplate', authRequired: false },
+  'store': { template: 'storetemplate', authRequired: false, script: '/assets/js/findastore.js',init: initializeStorePage },
   'topicsbar': { template: 'topicsbar-template', authRequired: true },
   'account': { template: 'account-template', authRequired: true, init: showAccountPage, script: '/assets/js/account.js' },
   'signin': { template: 'signin-template', authRequired: false, script: '/assets/js/signinpage.js' },
@@ -12,6 +12,7 @@ const routes = {
 };
 
 const loadedScripts = new Set();
+let isNavigating = false; // Add this flag to prevent duplicate navigation
 
 document.addEventListener('DOMContentLoaded', () => {
   handleRoute(getCurrentRoute());
@@ -20,6 +21,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle navigation links
     if (e.target.matches('.nav-link[data-page]') || e.target.closest('.nav-link[data-page]')) {
       e.preventDefault();
+
+
+
+      
       const element = e.target.matches('.nav-link[data-page]') ? e.target : e.target.closest('.nav-link[data-page]');
       const page = element.dataset.page;
       navigateTo(page);
@@ -225,3 +230,4 @@ function initializeSignInPage() {
   console.log('Sign in page initialization called from router.js');
   // The actual implementation is in signinpage.js
 }
+

@@ -59,8 +59,7 @@ type Post struct {
 	Topics    []string   `json:"topics"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	Upvotes   int       `json:"upvotes"`
-	Downvotes int       `json:"downvotes"`
+
 	Comments  []Comment `json:"comments"`
 }
 
@@ -71,14 +70,8 @@ type Comment struct {
 	UserID    string       `json:"user_id"`
 	PostID    int       `json:"post_id"`
 	CreatedAt time.Time `json:"created_at"`
-	Upvotes   int       `json:"upvotes"`
-	Downvotes int       `json:"downvotes"`
+
 	TimeAgo   string    `json:"time_ago"`
 }
 
-type Votes struct {
-	ID     int `json:"id"`
-	Vote   int `json:"vote"`
-	UserID string `json:"user_id"`
-	PostID int `json:"post_id"`
-}
+

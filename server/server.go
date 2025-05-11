@@ -1,33 +1,34 @@
 package server
 
 import (
-	"database/sql"
 	"log"
 	"net/http"
-	"realtimeforum/database"
 
 	"realtimeforum/handler"
 
 	_ "github.com/mattn/go-sqlite3" // or your database driver
 )
 
-// StartServer initializes the database and starts the HTTP server
+// StartServer starts the HTTP server
 func StartServer() {
-	// Connect to the database
-	var err error
-	database.DB, err = sql.Open("sqlite3", "./forum.db") // Adjust path if needed
-	if err != nil {
-		log.Fatal("Failed to connect to database:", err)
-	}
-	defer database.DB.Close()
 
-	// Define routes
+	// Serve static files from the "static" folder
+	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
+
+	// Define root handler (homepage)
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./index.html")
+	})
+
+	// Define API routes
 	http.HandleFunc("/api/login", handler.LoginHandler)
 	http.HandleFunc("/api/create-post", handler.CreatePostHandler)
+	http.HandleFunc("/api/submit-post", handler.SubmitPostHandler)
+	http.HandleFunc("/api/register", handler.RegisterHandler)
 
 	// Start the server
 	log.Println("Server started on http://localhost:8080")
-	err = http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
 		log.Fatal("Server error:", err)
 	}
