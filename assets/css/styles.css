@@ -348,8 +348,9 @@ body {
   right: 10px;
 }
 
-#close-signin:hover {
-  color: #e30c0c;
+#login-error-message {
+  color: red;
+  display: none;
 }
 
 
@@ -422,6 +423,8 @@ body {
   padding-bottom: 0.1rem; /* Extra space at bottom */
 }
 }
+
+
 
 /* Register Button Styles */
 

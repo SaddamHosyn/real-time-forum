@@ -4,13 +4,13 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 	"realtimeforum/database"
 	"realtimeforum/model"
 	"realtimeforum/utils"
+
 	"github.com/google/uuid"
 )
-
-const minPasswordLength = 6
 
 type LoginRequest struct {
 	Identity string `json:"identity"`
@@ -23,41 +23,49 @@ type LoginResponse struct {
 	ExpiresIn int         `json:"expires_in"`
 }
 
-
-
-
-
-
-func LoginUser(usernameOrEmail, password string) (*model.User, string, error) {
-	if len(password) < minPasswordLength {
-		return nil, "", errors.New("invalid credentials")
-	}
+func LoginUser(usernameOrEmail, password string) (*LoginResponse, error) {
+	log.Printf("Login attempt with identity: %s", usernameOrEmail)
 
 	user, err := database.GetUserByIdentity(usernameOrEmail)
 	if err != nil {
+		log.Printf("Error finding user by identity: %v", err)
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, "", errors.New("invalid credentials")
+			return nil, errors.New("invalid credentials")
 		}
-		return nil, "", fmt.Errorf("database error: %w", err)
+		return nil, fmt.Errorf("database error: %w", err)
 	}
+
+	log.Printf("User found with ID: %s", user.ID)
+	log.Printf("Comparing password with stored hash for user: %s", user.Username)
 
 	if !utils.CheckPasswordHash(password, user.PasswordHash) {
-		return nil, "", errors.New("invalid credentials")
+		return nil, errors.New("invalid credentials")
 	}
+
+	// ✅ Enforce single active session
+	if user.SessionToken != nil && user.SessionExpiry != nil && user.SessionExpiry.After(utils.GetCurrentTime()){
+		return nil, errors.New("user already logged in on another device")
+	}
+
+	// ✅ Now it's safe to issue a new token
 	token, err := utils.GenerateSessionToken(user)
 	if err != nil {
-		 return nil, "", fmt.Errorf("failed to generate token: %w", err)
+		log.Printf("Failed to generate token: %v", err)
+		return nil, fmt.Errorf("failed to generate token: %w", err)
 	}
 
+	// ✅ Update session in database
 	if err := UpdateUserSession(user, token); err != nil {
-		 return nil, "", fmt.Errorf("failed to update session: %w", err)
+		log.Printf("Failed to update session: %v", err)
+		return nil, fmt.Errorf("failed to update session: %w", err)
 	}
 
-	return user, token, nil
+	return &LoginResponse{
+		User:      user,
+		Token:     token,
+		ExpiresIn: 3600,
+	}, nil
 }
-
-
-
 
 func UserExist(db *sql.DB, identity string) (string, error) {
 	var id string
@@ -71,32 +79,18 @@ func UserExist(db *sql.DB, identity string) (string, error) {
 	return id, nil // user exists
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 func AddUser(db *sql.DB, username, email, password, firstName, lastName string, age int, gender string, termsAccepted bool) error {
 	hashedPassword, err := utils.HashPassword(password)
 	if err != nil {
 		return err
 	}
-	
+
 	_, err = db.Exec(`
 		INSERT INTO users (
 			id, username, email, password_hash, 
 			first_name, last_name, age, gender, terms_accepted
 		) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-		uuid.New().String(), username, email, hashedPassword, 
+		uuid.New().String(), username, email, hashedPassword,
 		firstName, lastName, age, gender, termsAccepted,
 	)
 	return err

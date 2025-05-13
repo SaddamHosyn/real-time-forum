@@ -686,52 +686,56 @@
     <!-- log in pop up page -->
     <!-- log in pop up page -->
    
-    <template id="signin-template">
-      <div class="container mt-5">
-        <div class="row justify-content-center">
-          <div class="col-md-6">
-            <div class="signin-card">
-              <div class="signin-card-header">
-                <h5 class="signin-card-title mb-0">Sign In</h5>
-                  <!-- Close button (x) -->
+<template id="signin-template">
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="signin-card">
+          <div class="signin-card-header">
+            <h5 class="signin-card-title mb-0">Sign In</h5>
             <button type="button" id="close-signin" class="btn btn-light">×</button>
+          </div>
+          <div class="signin-card-body">
+            <form id="login-form" novalidate>
+              <div class="mb-3">
+                <label class="form-label">Email or Username</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="login-identity"
+                  name="identity"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="login-password"
+                  name="password"
+                  required
+                />
+              </div>
 
-              </div>
-              <div class="signin-card-body">
-                <form id="login-form">
-                  <div class="mb-3">
-                    <label class="form-label">Email or Username</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="login-identity"
-                      required
-                    />
-                  </div>
-                  <div class="mb-3">
-                    <label class="form-label">Password</label>
-                    <input
-                      type="password"
-                      class="form-control"
-                      id="login-password"
-                      required
-                    />
-                  </div>
-                  <button type="submit" class="btn btn-primary w-100">
-                    Sign In
-                  </button>
-                </form>
-                <div class="text-center mt-3">
-                  <p>
-                    New user? <a href="#" id="show-register">Create account</a>
-                  </p>
-                </div>
-              </div>
+              <div id="login-error-message"></div>
+
+              <button type="submit" class="btn btn-primary w-100">
+                Sign In
+              </button>
+            </form>
+            <div class="text-center mt-3">
+              <p>
+                New user? <a href="#" id="show-register">Create account</a>
+              </p>
             </div>
           </div>
         </div>
       </div>
-    </template>
+    </div>
+  </div>
+</template>
+
       
       
 
