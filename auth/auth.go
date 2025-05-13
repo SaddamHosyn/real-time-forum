@@ -26,6 +26,7 @@ type LoginResponse struct {
 func LoginUser(usernameOrEmail, password string) (*LoginResponse, error) {
 	log.Printf("Login attempt with identity: %s", usernameOrEmail)
 
+	// Fetch user data
 	user, err := database.GetUserByIdentity(usernameOrEmail)
 	if err != nil {
 		log.Printf("Error finding user by identity: %v", err)
@@ -36,26 +37,22 @@ func LoginUser(usernameOrEmail, password string) (*LoginResponse, error) {
 	}
 
 	log.Printf("User found with ID: %s", user.ID)
-	log.Printf("Comparing password with stored hash for user: %s", user.Username)
 
+	// Validate password hash
+	log.Printf("Comparing password with stored hash for user: %s", user.Username)
 	if !utils.CheckPasswordHash(password, user.PasswordHash) {
 		return nil, errors.New("invalid credentials")
 	}
 
-	// ✅ Enforce single active session
-	if user.SessionToken != nil && user.SessionExpiry != nil && user.SessionExpiry.After(utils.GetCurrentTime()){
-		return nil, errors.New("user already logged in on another device")
-	}
-
-	// ✅ Now it's safe to issue a new token
+	// Generate a new session token
 	token, err := utils.GenerateSessionToken(user)
 	if err != nil {
 		log.Printf("Failed to generate token: %v", err)
 		return nil, fmt.Errorf("failed to generate token: %w", err)
 	}
 
-	// ✅ Update session in database
-	if err := UpdateUserSession(user, token); err != nil {
+	// Insert the new session in the database (create or update)
+	if err := updateSessionForUser(user.ID, token); err != nil {
 		log.Printf("Failed to update session: %v", err)
 		return nil, fmt.Errorf("failed to update session: %w", err)
 	}
@@ -63,8 +60,19 @@ func LoginUser(usernameOrEmail, password string) (*LoginResponse, error) {
 	return &LoginResponse{
 		User:      user,
 		Token:     token,
-		ExpiresIn: 3600,
+		ExpiresIn: 3600, // Token expiration (e.g., 1 hour)
 	}, nil
+}
+
+// Helper function to update the session for the user
+func updateSessionForUser(userID, token string) error {
+	_, err := database.DB.Exec(`
+		INSERT INTO sessions (user_id, session_token, session_expiry) 
+		VALUES (?, ?, ?)
+		ON DUPLICATE KEY UPDATE 
+			session_token = ?, session_expiry = ?
+	`, userID, token, utils.SessionExpiry(), token, utils.SessionExpiry())
+	return err
 }
 
 func UserExist(db *sql.DB, identity string) (string, error) {
