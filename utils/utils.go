@@ -1,15 +1,16 @@
 package utils
 
 import (
-	"crypto/rand"
-	"encoding/base64"
+
+
 	"errors"
-	"fmt"
 	"regexp"
 	"time"
 
-	"golang.org/x/crypto/bcrypt"
 	"realtimeforum/model"
+
+	"golang.org/x/crypto/bcrypt"
+	"github.com/google/uuid"
 )
 
 const (
@@ -67,11 +68,9 @@ func HashPassword(password string) (string, error) {
 
 // GenerateSessionToken generates a secure random session token
 func GenerateSessionToken(user *model.User) (string, error) {
-	b := make([]byte, 32) // 256-bit token
-	if _, err := rand.Read(b); err != nil {
-		return "", fmt.Errorf("failed to generate token: %w", err)
-	}
-	return base64.URLEncoding.EncodeToString(b), nil
+	token := uuid.New().String()
+
+	return token, nil
 }
 
 // GetCurrentTime returns the current time in UTC

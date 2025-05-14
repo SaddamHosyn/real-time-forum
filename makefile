@@ -3,40 +3,34 @@ DB_NAME := mydatabase.db
 SCHEMA_FILE := database/schema.sql
 SEED_FILE := database/seed.go
 
-# Run the application
-run:
+# Default target (run the application with fresh DB)
+run: db-clean prepare-db
+	@echo "Starting application..."
 	go run main.go
 
-# Prepare the DB: create and init if missing
+# Prepare the DB: always create fresh
 prepare-db:
-	@if [ ! -f $(DB_NAME) ]; then \
-		echo "Database not found. Creating $(DB_NAME)..."; \
-		sqlite3 $(DB_NAME) < $(SCHEMA_FILE); \
-		echo "Database schema initialized."; \
-	else \
-		echo "$(DB_NAME) already exists. Skipping DB creation."; \
-	fi
+	@echo "Creating fresh $(DB_NAME)..."
+	@sqlite3 $(DB_NAME) < $(SCHEMA_FILE)
+	@echo "Database schema initialized."
 
 # Seed the database
-db-seed:
-	@if [ -f $(DB_NAME) ]; then \
-		echo "Seeding database..."; \
-		go run $(SEED_FILE); \
-	else \
-		echo "Database not found. Run 'make prepare-db' first."; \
-	fi
+db-seed: prepare-db
+	@echo "Seeding database..."
+	@go run $(SEED_FILE)
 
 # Delete database
 db-clean:
-	@echo "Removing database..."
-	rm -f $(DB_NAME)
-	@echo "Database removed."
+	@if [ -f $(DB_NAME) ]; then \
+		echo "Removing existing database..."; \
+		rm -f $(DB_NAME); \
+	fi
 
 # Clean (removed binary-related cleanup)
-clean:
+clean: db-clean
 	@echo "Clean completed."
 
-# Clean and rebuild (without binary)
-rebuild: db-clean run
+# Rebuild (clean and run with fresh DB)
+rebuild: clean run
 
 .PHONY: run prepare-db db-seed db-clean clean rebuild

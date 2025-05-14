@@ -52,7 +52,7 @@ func LoginUser(usernameOrEmail, password string) (*LoginResponse, error) {
 	}
 
 	// Insert the new session in the database (create or update)
-	if err := updateSessionForUser(user.ID, token); err != nil {
+	if err := UpdateUserSession(user, token); err != nil {
 		log.Printf("Failed to update session: %v", err)
 		return nil, fmt.Errorf("failed to update session: %w", err)
 	}
@@ -65,15 +65,6 @@ func LoginUser(usernameOrEmail, password string) (*LoginResponse, error) {
 }
 
 // Helper function to update the session for the user
-func updateSessionForUser(userID, token string) error {
-	_, err := database.DB.Exec(`
-		INSERT INTO sessions (user_id, session_token, session_expiry) 
-		VALUES (?, ?, ?)
-		ON DUPLICATE KEY UPDATE 
-			session_token = ?, session_expiry = ?
-	`, userID, token, utils.SessionExpiry(), token, utils.SessionExpiry())
-	return err
-}
 
 func UserExist(db *sql.DB, identity string) (string, error) {
 	var id string

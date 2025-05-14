@@ -3,20 +3,19 @@ PRAGMA foreign_keys = ON;
 -- Users table
 CREATE TABLE IF NOT EXISTS users (
     id TEXT PRIMARY KEY,
-    -- UUID instead of AUTOINCREMENT
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
     username TEXT UNIQUE NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
-    age INTEGER NOT NULL CHECK (
-        age >= 13
-        AND age <= 120
-    ),
+    age INTEGER NOT NULL CHECK (age >= 13 AND age <= 120),
     gender TEXT NOT NULL CHECK (gender IN ('male', 'female', 'other')),
     terms_accepted BOOLEAN NOT NULL DEFAULT 0,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    session_token TEXT,
+    session_expiry DATETIME 
 );
+
 -- topics table
 CREATE TABLE IF NOT EXISTS topics (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -29,7 +28,7 @@ CREATE TABLE IF NOT EXISTS posts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL UNIQUE,
     content TEXT NOT NULL,
-    user_id INTEGER NOT NULL,
+    user_id TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(user_id) REFERENCES users(id)
@@ -38,7 +37,7 @@ CREATE TABLE IF NOT EXISTS posts (
 CREATE TABLE IF NOT EXISTS comments (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     content TEXT NOT NULL,
-    user_id INTEGER NOT NULL,
+    user_id TEXT NOT NULL,
     post_id INTEGER NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(user_id) REFERENCES users(id),
@@ -57,13 +56,11 @@ CREATE TABLE IF NOT EXISTS posts_topics (
 -- Sessions table
 CREATE TABLE IF NOT EXISTS sessions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
+    user_id TEXT NOT NULL,
     session_token TEXT NOT NULL UNIQUE,
     session_expiry DATETIME NOT NULL,
     FOREIGN KEY(user_id) REFERENCES users(id)
 );
-
-
 -- Chat_Messages table to store private messages between users
 CREATE TABLE IF NOT EXISTS chat_messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -78,7 +75,7 @@ CREATE TABLE IF NOT EXISTS chat_messages (
 );
 -- User_Online table to track users' online status
 CREATE TABLE IF NOT EXISTS user_online (
-    user_id INTEGER PRIMARY KEY,
+    user_id TEXT PRIMARY KEY,
     is_online BOOLEAN DEFAULT 0,
     -- 1 if online, 0 if offline
     last_activity DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -95,12 +92,11 @@ CREATE TABLE IF NOT EXISTS user_chat_last_message (
     FOREIGN KEY(last_message_id) REFERENCES chat_messages(id) ON DELETE CASCADE,
     UNIQUE(user1_id, user2_id)
 );
-
-
-
 CREATE TABLE IF NOT EXISTS reset_tokens (
-    id TEXT PRIMARY KEY, -- UUID
-    user_id TEXT NOT NULL, -- assuming user.id is a UUID
+    id TEXT PRIMARY KEY,
+    -- UUID
+    user_id TEXT NOT NULL,
+    -- assuming user.id is a UUID
     expires_at DATETIME NOT NULL,
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );

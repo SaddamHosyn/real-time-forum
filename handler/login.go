@@ -6,12 +6,9 @@ import (
 	"log"
 	"net/http"
 	"strings"
-	"time"
 
 	"realtimeforum/auth"
-	"realtimeforum/utils"
 )
-
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	// Enable CORS for local development if needed
@@ -53,7 +50,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	loginResp, err := auth.LoginUser(loginData.Identity, loginData.Password)
 	if err != nil {
 		log.Printf("Failed login attempt for: %s - %v", loginData.Identity, err)
-		
+
 		// Return structured error
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
@@ -63,17 +60,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
-
-	// Set session cookie
-	http.SetCookie(w, &http.Cookie{
-		Name:     "session_token",
-		Value:    loginResp.Token,
-		Path:     "/",
-		HttpOnly: true,
-		Expires:  time.Now().Add(utils.SessionDuration),
-		SameSite: http.SameSiteLaxMode,
-		// Secure:   true, // Only enable in production with HTTPS
-	})
+	auth.SetSessionCookie(w, loginResp.Token)
 
 	// Log successful login
 	log.Printf("Successful login for user: %s", loginData.Identity)

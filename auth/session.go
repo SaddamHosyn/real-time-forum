@@ -1,52 +1,49 @@
 package auth
 
 import (
+	"database/sql"
 	"errors"
 	"log"
 	"net/http"
 	"realtimeforum/database"
 	"realtimeforum/model"
 	"realtimeforum/utils"
-
 )
 
 func UpdateUserSession(user *model.User, sessionToken string) error {
-	// First, check if a session already exists for this user
-	var exists bool
 	var sessionID int64
 	err := database.DB.QueryRow(`
-		SELECT id, COUNT(*) > 0
+		SELECT id 
 		FROM sessions 
-		WHERE user_id = ?`,
-		user.ID).Scan(&sessionID, &exists)
-		
-	if err != nil {
+		WHERE user_id = ? 
+		LIMIT 1`, user.ID).Scan(&sessionID)
+
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		log.Printf("Error checking existing session: %v", err)
-		// Continue with insert attempt if query fails
+		return err
 	}
-	
-	if exists {
-		// Update existing session
+
+	if err == nil {
+		// Session exists, update it
 		_, err = database.DB.Exec(`
 			UPDATE sessions
 			SET session_token = ?, session_expiry = ?
 			WHERE user_id = ?`,
 			sessionToken, utils.SessionExpiry(), user.ID)
 	} else {
-		// Insert new session
+		// No existing session, insert new one
 		_, err = database.DB.Exec(`
 			INSERT INTO sessions (user_id, session_token, session_expiry)
 			VALUES (?, ?, ?)`,
 			user.ID, sessionToken, utils.SessionExpiry())
 	}
-	
+
 	return err
 }
 
 func GetUserBySessionToken(sessionToken string) (*model.User, error) {
 	var user model.User
-	
-	// Join users and sessions tables to get user data by session token
+
 	err := database.DB.QueryRow(`
 		SELECT u.id, u.username, u.email, u.password_hash, s.session_token, s.session_expiry
 		FROM users u
@@ -55,9 +52,9 @@ func GetUserBySessionToken(sessionToken string) (*model.User, error) {
 		sessionToken, utils.GetCurrentTime()).
 		Scan(&user.ID, &user.Username, &user.Email, &user.PasswordHash,
 			&user.SessionToken, &user.SessionExpiry)
-			
+
 	if err != nil {
-		if err.Error() == "sql: no rows in result set" {
+		if errors.Is(err, sql.ErrNoRows) {
 			return nil, errors.New("invalid session token")
 		}
 		return nil, err
@@ -66,14 +63,12 @@ func GetUserBySessionToken(sessionToken string) (*model.User, error) {
 }
 
 func LogoutUser(userID string) error {
-	// Delete the session instead of updating it to NULL
 	_, err := database.DB.Exec(`
 		DELETE FROM sessions
 		WHERE user_id = ?`, userID)
 	return err
 }
 
-// CheckUserLoggedIn validates the session token from the cookie and returns (loggedIn, userID)
 func CheckUserLoggedIn(r *http.Request) (bool, string) {
 	cookie, err := r.Cookie("session_token")
 	if err != nil || cookie.Value == "" {
@@ -86,4 +81,14 @@ func CheckUserLoggedIn(r *http.Request) (bool, string) {
 	}
 
 	return true, user.ID
+}
+
+func SetSessionCookie(w http.ResponseWriter, token string) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_token",
+		Value:    token,
+		Path:     "/",
+		HttpOnly: true,
+		Expires:  utils.SessionExpiry(),
+	})
 }
