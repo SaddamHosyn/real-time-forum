@@ -60,7 +60,7 @@ func LoginUser(usernameOrEmail, password string) (*LoginResponse, error) {
 	return &LoginResponse{
 		User:      user,
 		Token:     token,
-		ExpiresIn: 3600, // Token expiration (e.g., 1 hour)
+		ExpiresIn: 86400, // Token expiration (e.g., 1 hour)
 	}, nil
 }
 
