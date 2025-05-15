@@ -12,14 +12,13 @@ var DB *sql.DB
 // GetUserByIdentity fetches the user from the DB by either username or email
 func GetUserByIdentity(usernameOrEmail string) (*model.User, error) {
 	var user model.User
-	
-err := DB.QueryRow(`
+
+	err := DB.QueryRow(`
     SELECT id, first_name, last_name, username, email, password_hash, age, gender, terms_accepted, session_token, session_expiry, created_at
     FROM users
     WHERE username = ? OR email = ?`, usernameOrEmail, usernameOrEmail).
-    Scan(&user.ID, &user.FirstName, &user.LastName, &user.Username, &user.Email, &user.PasswordHash,
-         &user.Age, &user.Gender, &user.TermsAccepted, &user.SessionToken, &user.SessionExpiry, &user.CreatedAt)
-
+		Scan(&user.ID, &user.FirstName, &user.LastName, &user.Username, &user.Email, &user.PasswordHash,
+			&user.Age, &user.Gender, &user.TermsAccepted, &user.SessionToken, &user.SessionExpiry, &user.CreatedAt)
 
 	if err != nil {
 		if err == sql.ErrNoRows {

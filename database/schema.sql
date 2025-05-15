@@ -8,14 +8,16 @@ CREATE TABLE IF NOT EXISTS users (
     username TEXT UNIQUE NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
-    age INTEGER NOT NULL CHECK (age >= 13 AND age <= 120),
+    age INTEGER NOT NULL CHECK (
+        age >= 13
+        AND age <= 120
+    ),
     gender TEXT NOT NULL CHECK (gender IN ('male', 'female', 'other')),
     terms_accepted BOOLEAN NOT NULL DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     session_token TEXT,
-    session_expiry DATETIME 
+    session_expiry DATETIME
 );
-
 -- topics table
 CREATE TABLE IF NOT EXISTS topics (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -59,8 +61,13 @@ CREATE TABLE IF NOT EXISTS sessions (
     user_id TEXT NOT NULL,
     session_token TEXT NOT NULL UNIQUE,
     session_expiry DATETIME NOT NULL,
-    FOREIGN KEY(user_id) REFERENCES users(id)
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+-- Create indexes for sessions table
+CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
+CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(session_token);
+CREATE INDEX IF NOT EXISTS idx_sessions_expiry ON sessions(session_expiry);
 -- Chat_Messages table to store private messages between users
 CREATE TABLE IF NOT EXISTS chat_messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

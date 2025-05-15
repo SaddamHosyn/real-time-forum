@@ -2,21 +2,18 @@ package handler
 
 import (
 	"encoding/json"
-
 	"log"
 	"net/http"
-	"strings"
-
 	"realtimeforum/auth"
+	"realtimeforum/database"
+	"strings"
 )
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
-	// Enable CORS for local development if needed
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
-	// Handle preflight OPTIONS request
 	if r.Method == http.MethodOptions {
 		w.WriteHeader(http.StatusOK)
 		return
@@ -27,7 +24,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Log request details for debugging
 	log.Printf("Login request received: %s %s", r.Method, r.URL.Path)
 
 	var loginData auth.LoginRequest
@@ -37,21 +33,36 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate input
 	if strings.TrimSpace(loginData.Identity) == "" || strings.TrimSpace(loginData.Password) == "" {
 		http.Error(w, "Username/email and password are required", http.StatusBadRequest)
 		return
 	}
 
-	// Log login attempt (without password)
 	log.Printf("Login attempt for identity: %s", loginData.Identity)
 
-	// Use correct return unpacking
+	// First check if user already has an active session
+	var existingSession string
+	var userID int
+	err := database.DB.QueryRow(`
+		SELECT s.session_token, s.user_id 
+		FROM sessions s
+		JOIN users u ON s.user_id = u.id
+		WHERE u.username = ? OR u.email = ?`,
+		loginData.Identity, loginData.Identity).Scan(&existingSession, &userID)
+
+	if err == nil && existingSession != "" {
+		// User already has a session - remove it to ensure single session
+		_, err = database.DB.Exec("DELETE FROM sessions WHERE user_id = ?", userID)
+		if err != nil {
+			log.Printf("Error removing existing session: %v", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+	}
+
 	loginResp, err := auth.LoginUser(loginData.Identity, loginData.Password)
 	if err != nil {
 		log.Printf("Failed login attempt for: %s - %v", loginData.Identity, err)
-
-		// Return structured error
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(map[string]string{
@@ -60,18 +71,10 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
-	auth.SetSessionCookie(w, loginResp.Token)
 
-	// Log successful login
+	auth.SetSessionCookie(w, loginResp.Token)
 	log.Printf("Successful login for user: %s", loginData.Identity)
 
-	// Send back LoginResponse
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(loginResp)
-}
-
-// Add route handler to main.go
-func SetupRoutes() {
-	http.HandleFunc("/api/login", LoginHandler)
-	// Add other route handlers here...
 }

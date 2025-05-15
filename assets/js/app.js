@@ -1,7 +1,8 @@
 // app.js
 // Centralized state 
 let appState = {
-  user: null
+  user: null,
+  token: null
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -62,16 +63,51 @@ function setupEventListeners() {
   });
 }
 
-function checkUserSession() {
+async function checkUserSession() {
   try {
+    // Check localStorage first
+    const token = localStorage.getItem('session_token');
     const userData = localStorage.getItem('user');
-    appState.user = userData ? JSON.parse(userData) : null;
+    
+    if (token && userData) {
+      // Verify with server
+      const response = await fetch('/api/check-session', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        credentials: 'same-origin'
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.authenticated) {
+          appState.user = JSON.parse(userData);
+          appState.token = token;
+        } else {
+          // Server says session is invalid
+          clearSessionData();
+        }
+      } else {
+        // Network error or server error
+        clearSessionData();
+      }
+    } else {
+      // No session data in localStorage
+      clearSessionData();
+    }
   } catch (error) {
-    console.error('Failed to parse user data from localStorage', error);
-    appState.user = null;
+    console.error('Session check failed:', error);
+    clearSessionData();
   }
   
   updateUIForAuthState();
+}
+
+function clearSessionData() {
+  localStorage.removeItem('user');
+  localStorage.removeItem('session_token');
+  appState.user = null;
+  appState.token = null;
 }
 
 function updateUIForAuthState() {
@@ -95,20 +131,37 @@ function updateUIForAuthState() {
   });
 }
 
-function logoutUser() {
-  localStorage.removeItem('user');
-  localStorage.removeItem('token');
-  appState.user = null;
-  
-  updateUIForAuthState();
-  
-  if (window.navigateTo) {
-    window.navigateTo('home');
-  } else {
-    window.location.hash = '#/home';
+async function logoutUser() {
+  try {
+    const response = await fetch('/api/logout', {
+      method: 'POST',
+      credentials: 'same-origin'
+    });
+    
+    if (response.ok) {
+      clearSessionData();
+      updateUIForAuthState();
+      
+      if (window.navigateTo) {
+        window.navigateTo('home');
+      } else {
+        window.location.hash = '#/home';
+      }
+    } else {
+      console.error('Logout failed with status:', response.status);
+      // Still clear local data even if server logout failed
+      clearSessionData();
+      updateUIForAuthState();
+    }
+  } catch (error) {
+    console.error('Logout failed:', error);
+    // Clear local data on error too
+    clearSessionData();
+    updateUIForAuthState();
   }
 }
 
 // Make these functions available globally
 window.appState = appState;
 window.updateUIForAuthState = updateUIForAuthState;
+window.checkUserSession = checkUserSession;

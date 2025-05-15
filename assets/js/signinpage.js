@@ -66,15 +66,13 @@ function setupLoginForm() {
     return;
   }
 
-  // Clear any existing form action and ensure it won't redirect
   loginForm.setAttribute('action', 'javascript:void(0);');
   loginForm.setAttribute('method', 'post');
   loginForm.setAttribute('onsubmit', 'return false;');
 
-  // Add a direct click handler to the submit button
   const submitButton = loginForm.querySelector('button[type="submit"], input[type="submit"]');
   if (submitButton) {
-    submitButton.onclick = function(e) {
+    submitButton.onclick = function (e) {
       e.preventDefault();
       e.stopPropagation();
       handleLogin(loginForm, 'login-error-message');
@@ -82,13 +80,16 @@ function setupLoginForm() {
     };
   }
 
-  // Also add an overall form submit handler
-  loginForm.addEventListener('submit', function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    handleLogin(loginForm, 'login-error-message');
-    return false;
-  }, true);
+  loginForm.addEventListener(
+    'submit',
+    function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      handleLogin(loginForm, 'login-error-message');
+      return false;
+    },
+    true
+  );
 
   const showRegisterLink = document.getElementById('show-register');
   if (showRegisterLink) {
@@ -116,7 +117,6 @@ const observer = new MutationObserver((mutations) => {
         };
         closeButton.style.cursor = 'pointer';
       }
-      // Also check for login form in added nodes
       if (node.nodeType === 1 && (node.id === 'login-form' || node.querySelector('#login-form'))) {
         setupLoginForm();
       }
@@ -126,7 +126,6 @@ const observer = new MutationObserver((mutations) => {
 
 observer.observe(document.body, { childList: true, subtree: true });
 
-// Handle login function - moved inside this file and not on window object
 async function handleLogin(form, errorElementId) {
   const formData = new FormData(form);
   const identity = formData.get('identity');
@@ -134,7 +133,6 @@ async function handleLogin(form, errorElementId) {
 
   console.log('Attempting login for:', identity);
 
-  // Show loading state
   const submitButton = form.querySelector('button[type="submit"], input[type="submit"]');
   const originalButtonText = submitButton ? submitButton.textContent : 'Sign In';
   if (submitButton) {
@@ -147,10 +145,9 @@ async function handleLogin(form, errorElementId) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ identity, password }),
-      credentials: 'same-origin' // Include cookies in the request
+      credentials: 'same-origin'
     });
 
-    // Reset button state
     if (submitButton) {
       submitButton.disabled = false;
       submitButton.textContent = originalButtonText;
@@ -159,12 +156,9 @@ async function handleLogin(form, errorElementId) {
     if (response.ok) {
       const data = await response.json();
       console.log('Login successful!');
-      
-      // Store token both in localStorage and as a variable in memory
       localStorage.setItem('session_token', data.token);
       window.userToken = data.token;
-      
-      // Navigate to home
+
       if (window.navigateTo) {
         window.navigateTo('home');
       } else {
@@ -180,13 +174,10 @@ async function handleLogin(form, errorElementId) {
     }
   } catch (error) {
     console.error('Login error:', error);
-    
-    // Reset button state
     if (submitButton) {
       submitButton.disabled = false;
       submitButton.textContent = originalButtonText;
     }
-    
     const errorElement = document.getElementById(errorElementId);
     if (errorElement) {
       errorElement.textContent = 'Network error. Please try again later.';
@@ -195,9 +186,41 @@ async function handleLogin(form, errorElementId) {
   }
 }
 
-// Expose handleLogin to global scope
-window.handleLogin = handleLogin;
+// ✅ ADDING LOGOUT FUNCTION HERE
+async function handleLogout() {
+  try {
+    const response = await fetch('/api/logout', {
+      method: 'POST',
+      credentials: 'same-origin',
+    });
 
+    if (response.ok) {
+      console.log('Logout successful');
+    } else {
+      console.warn('Logout failed on server:', await response.text());
+    }
+  } catch (error) {
+    console.error('Logout request failed:', error);
+  }
+
+  // Clear localStorage and in-memory token
+  localStorage.removeItem('session_token');
+  window.userToken = null;
+
+  // Redirect to signin page
+  if (window.navigateTo) {
+    window.navigateTo('signin');
+  } else {
+    window.location.hash = '#/signin';
+  }
+}
+
+// ✅ EXPOSE FUNCTIONS GLOBALLY
+window.handleLogin = handleLogin;
+window.handleLogout = handleLogout;
+window.initializeSignInPage = initializeSignInPage;
+
+// ✅ INITIALIZE SIGNIN PAGE
 document.addEventListener('DOMContentLoaded', () => {
   if (window.location.hash.includes('#/signin')) {
     initializeSignInPage();
@@ -209,5 +232,3 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
     setTimeout(initializeSignInPage, 0);
   }
 }
-
-window.initializeSignInPage = initializeSignInPage;

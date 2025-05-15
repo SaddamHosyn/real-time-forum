@@ -1,16 +1,14 @@
 package utils
 
 import (
-
-
 	"errors"
 	"regexp"
 	"time"
 
 	"realtimeforum/model"
 
-	"golang.org/x/crypto/bcrypt"
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 const (

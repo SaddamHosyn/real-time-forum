@@ -3,6 +3,7 @@ package server
 import (
 	"log"
 	"net/http"
+	"realtimeforum/auth"
 
 	"realtimeforum/handler"
 
@@ -25,6 +26,7 @@ func StartServer() {
 	http.HandleFunc("/api/create-post", handler.CreatePostHandler)
 	http.HandleFunc("/api/submit-post", handler.SubmitPostHandler)
 	http.HandleFunc("/api/register", handler.RegisterHandler)
+	http.HandleFunc("/api/check-session", auth.CheckSessionHandler)
 
 	// Start the server
 	log.Println("Server started on http://localhost:8080")
