@@ -4,7 +4,7 @@ const routes = {
   'home': { template: 'home-template', authRequired: false, script: '/assets/js/home.js' },
   'store': { template: 'storetemplate', authRequired: false, script: '/assets/js/findastore.js',init: initializeStorePage },
   'topicsbar': { template: 'topicsbar-template', authRequired: true },
-  'account': { template: 'account-template', authRequired: true, init: showAccountPage, script: '/assets/js/account.js' },
+  'account': { template: 'account-template', authRequired: true, init: initializeAccountPage, script: '/assets/js/account.js' },
   'signin': { template: 'signin-template', authRequired: false, script: '/assets/js/signinpage.js' },
   'register': { template: 'register-template', authRequired: false, init: initializeRegisterPage, script: '/assets/js/registerfront.js' },
   'feed': { template: 'feed-template', authRequired: false },
@@ -218,9 +218,7 @@ window.isLoggedIn = isLoggedIn;
 window.updateAuthUI = updateAuthUI;
 
 // Stub functions for page initialization
-function showAccountPage() { 
-  console.log('Account page initialization');
-}
+
 
 function initializeRegisterPage() {
   console.log('Register page initialization');
@@ -229,5 +227,8 @@ function initializeRegisterPage() {
 function initializeSignInPage() {
   console.log('Sign in page initialization called from router.js');
   // The actual implementation is in signinpage.js
+}
+function initializeAccountPage() { 
+  console.log('Account page initialization');
 }
 

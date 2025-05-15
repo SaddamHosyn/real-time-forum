@@ -533,150 +533,71 @@
     <!-- my account details( posts, my comments) -->
     <!-- my account details( posts, my comments) -->
 
-    <template id="account-template">
-      <section class="user-account">
-        <div class="container">
-          <div class="row">
-            <!-- User Profile Sidebar -->
-            <div class="col-md-3 mb-4">
-              <div class="card profile-card shadow-sm">
-                <div class="card-body text-center">
-                  <img
-                    src="https://via.placeholder.com/150"
-                    class="rounded-circle mb-3"
-                    alt="Profile"
-                    width="100"
-                  />
-                  <h4 id="account-username">Username</h4>
-                  <p class="text-muted" id="account-email">user@example.com</p>
-                  <div class="d-flex justify-content-center mb-3">
-                    <span class="badge bg-primary me-2">Member</span>
-                    <span class="badge bg-secondary">Since 2023</span>
-                  </div>
-                </div>
-              </div>
-        
-              <!-- Stats Summary -->
-              <div class="card mt-3 shadow-sm">
-                <div class="card-body">
-                  <h6 class="card-title">Activity Summary</h6>
-                  <ul class="list-group list-group-flush">
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                      Posts
-                      <span class="badge bg-primary rounded-pill" id="post-count">0</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                      Comments
-                      <span class="badge bg-success rounded-pill" id="comment-count">0</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
+   <template id="account-template">
+  <div class="account-container">
+    <div class="account-header">
+      <h2>My Account</h2>
+    </div>
+    <div class="account-content">
+      <div class="account-sidebar">
+        <div class="account-profile">
+          <div class="profile-picture">
+            <img src="https://via.placeholder.com/150" alt="Profile" id="account-profile-img">
+          </div>
+          <h3 id="account-username">Username</h3>
+          <p id="account-email">user@example.com</p>
+          <div class="account-stats">
+            <div class="stat-item">
+              <span class="stat-value" id="post-count">0</span>
+              <span class="stat-label">Posts</span>
             </div>
-        
-            <!-- Main Content Area -->
-            <div class="col-md-9">
-              <div class="card shadow-sm">
-                <div class="card-header">
-                  <ul class="nav nav-tabs card-header-tabs" id="accountTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                      <button
-                        class="nav-link active"
-                        id="posts-tab"
-                        data-bs-toggle="tab"
-                        data-bs-target="#posts-content"
-                        type="button"
-                        role="tab"
-                      >
-                        My Posts
-                      </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                      <button
-                        class="nav-link"
-                        id="comments-tab"
-                        data-bs-toggle="tab"
-                        data-bs-target="#comments-content"
-                        type="button"
-                        role="tab"
-                      >
-                        My Comments
-                      </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                      <button
-                        class="nav-link"
-                        id="saved-tab"
-                        data-bs-toggle="tab"
-                        data-bs-target="#saved-content"
-                        type="button"
-                        role="tab"
-                      >
-                        Saved Items
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-        
-                <div class="card-body">
-                  <div class="tab-content" id="accountTabContent">
-                    <!-- My Posts Tab -->
-                    <div class="tab-pane fade show active" id="posts-content" role="tabpanel">
-                      <h5 class="mb-3">My Recent Posts</h5>
-                      <div class="list-group" id="user-posts-list">
-                        <!-- Posts will be loaded here dynamically -->
-                        <div class="text-center py-4">
-                          <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="text-end mt-3">
-                        <a href="#" class="btn btn-sm btn-outline-primary">View All Posts</a>
-                      </div>
-                    </div>
-        
-                    <!-- My Comments Tab -->
-                    <div class="tab-pane fade" id="comments-content" role="tabpanel">
-                      <h5 class="mb-3">My Recent Comments</h5>
-                      <div class="list-group" id="user-comments-list">
-                        <!-- Comments will be loaded here dynamically -->
-                        <div class="text-center py-4">
-                          <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="text-end mt-3">
-                        <a href="#" class="btn btn-sm btn-outline-primary">View All Comments</a>
-                      </div>
-                    </div>
-        
-                    <!-- Saved Items Tab -->
-                    <div class="tab-pane fade" id="saved-content" role="tabpanel">
-                      <h5 class="mb-3">My Saved Items</h5>
-                      <div class="list-group" id="saved-items-list">
-                        <!-- Saved items will be loaded here dynamically -->
-                        <div class="text-center py-4">
-                          <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="text-end mt-3">
-                        <a href="#" class="btn btn-sm btn-outline-primary">View All Saved Items</a>
-                      </div>
-                    </div>
-                  </div> <!-- /.tab-content -->
-                </div> <!-- /.card-body -->
-              </div> <!-- /.card -->
-            </div> <!-- /.col-md-9 -->
-          </div> <!-- /.row -->
-        </div> <!-- /.container -->
-        
-      </section>
-    </template>
-
+            <div class="stat-item">
+              <span class="stat-value" id="comment-count">0</span>
+              <span class="stat-label">Comments</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="account-main">
+        <div class="account-tabs">
+          <button class="tab-button active" data-tab="posts">My Posts</button>
+          <button class="tab-button" data-tab="comments">My Comments</button>
+          <button class="tab-button" data-tab="settings">Account Settings</button>
+        </div>
+        <div class="tab-content active" id="posts-tab">
+          <h3>Recent Posts</h3>
+          <div class="posts-list" id="user-posts-list">
+            <!-- Posts will be loaded here -->
+          </div>
+        </div>
+        <div class="tab-content" id="comments-tab">
+          <h3>Recent Comments</h3>
+          <div class="comments-list" id="user-comments-list">
+            <!-- Comments will be loaded here -->
+          </div>
+        </div>
+        <div class="tab-content" id="settings-tab">
+          <h3>Account Settings</h3>
+          <form id="account-settings-form">
+            <div class="form-group">
+              <label for="first-name">First Name</label>
+              <input type="text" id="first-name" name="first_name">
+            </div>
+            <div class="form-group">
+              <label for="last-name">Last Name</label>
+              <input type="text" id="last-name" name="last_name">
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email">
+            </div>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
     <!-- my account details( posts,  my comments) -->
 
 

@@ -27,6 +27,9 @@ func StartServer() {
 	http.HandleFunc("/api/submit-post", handler.SubmitPostHandler)
 	http.HandleFunc("/api/register", handler.RegisterHandler)
 	http.HandleFunc("/api/check-session", auth.CheckSessionHandler)
+	http.HandleFunc("/api/user/posts", handler.GetUserPostsHandler)
+	http.HandleFunc("/api/user/comments", handler.GetUserCommentsHandler)
+	http.HandleFunc("/api/user/update", handler.UpdateUserHandler)
 
 	// Start the server
 	log.Println("Server started on http://localhost:8080")
