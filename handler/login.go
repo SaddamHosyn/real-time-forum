@@ -13,6 +13,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("Content-Type", "application/json")
 
 	if r.Method == http.MethodOptions {
 		w.WriteHeader(http.StatusOK)
@@ -20,7 +21,11 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method != http.MethodPost {
-		http.Error(w, "Only POST method allowed", http.StatusMethodNotAllowed)
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		json.NewEncoder(w).Encode(map[string]string{
+			"message": "Only POST method allowed",
+			"status":  "error",
+		})
 		return
 	}
 
@@ -29,18 +34,29 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	var loginData auth.LoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&loginData); err != nil {
 		log.Printf("Failed to decode request body: %v", err)
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{
+			"message": "Invalid request body",
+			"status":  "error",
+		})
 		return
 	}
 
-	if strings.TrimSpace(loginData.Identity) == "" || strings.TrimSpace(loginData.Password) == "" {
-		http.Error(w, "Username/email and password are required", http.StatusBadRequest)
+	loginData.Identity = strings.TrimSpace(loginData.Identity)
+	loginData.Password = strings.TrimSpace(loginData.Password)
+
+	if loginData.Identity == "" || loginData.Password == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{
+			"message": "Username/email and password are required",
+			"status":  "error",
+		})
 		return
 	}
 
 	log.Printf("Login attempt for identity: %s", loginData.Identity)
 
-	// First check if user already has an active session
+	// Check for existing session
 	var existingSession string
 	var userID int
 	err := database.DB.QueryRow(`
@@ -51,11 +67,14 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		loginData.Identity, loginData.Identity).Scan(&existingSession, &userID)
 
 	if err == nil && existingSession != "" {
-		// User already has a session - remove it to ensure single session
 		_, err = database.DB.Exec("DELETE FROM sessions WHERE user_id = ?", userID)
 		if err != nil {
 			log.Printf("Error removing existing session: %v", err)
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(map[string]string{
+				"message": "Internal server error",
+				"status":  "error",
+			})
 			return
 		}
 	}
@@ -63,10 +82,20 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	loginResp, err := auth.LoginUser(loginData.Identity, loginData.Password)
 	if err != nil {
 		log.Printf("Failed login attempt for: %s - %v", loginData.Identity, err)
-		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
+
+		// Enhanced error messaging
+		var errorMsg string
+		if strings.Contains(err.Error(), "user not found") {
+			errorMsg = "User not found. Please check your username/email"
+		} else if strings.Contains(err.Error(), "invalid password") {
+			errorMsg = "Incorrect password. Please try again"
+		} else {
+			errorMsg = "Invalid username/email or password"
+		}
+
 		json.NewEncoder(w).Encode(map[string]string{
-			"message": "Invalid credentials",
+			"message": errorMsg,
 			"status":  "error",
 		})
 		return
@@ -75,6 +104,5 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	auth.SetSessionCookie(w, loginResp.Token)
 	log.Printf("Successful login for user: %s", loginData.Identity)
 
-	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(loginResp)
 }

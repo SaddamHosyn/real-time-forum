@@ -1,4 +1,5 @@
-document.addEventListener('DOMContentLoaded', () => {
+ 
+ document.addEventListener('DOMContentLoaded', () => {
   updateAuthUI();
   
   // Check for existing session on page load

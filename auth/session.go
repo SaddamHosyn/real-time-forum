@@ -105,17 +105,18 @@ func CheckSessionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user, err := GetUserBySessionToken(cookie.Value)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			// Invalid session token
+if err != nil {
+		if err.Error() == "invalid session token" {
+			log.Println("No valid session found (user not logged in).")
 			json.NewEncoder(w).Encode(map[string]interface{}{
 				"authenticated": false,
 			})
 			return
+		} else {
+			log.Printf("Unexpected error checking session: %v", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
 		}
-		log.Printf("Error checking session: %v", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
 	}
 
 	// Valid session

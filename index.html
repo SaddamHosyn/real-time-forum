@@ -75,7 +75,7 @@
           </div>
             <!-- when login after that it should have these buttons -->
              <div class="d-none" id="account-buttons">
-               <a href="/my-account" class="btn btn-outline-primary">My Account</a>
+               <a href="/my-account" class="btn btn-light">My Account</a>
                <button class="btn btn-secondary"             id="logout-btn">Logout</button>
              </div>
           
@@ -533,71 +533,50 @@
     <!-- my account details( posts, my comments) -->
     <!-- my account details( posts, my comments) -->
 
-   <template id="account-template">
+<template id="account-template">
   <div class="account-container">
     <div class="account-header">
       <h2>My Account</h2>
     </div>
-    <div class="account-content">
-      <div class="account-sidebar">
-        <div class="account-profile">
-          <div class="profile-picture">
-            <img src="https://via.placeholder.com/150" alt="Profile" id="account-profile-img">
-          </div>
-          <h3 id="account-username">Username</h3>
-          <p id="account-email">user@example.com</p>
-          <div class="account-stats">
-            <div class="stat-item">
-              <span class="stat-value" id="post-count">0</span>
-              <span class="stat-label">Posts</span>
+    <div class="account-info">
+      <p><strong>Username:</strong> <span id="account-username">Username</span></p>
+      <p><strong>Email:</strong> <span id="account-email">user@example.com</span></p>
+    </div>
+    
+    <div class="user-activity">
+      <div class="user-posts">
+        <h3>My Posts</h3>
+        <div class="posts-list" id="user-posts-list">
+          <template id="post-item-template">
+            <div class="post-item">
+              <h4><a class="post-link" href=""></a></h4>
+              <p class="post-meta"></p>
+              <p class="post-excerpt"></p>
             </div>
-            <div class="stat-item">
-              <span class="stat-value" id="comment-count">0</span>
-              <span class="stat-label">Comments</span>
-            </div>
-          </div>
+          </template>
+          <p class="no-posts">You have not created any posts yet.</p>
         </div>
       </div>
-      <div class="account-main">
-        <div class="account-tabs">
-          <button class="tab-button active" data-tab="posts">My Posts</button>
-          <button class="tab-button" data-tab="comments">My Comments</button>
-          <button class="tab-button" data-tab="settings">Account Settings</button>
-        </div>
-        <div class="tab-content active" id="posts-tab">
-          <h3>Recent Posts</h3>
-          <div class="posts-list" id="user-posts-list">
-            <!-- Posts will be loaded here -->
-          </div>
-        </div>
-        <div class="tab-content" id="comments-tab">
-          <h3>Recent Comments</h3>
-          <div class="comments-list" id="user-comments-list">
-            <!-- Comments will be loaded here -->
-          </div>
-        </div>
-        <div class="tab-content" id="settings-tab">
-          <h3>Account Settings</h3>
-          <form id="account-settings-form">
-            <div class="form-group">
-              <label for="first-name">First Name</label>
-              <input type="text" id="first-name" name="first_name">
+
+      <div class="user-comments">
+        <h3>My Comments</h3>
+        <div class="comments-list" id="user-comments-list">
+          <template id="comment-item-template">
+            <div class="comment-item">
+              <p class="comment-content"></p>
+              <p class="comment-meta">
+                Posted on <span class="comment-date"></span>
+                in <a class="comment-post-link" href="">post</a>
+              </p>
             </div>
-            <div class="form-group">
-              <label for="last-name">Last Name</label>
-              <input type="text" id="last-name" name="last_name">
-            </div>
-            <div class="form-group">
-              <label for="email">Email</label>
-              <input type="email" id="email" name="email">
-            </div>
-            <button type="submit" class="btn btn-primary">Save Changes</button>
-          </form>
+          </template>
+          <p class="no-comments">You have not made any comments yet.</p>
         </div>
       </div>
     </div>
   </div>
 </template>
+
     <!-- my account details( posts,  my comments) -->
 
 
@@ -606,8 +585,7 @@
 
     <!-- log in pop up page -->
     <!-- log in pop up page -->
-   
-<template id="signin-template">
+      <template id="signin-template">
   <div class="container mt-5">
     <div class="row justify-content-center">
       <div class="col-md-6">
@@ -617,6 +595,11 @@
             <button type="button" id="close-signin" class="btn btn-light">×</button>
           </div>
           <div class="signin-card-body">
+            <!-- ✅ Only ONE error message div -->
+      
+
+
+
             <form id="login-form" novalidate>
               <div class="mb-3">
                 <label class="form-label">Email or Username</label>
@@ -638,13 +621,19 @@
                   required
                 />
               </div>
+                <div id="login-error-message"></div>
 
-              <div id="login-error-message"></div>
+
+
+
+
+
 
               <button type="submit" class="btn btn-primary w-100">
                 Sign In
               </button>
             </form>
+
             <div class="text-center mt-3">
               <p>
                 New user? <a href="#" id="show-register">Create account</a>
@@ -657,7 +646,6 @@
   </div>
 </template>
 
-      
       
 
     <!-- log in pop up page -->
@@ -695,11 +683,18 @@
   <template id="register-template">
     <div id="register-page" class="register-page-container">
        <div class="register-page-content">
-            <div class="register-page-header d-flex justify-content-between align-items-center">
+           <div class="register-page-header d-flex justify-content-between align-items-center">
                 <h2>Create Your Account</h2>
                 <button type="button" class="btn-close" aria-label="Close" id="close-register"></button>
             </div>
             <div class="register-page-body">
+
+  <!-- ✅ Success message container -->
+        <div id="registerSuccessMessage" class="alert alert-success d-none" role="alert">
+          Registration successful!
+        </div>
+
+
                 <form id="registerForm" class="needs-validation" novalidate>
                     <div class="row">
                         <div class="col-md-6">
@@ -947,22 +942,18 @@
   <script src="/assets/js/home.js" defer></script>
   <script src="/assets/js/findastore.js" defer></script>
   <script src="/assets/js/topicsbar.js" defer></script>
+  <script src="/assets/js/account.js" defer></script>
+  <script src="/assets/js/auth.js" defer></script>
+ 
  
   <script src="/assets/js/comment.js" defer></script>
-  <script src="/assets/js/profile.js" defer></script>
+ 
   <script src="/assets/js/error.js" defer></script>
   <script src="/assets/js/createpost.js" defer></script>
   <script src="/assets/js/app.js" defer></script>
   <script src="/assets/js/router.js" defer></script>
 
  
-   
-
-   
-  
-   
-    <script src="/backend/js/registerback.js" defer></script>
-    <script src="/backend/js/main.js" defer></script>
    
 
 

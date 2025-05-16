@@ -1,3 +1,4 @@
+// signinpage.js
 function initializeSignInPage() {
   console.log('Initializing sign-in page');
   setupCloseButton();
@@ -9,16 +10,16 @@ function setupCloseButton() {
   const closeButton = document.getElementById('close-signin');
   if (closeButton) {
     closeButton.onclick = null;
-    closeButton.onclick = function (e) {
+    closeButton.onclick = function(e) {
       e.preventDefault();
       e.stopPropagation();
-      navigateToHome();
+      navigateTo('home');
       return false;
     };
-    closeButton.addEventListener('click', function (e) {
+    closeButton.addEventListener('click', function(e) {
       e.preventDefault();
       e.stopPropagation();
-      navigateToHome();
+      navigateTo('home');
     });
     closeButton.style.cursor = 'pointer';
     closeButton.classList.add('close-button-initialized');
@@ -39,11 +40,11 @@ function reinforceCloseButtonHandler() {
 
     document.addEventListener(
       'click',
-      function (e) {
+      function(e) {
         if (e.target.id === 'close-signin' || e.target.closest('#close-signin')) {
           e.preventDefault();
           e.stopPropagation();
-          navigateToHome();
+          navigateTo('home');
         }
       },
       true
@@ -72,7 +73,7 @@ function setupLoginForm() {
 
   const submitButton = loginForm.querySelector('button[type="submit"], input[type="submit"]');
   if (submitButton) {
-    submitButton.onclick = function (e) {
+    submitButton.onclick = function(e) {
       e.preventDefault();
       e.stopPropagation();
       handleLogin(loginForm, 'login-error-message');
@@ -82,7 +83,7 @@ function setupLoginForm() {
 
   loginForm.addEventListener(
     'submit',
-    function (e) {
+    function(e) {
       e.preventDefault();
       e.stopPropagation();
       handleLogin(loginForm, 'login-error-message');
@@ -104,15 +105,16 @@ function setupLoginForm() {
   }
 }
 
-const observer = new MutationObserver((mutations) => {
+// Only declare observer once
+const observer = window.observer || new MutationObserver((mutations) => {
   mutations.forEach((mutation) => {
     mutation.addedNodes.forEach((node) => {
       if (node.nodeType === 1 && node.querySelector('#close-signin')) {
         const closeButton = node.querySelector('#close-signin');
         closeButton.onclick = null;
-        closeButton.onclick = function (e) {
+        closeButton.onclick = function(e) {
           e.preventDefault();
-          navigateToHome();
+          navigateTo('home');
           return false;
         };
         closeButton.style.cursor = 'pointer';
@@ -124,7 +126,10 @@ const observer = new MutationObserver((mutations) => {
   });
 });
 
-observer.observe(document.body, { childList: true, subtree: true });
+if (!window.observer) {
+  observer.observe(document.body, { childList: true, subtree: true });
+  window.observer = observer;
+}
 
 async function handleLogin(form, errorElementId) {
   const formData = new FormData(form);
@@ -132,6 +137,12 @@ async function handleLogin(form, errorElementId) {
   const password = formData.get('password');
 
   console.log('Attempting login for:', identity);
+
+  const errorElement = document.getElementById(errorElementId);
+  if (errorElement) {
+    errorElement.textContent = '';
+    errorElement.style.display = 'none';
+  }
 
   const submitButton = form.querySelector('button[type="submit"], input[type="submit"]');
   const originalButtonText = submitButton ? submitButton.textContent : 'Sign In';
@@ -155,18 +166,20 @@ async function handleLogin(form, errorElementId) {
 
     if (response.ok) {
       const data = await response.json();
-      console.log('Login successful!');
       localStorage.setItem('session_token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
       window.userToken = data.token;
 
+      const redirectTo = localStorage.getItem('redirectAfterLogin') || 'home';
+      localStorage.removeItem('redirectAfterLogin');
+      
       if (window.navigateTo) {
-        window.navigateTo('home');
+        window.navigateTo(redirectTo);
       } else {
-        window.location.hash = '#/home';
+        window.location.hash = `#/${redirectTo}`;
       }
     } else {
       const errorData = await response.json().catch(() => ({ message: 'Login failed. Please try again.' }));
-      const errorElement = document.getElementById(errorElementId);
       if (errorElement) {
         errorElement.textContent = errorData.message || 'Invalid username/email or password';
         errorElement.style.display = 'block';
@@ -178,7 +191,6 @@ async function handleLogin(form, errorElementId) {
       submitButton.disabled = false;
       submitButton.textContent = originalButtonText;
     }
-    const errorElement = document.getElementById(errorElementId);
     if (errorElement) {
       errorElement.textContent = 'Network error. Please try again later.';
       errorElement.style.display = 'block';
@@ -186,7 +198,6 @@ async function handleLogin(form, errorElementId) {
   }
 }
 
-// ✅ ADDING LOGOUT FUNCTION HERE
 async function handleLogout() {
   try {
     const response = await fetch('/api/logout', {
@@ -203,11 +214,10 @@ async function handleLogout() {
     console.error('Logout request failed:', error);
   }
 
-  // Clear localStorage and in-memory token
   localStorage.removeItem('session_token');
+  localStorage.removeItem('user');
   window.userToken = null;
 
-  // Redirect to signin page
   if (window.navigateTo) {
     window.navigateTo('signin');
   } else {
@@ -215,20 +225,12 @@ async function handleLogout() {
   }
 }
 
-// ✅ EXPOSE FUNCTIONS GLOBALLY
+// Expose functions globally
 window.handleLogin = handleLogin;
 window.handleLogout = handleLogout;
 window.initializeSignInPage = initializeSignInPage;
 
-// ✅ INITIALIZE SIGNIN PAGE
-document.addEventListener('DOMContentLoaded', () => {
-  if (window.location.hash.includes('#/signin')) {
-    initializeSignInPage();
-  }
-});
-
-if (document.readyState === 'complete' || document.readyState === 'interactive') {
-  if (window.location.hash.includes('#/signin')) {
-    setTimeout(initializeSignInPage, 0);
-  }
+// Initialize sign-in page
+if (window.location.hash.includes('#/signin')) {
+  initializeSignInPage();
 }
