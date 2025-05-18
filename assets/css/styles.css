@@ -538,9 +538,9 @@ h2 {
 
 
 /* all topics options while posting*/
-/* Modal Content Styles */
-/* Modal Content Styles */
-.create-post-modal-content {
+/* create post Content Styles */
+/* create post Content Styles */
+.create-post-content {
   background-color: #fefefe;
   margin: auto;
   padding: 20px;
@@ -549,22 +549,13 @@ h2 {
   width: 80%;
   max-width: 800px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  
-
 }
 
-
 @media (min-width: 769px) {
-  .create-post-modal-content {
+  .create-post-content {
     transform: translateX(-12%);
   }
 }
-
-
-
-
-
-
 
 .create-post-close-btn {
   color: #aaa;
@@ -590,9 +581,7 @@ h2 {
   color: #333;
 }
 
-#create-post-title,
 #input-create-post-title,
-#create-post-content,
 #create-post-form textarea,
 #create-post-form input[type="text"],
 #create-post-form textarea {
@@ -601,11 +590,11 @@ h2 {
   border: 2px solid #ddd;
   border-radius: 4px;
   font-size: 16px;
+  box-sizing: border-box;
 }
 
-
 #textarea-create-post-content {
-  width: 100%; /* full width of its container */
+  width: 100%;
   padding: 10px;
   font-size: 16px;
   border: 2px solid #ccc;
@@ -613,8 +602,6 @@ h2 {
   resize: vertical;
   box-sizing: border-box;
 }
-
-
 
 /* Topics Layout */
 .create-post-topics-container {
@@ -724,9 +711,9 @@ h2 {
   transform: translate(-50%, -50%);
 }
 
-
+/* Submit Button */
 .btn-submit-create-post {
-  background-color: #1e90ff; /* Dodger Blue */
+  background-color: #1e90ff;
   color: white;
   padding: 12px 24px;
   font-size: 16px;
@@ -739,13 +726,12 @@ h2 {
 }
 
 .btn-submit-create-post:hover {
-  background-color: #1c4e80; /* Slightly darker blue */
+  background-color: #1c4e80;
 }
 
 .btn-submit-create-post:active {
-  transform: scale(0.98); /* Button press effect */
+  transform: scale(0.98);
 }
-
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
@@ -758,30 +744,29 @@ h2 {
     min-width: 100%;
   }
 
-  .create-post-modal-content {
+  .create-post-content {
     width: 95%;
     padding: 15px;
   }
 }
 
-
+/* Modal Overlay */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.4); /* dimmed background */
-  z-index: 9999; /* high z-index to go above everything */
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 9999;
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow-y: auto; /* allow scrolling */
-  padding: 20px; /* give breathing room around modal */
+  overflow-y: auto;
+  padding: 20px;
 }
 
-
-
+/* Validation Errors */
 .validation-errors {
   background-color: #ffebee;
   border-left: 4px solid #f44336;
@@ -800,9 +785,7 @@ h2 {
   margin-bottom: 5px;
 }
 
-
-
-/* NOT-ALLOWED WHEN MORE THAN 3 TOPICS ARE SELECTED */
+/* Blurred Topic */
 .create-post-topics-container label.blurred-topic {
   opacity: 0.5;
   filter: blur(2px);
@@ -2169,3 +2152,184 @@ h2 {
 /* My Account Page Styles */
 
 
+
+
+
+
+
+/* try Styles */
+/* tryStyles */
+
+
+
+/* Feed Page Styles */
+.feed-section {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.feed-section h2 {
+  margin-bottom: 25px;
+  text-align: center;
+  color: #333;
+}
+
+.posts-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.post-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  transition: transform 0.2s ease;
+}
+
+.post-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.post-header {
+  margin-bottom: 15px;
+}
+
+.post-title {
+  margin-bottom: 5px;
+  font-size: 1.4rem;
+}
+
+.post-title a {
+  color: #0056b3;
+  text-decoration: none;
+}
+
+.post-title a:hover {
+  text-decoration: underline;
+}
+
+.post-meta {
+  display: flex;
+  gap: 15px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.post-content {
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+.post-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.post-stats {
+  display: flex;
+  gap: 15px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.post-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* Clear previous page content */
+#app-content {
+  min-height: 80vh;
+}
+
+/* Account Page Styles */
+.account-container {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.account-header {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.account-info {
+  margin-bottom: 30px;
+}
+
+.user-activity {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+}
+
+@media (min-width: 768px) {
+  .user-activity {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.user-posts, .user-comments {
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.user-posts h3, .user-comments h3 {
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+}
+
+.post-item, .comment-item {
+  padding: 15px;
+  margin-bottom: 15px;
+  background-color: #fff;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.post-item h4 {
+  margin-bottom: 5px;
+}
+
+.post-link, .comment-post-link {
+  color: #0056b3;
+  text-decoration: none;
+}
+
+.post-meta, .comment-meta {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.post-excerpt {
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.comment-content {
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+}
+
+.no-posts, .no-comments {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+  font-style: italic;
+}
+
+/* try Styles */

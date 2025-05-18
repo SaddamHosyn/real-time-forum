@@ -2,6 +2,7 @@
 (function() {
   let carouselInterval = null;
   let currentCarouselIndex = 0;
+  let currentCleanup = null;
 
   function initializeCarousel() {
     const carousel = document.getElementById('mainCarousel');
@@ -90,7 +91,6 @@
     };
   }
 
-  // Hamburger menu functionality
   function setupHamburgerMenu() {
     const hamburgerBtn = document.querySelector('#navbarToggle');
     const navbarCollapse = document.querySelector('.navbar-collapse');
@@ -98,16 +98,11 @@
     if (hamburgerBtn && navbarCollapse) {
       hamburgerBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        
-        // Toggle the 'show' class on the navbar
         navbarCollapse.classList.toggle('show');
-        
-        // Toggle aria-expanded attribute for accessibility
         const expanded = hamburgerBtn.getAttribute('aria-expanded') === 'true' || false;
         hamburgerBtn.setAttribute('aria-expanded', !expanded);
       });
       
-      // Close menu when clicking outside
       document.addEventListener('click', (e) => {
         if (navbarCollapse.classList.contains('show') && 
             !navbarCollapse.contains(e.target) && 
@@ -117,7 +112,6 @@
         }
       });
       
-      // Close menu when clicking on a nav link
       const navLinks = navbarCollapse.querySelectorAll('.nav-link');
       navLinks.forEach(link => {
         link.addEventListener('click', () => {
@@ -130,9 +124,6 @@
     }
   }
 
-  // SPA logic
-  let currentCleanup = null;
-
   function loadPage(pageId) {
     console.log(`Loading page: ${pageId}`);
     
@@ -142,11 +133,11 @@
     }
     
     const appContent = document.getElementById('app-content');
+    if (!appContent) return;
     
-    if (appContent) appContent.style.display = 'block';
-    
+    appContent.style.display = 'block';
     const template = document.getElementById(`${pageId}-template`);
-    if (!template || !appContent) return;
+    if (!template) return;
     
     appContent.innerHTML = '';
     appContent.appendChild(template.content.cloneNode(true));
@@ -156,14 +147,12 @@
     }
   }
 
-  // Updated navigation delegation
   function setupNavigation() {
     document.body.addEventListener('click', (e) => {
       const target = e.target.closest('a.nav-link, .navbar-brand, [data-page]');
       if (!target) return;
 
       e.preventDefault();
-
       const pageId = target.dataset.page || (target.classList.contains('navbar-brand') ? 'home' : null);
       if (!pageId) return;
 
@@ -171,11 +160,19 @@
     });
   }
 
-  // Init
-  document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM fully loaded');
+  // Main initialization function
+  window.initializeHomePage = function() {
+    console.log('Home page initialized');
     setupNavigation();
     setupHamburgerMenu();
     loadPage('home');
+  };
+
+  // For standalone use (without router)
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!window.routerEnabled) {
+      initializeHomePage();
+    }
   });
+
 })();

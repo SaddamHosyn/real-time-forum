@@ -1,4 +1,5 @@
-// Renamed the top-level function to be called from router.js
+// register.js
+
 function setupRegisterPage() {
   console.log('Setting up register page event listeners...');
   const registerPage = document.getElementById('register-page');
@@ -10,27 +11,23 @@ function setupRegisterPage() {
   const passwordStrengthText = document.getElementById('passwordStrengthText');
   const usernameInput = document.getElementById('usernameInput');
   const usernameFeedback = document.getElementById('usernameAvailability');
-  const closeRegisterButton = document.getElementById('close-register'); // Get the close button
+  const closeRegisterButton = document.getElementById('close-register'); 
+  const successMessage = document.getElementById('registerSuccessMessage');
 
   if (!registerForm) {
       console.error('Register form not found!');
       return;
   }
 
-   // Event listener for the close button
-   if (closeRegisterButton) {
+  // Event listener for the close button
+  if (closeRegisterButton) {
     closeRegisterButton.addEventListener('click', () => {
         console.log('Close register button clicked.');
-        window.navigateTo('home'); // Or any other page you want to navigate to
+        window.navigateTo('home'); // Navigate to home page
     });
-} else {
+  } else {
     console.warn('Close register button element not found.');
-}
-
-
-
-
-
+  }
 
   // Prevent clipboard actions on confirmPassword input
   ['copy', 'paste', 'cut', 'drop'].forEach(evt =>
@@ -39,6 +36,7 @@ function setupRegisterPage() {
           confirmPasswordInput.value = ''; // Clear field if paste/drop attempted
       })
   );
+  
   // Disable dragover just in case
   confirmPasswordInput.addEventListener('dragover', e => e.preventDefault());
 
@@ -94,6 +92,7 @@ function setupRegisterPage() {
           confirmPasswordInput.classList.add('is-valid');
       }
   }
+  
   // Run the validation when password or confirm password changes
   passwordInput.addEventListener('input', validatePasswords);
   confirmPasswordInput.addEventListener('input', validatePasswords);
@@ -114,11 +113,9 @@ function setupRegisterPage() {
       }
   });
 
-  // Form validation
-
-
-registerForm.addEventListener('submit', async (e) => {
-    e.preventDefault(); // 🔴 prevent default form submission
+  // Form submission handler
+  registerForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
     registerForm.classList.add('was-validated');
 
     if (!registerForm.checkValidity()) {
@@ -148,8 +145,17 @@ registerForm.addEventListener('submit', async (e) => {
         const result = await response.json();
 
         if (response.ok) {
-            alert(result.message);
-            window.navigateTo('login'); // Or another page in your router
+            // Show success message
+            if (successMessage) {
+                successMessage.classList.remove('d-none');
+                successMessage.textContent = result.message || 'Registration successful!';
+            }
+            
+            // Wait a moment before redirecting to login
+            setTimeout(() => {
+                // Navigate to the feed page after successful registration
+                window.navigateTo('signin');
+            }, 1500);
         } else {
             alert(result.error || 'Registration failed');
         }
@@ -157,13 +163,8 @@ registerForm.addEventListener('submit', async (e) => {
         console.error('Registration error:', error);
         alert('An error occurred. Please try again.');
     }
-});
-
-
-
-
-
-
+  });
 }
 
-// The initializeRegisterPage function in router.js will trigger setupRegisterPage
+// Make the function globally available
+window.setupRegisterPage = setupRegisterPage;

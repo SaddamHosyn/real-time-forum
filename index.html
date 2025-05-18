@@ -57,25 +57,26 @@
             <a class="nav-link" href="#" data-page="home" data-type="page">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" data-page="store" data-type="page" >Find a Store</a>
+            <a class="nav-link" href="#store" data-page="store" data-type="page" >Find a Store</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#" data-page="topicsbar" data-type="page">Topics</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" data-page="template-create-post-modal" data-type="modal">Create Post</a>
-          </li>
+  <a class="nav-link" href="#/create-post">Create Post</a>
+</li>
+
         </ul>
 
           <!-- Register Button and Sign in Button -->
 
           <div class="registerlogin-buttons d-flex gap-2" id="registerlogin-buttons">
-            <button type="button" class="btn btn-register" id="open-register-modal">Register</button>
+            <button type="button" class="btn btn-register" id="open-register-page">Register</button>
             <button type="button" class="btn btn-light" id="open-signin-page">Sign In</button>
           </div>
             <!-- when login after that it should have these buttons -->
              <div class="d-none" id="account-buttons">
-               <a href="/my-account" class="btn btn-light">My Account</a>
+               <a href="#/my-account" class="btn btn-light">My Account</a>
                <button class="btn btn-secondary"             id="logout-btn">Logout</button>
              </div>
           
@@ -213,6 +214,7 @@
   <!-- find a Store template container -->
 
 <!-- Store Results Section -->
+<!-- Container always present -->
 <div id="storeResults" class="view d-none" aria-live="polite">
   <div class="container my-4">
     <h2 class="mb-4">Available Stores</h2>
@@ -220,8 +222,8 @@
   </div>
 </div>
 
-<!-- Store Template -->
-<template id="storetemplate">
+<!-- Only the card goes in the template -->
+<template id="store-template">
   <div class="store-card col-12 col-md-4 mb-4">
     <h3 class="store-name"></h3>
     <p class="store-address-line">
@@ -238,6 +240,7 @@
     </p>
   </div>
 </template>
+
 
 
 
@@ -409,120 +412,115 @@
     <!-- create post topics will be loaded here -->
     <!-- create post topics all here-->
     <!-- create post topics all here-->
-    <template id="template-create-post-modal">
-      <div class="create-post-modal-content">
-    
-        <span class="create-post-close-btn">&times;</span>
-        <h2>Create New Post</h2>
-        <form id="form-create-post">
-          <div class="validation-errors" style="display: none;"></div>
+  <template id="template-create-post">
+  <div class="create-post-content">
+    <button type="button" class="btn-close-create-post" style="float: right;">&times;</button>
+    <h2>Create New Post</h2>
+    <form id="form-create-post">
+      <div class="validation-errors" style="display: none;"></div>
 
-
-          <div class="create-post-form-group">
-            <label for="input-create-post-title">Title:</label>
-            <input type="text" id="input-create-post-title" required />
-           
-          </div>
-    
-          <div class="create-post-form-group">
-            <label>Topics (select at least 3):</label>
-            <div class="create-post-topics-container">
-    
-              <!-- Column 1 -->
-              <div class="create-post-topics-column">
-                <label>
-                  <input type="checkbox" name="create-post-topic" value="Daily Essentials" />
-                  <span class="create-post-topic-icon icon-daily"></span>
-                  Daily Essentials
-                </label>
-    
-                <label>
-                  <input type="checkbox" name="create-post-topic" value="Home & Lifestyle" />
-                  <span class="create-post-topic-icon icon-home"></span>
-                  Home & Lifestyle
-                </label>
-    
-                <label>
-                  <input type="checkbox" name="create-post-topic" value="Personal Well-being" />
-                  <span class="create-post-topic-icon icon-personal"></span>
-                  Personal Well-being
-                </label>
-              </div>
-    
-              <!-- Column 2 -->
-              <div class="create-post-topics-column">
-                <label>
-                  <input type="checkbox" name="create-post-topic" value="Leisure & Entertainment" />
-                  <span class="create-post-topic-icon icon-leisure"></span>
-                  Leisure & Entertainment
-                </label>
-    
-                <label>
-                  <input type="checkbox" name="create-post-topic" value="Commerce & Shopping" />
-                  <span class="create-post-topic-icon icon-commerce"></span>
-                  Commerce & Shopping
-                </label>
-    
-                <label>
-                  <input type="checkbox" name="create-post-topic" value="Mobility & Transportation" />
-                  <span class="create-post-topic-icon icon-mobility"></span>
-                  Mobility & Transportation
-                </label>
-              </div>
-    
-              <!-- Column 3 -->
-              <div class="create-post-topics-column">
-                <label>
-                  <input type="checkbox" name="create-post-topic" value="Services & Support" />
-                  <span class="create-post-topic-icon icon-services"></span>
-                  Services & Support
-                </label>
-    
-                <label>
-                  <input type="checkbox" name="create-post-topic" value="Culture & Community" />
-                  <span class="create-post-topic-icon icon-culture"></span>
-                  Culture & Community
-                </label>
-    
-                <label>
-                  <input type="checkbox" name="create-post-topic" value="Technology & Innovation" />
-                  <span class="create-post-topic-icon icon-technology"></span>
-                  Technology & Innovation
-                </label>
-              </div>
-    
-              <!-- Column 4 -->
-              <div class="create-post-topics-column">
-                <label>
-                  <input type="checkbox" name="create-post-topic" value="Information & Learning" />
-                  <span class="create-post-topic-icon icon-information"></span>
-                  Information & Learning
-                </label>
-    
-                <label>
-                  <input type="checkbox" name="create-post-topic" value="Quick Recipes" />
-                  <span class="create-post-topic-icon icon-recipes"></span>
-                  Quick Recipes
-                </label>
-    
-                <label>
-                  <input type="checkbox" name="create-post-topic" value="Nutrition Insights" />
-                  <span class="create-post-topic-icon icon-nutrition"></span>
-                  Nutrition Insights
-                </label>
-              </div>
-            </div>
-          </div>
-    
-          <div class="create-post-form-group">
-            <label for="textarea-create-post-content">Content:</label>
-            <textarea id="textarea-create-post-content" rows="6" required></textarea>
-          </div>
-    
-          <button type="submit" class="btn-submit-create-post">Submit Post</button>
-        </form>
+      <div class="create-post-form-group">
+        <label for="input-create-post-title">Title:</label>
+        <input type="text" id="input-create-post-title" required />
       </div>
-    </template>
+
+      <div class="create-post-form-group">
+        <label>Topics (select at least 3):</label>
+        <div class="create-post-topics-container">
+
+          <div class="create-post-topics-column">
+            <label>
+              <input type="checkbox" name="create-post-topic" value="Daily Essentials" />
+              <span class="create-post-topic-icon icon-daily"></span>
+              Daily Essentials
+            </label>
+
+            <label>
+              <input type="checkbox" name="create-post-topic" value="Home & Lifestyle" />
+              <span class="create-post-topic-icon icon-home"></span>
+              Home & Lifestyle
+            </label>
+
+            <label>
+              <input type="checkbox" name="create-post-topic" value="Personal Well-being" />
+              <span class="create-post-topic-icon icon-personal"></span>
+              Personal Well-being
+            </label>
+          </div>
+
+          <div class="create-post-topics-column">
+            <label>
+              <input type="checkbox" name="create-post-topic" value="Leisure & Entertainment" />
+              <span class="create-post-topic-icon icon-leisure"></span>
+              Leisure & Entertainment
+            </label>
+
+            <label>
+              <input type="checkbox" name="create-post-topic" value="Commerce & Shopping" />
+              <span class="create-post-topic-icon icon-commerce"></span>
+              Commerce & Shopping
+            </label>
+
+            <label>
+              <input type="checkbox" name="create-post-topic" value="Mobility & Transportation" />
+              <span class="create-post-topic-icon icon-mobility"></span>
+              Mobility & Transportation
+            </label>
+          </div>
+
+          <div class="create-post-topics-column">
+            <label>
+              <input type="checkbox" name="create-post-topic" value="Services & Support" />
+              <span class="create-post-topic-icon icon-services"></span>
+              Services & Support
+            </label>
+
+            <label>
+              <input type="checkbox" name="create-post-topic" value="Culture & Community" />
+              <span class="create-post-topic-icon icon-culture"></span>
+              Culture & Community
+            </label>
+
+            <label>
+              <input type="checkbox" name="create-post-topic" value="Technology & Innovation" />
+              <span class="create-post-topic-icon icon-technology"></span>
+              Technology & Innovation
+            </label>
+          </div>
+
+          <div class="create-post-topics-column">
+            <label>
+              <input type="checkbox" name="create-post-topic" value="Information & Learning" />
+              <span class="create-post-topic-icon icon-information"></span>
+              Information & Learning
+            </label>
+
+            <label>
+              <input type="checkbox" name="create-post-topic" value="Quick Recipes" />
+              <span class="create-post-topic-icon icon-recipes"></span>
+              Quick Recipes
+            </label>
+
+            <label>
+              <input type="checkbox" name="create-post-topic" value="Nutrition Insights" />
+              <span class="create-post-topic-icon icon-nutrition"></span>
+              Nutrition Insights
+            </label>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="create-post-form-group">
+        <label for="textarea-create-post-content">Content:</label>
+        <textarea id="textarea-create-post-content" rows="6" required></textarea>
+      </div>
+
+      <button type="submit" class="btn-submit-create-post">Submit Post</button>
+    </form>
+  </div>
+</template>
+
      <!-- post topics all here-->
     <!-- post topics will be loaded here-->
     
@@ -936,22 +934,23 @@
 
 
   <!-- If your HTML is inside real-time-forum directory -->
-  <script src="/assets/js/registerfront.js" defer></script>
-  <script src="/assets/js/loginlogout.js" defer></script>
-  <script src="/assets/js/signinpage.js" defer></script>
-  <script src="/assets/js/home.js" defer></script>
-  <script src="/assets/js/findastore.js" defer></script>
-  <script src="/assets/js/topicsbar.js" defer></script>
-  <script src="/assets/js/account.js" defer></script>
-  <script src="/assets/js/auth.js" defer></script>
+  <script type="module" src="/assets/js/registerfront.js" defer></script>
+  <script type="module" src="/assets/js/loginlogout.js" defer></script>
+  <script type="module" src="/assets/js/signinpage.js" defer></script>
+  <script type="module" src="/assets/js/home.js" defer></script>
+  <script type="module" src="/assets/js/findastore.js" defer></script>
+  <script type="module" src="/assets/js/topicsbar.js" defer></script>
+  <script type="module" src="/assets/js/account.js" defer></script>
+  <script type="module" src="/assets/js/auth.js" defer></script>
+  <script type="module" src="/assets/js/feed.js" defer></script>
  
  
-  <script src="/assets/js/comment.js" defer></script>
+  <script type="module" src="/assets/js/comment.js" defer></script>
  
-  <script src="/assets/js/error.js" defer></script>
-  <script src="/assets/js/createpost.js" defer></script>
-  <script src="/assets/js/app.js" defer></script>
-  <script src="/assets/js/router.js" defer></script>
+  <script type="module" src="/assets/js/error.js" defer></script>
+  <script type="module" src="/assets/js/createpost.js" defer></script>
+  <script type="module" src="/assets/js/app.js" defer></script>
+  <script type="module" src="/assets/js/router.js" defer></script>
 
  
    

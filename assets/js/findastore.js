@@ -1,7 +1,8 @@
 function renderStoreList() {
   console.log("Rendering store list");
 
-  const storeTemplate = document.getElementById('storetemplate');
+  const storeResults = document.getElementById('storeResults');
+  const storeTemplate = document.getElementById('store-template');
   const storesList = document.getElementById('storesList');
 
   if (!storeTemplate) {
@@ -48,6 +49,7 @@ function renderStoreList() {
     const storeClone = storeTemplate.content.cloneNode(true);
     const card = storeClone.querySelector('.store-card');
 
+    // Animation delay for nice appearance
     card.style.animationDelay = `${index * 0.1}s`;
 
     card.querySelector('.store-name').textContent = store.name;
@@ -63,31 +65,13 @@ function renderStoreList() {
 
     storesList.appendChild(storeClone);
   });
+
+  // ✅ Debugging: How many cards were rendered
+  const renderedCards = storesList.querySelectorAll('.store-card').length;
+  console.log("Total rendered store cards:", renderedCards);
+
+
+
+  // ✅ Make the results container visible
+  storeResults.classList.remove('d-none');
 }
-
-// Store page initialization function
-function initializeStorePage() {
-  console.log("Initializing store page");
-  const storeResults = document.getElementById('storeResults');
-  if (storeResults) storeResults.classList.remove('d-none');
-  
-  // Wait briefly to ensure template is injected
-  setTimeout(() => {
-    if (window.renderStoreList) {
-      renderStoreList();
-    } else {
-      console.error("renderStoreList function not available");
-    }
-  }, 50);
-}
-
-// Expose functions to window
-window.renderStoreList = renderStoreList;
-window.initializeStorePage = initializeStorePage;
-
-// For standalone page testing (if needed)
-document.addEventListener('DOMContentLoaded', () => {
-  if (window.location.pathname.includes('store')) {
-    initializeStorePage();
-  }
-});

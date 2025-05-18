@@ -151,53 +151,46 @@ async function handleLogin(form, errorElementId) {
     submitButton.textContent = 'Signing in...';
   }
 
-  try {
-    const response = await fetch('/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ identity, password }),
-      credentials: 'same-origin'
-    });
+   try {
+    const response = await fetch('/api/login', { // Replace with your actual login API endpoint
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ identity, password }),
+      credentials: 'same-origin',
+    });
 
-    if (submitButton) {
-      submitButton.disabled = false;
-      submitButton.textContent = originalButtonText;
-    }
+    const result = await response.json();
 
-    if (response.ok) {
-      const data = await response.json();
-      localStorage.setItem('session_token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      window.userToken = data.token;
+    if (response.ok) {
+      // Store user data and token
+      localStorage.setItem('user', JSON.stringify(result.user));
+      localStorage.setItem('session_token', result.token);
+      window.appState.user = result.user;
+      window.appState.token = result.token;
+      window.updateUIForAuthState();
 
-      const redirectTo = localStorage.getItem('redirectAfterLogin') || 'home';
-      localStorage.removeItem('redirectAfterLogin');
-      
-      if (window.navigateTo) {
-        window.navigateTo(redirectTo);
-      } else {
-        window.location.hash = `#/${redirectTo}`;
-      }
-    } else {
-      const errorData = await response.json().catch(() => ({ message: 'Login failed. Please try again.' }));
-      if (errorElement) {
-        errorElement.textContent = errorData.message || 'Invalid username/email or password';
-        errorElement.style.display = 'block';
-      }
-    }
-  } catch (error) {
-    console.error('Login error:', error);
-    if (submitButton) {
-      submitButton.disabled = false;
-      submitButton.textContent = originalButtonText;
-    }
-    if (errorElement) {
-      errorElement.textContent = 'Network error. Please try again later.';
-      errorElement.style.display = 'block';
-    }
-  }
+      // Navigate to the feed page after successful login
+      window.navigateTo('feed');
+    } else {
+      if (errorElement) {
+        errorElement.textContent = result.error || 'Login failed.';
+        errorElement.classList.remove('d-none');
+      } else {
+        alert(result.error || 'Login failed.');
+      }
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    if (errorElement) {
+      errorElement.textContent = 'An error occurred during login.';
+      errorElement.classList.remove('d-none');
+    } else {
+      alert('An error occurred during login.');
+    }
+  }
 }
-
 async function handleLogout() {
   try {
     const response = await fetch('/api/logout', {

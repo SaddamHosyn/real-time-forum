@@ -1,62 +1,97 @@
 // router.js
 
+import { updateAuthUI, isLoggedIn } from './authutils.js';
+
 const routes = {
-  'home': { template: 'home-template', authRequired: false, script: '/assets/js/home.js' },
-  'store': { template: 'storetemplate', authRequired: false, script: '/assets/js/findastore.js',init: initializeStorePage },
-  'topicsbar': { template: 'topicsbar-template', authRequired: true },
-  'account': { template: 'account-template', authRequired: true, init: initializeAccountPage, script: '/assets/js/account.js' },
-  'signin': { template: 'signin-template', authRequired: false, script: '/assets/js/signinpage.js' },
-  'register': { template: 'register-template', authRequired: false, init: initializeRegisterPage, script: '/assets/js/registerfront.js' },
-  'feed': { template: 'feed-template', authRequired: false },
-  'create-post': { template: 'template-create-post', authRequired: true }
+  'home': { 
+    template: 'home-template', 
+    authRequired: false, 
+    script: '/assets/js/home.js',
+    init: initializeHomePage  // ✅ Added init function for home page
+  },
+  'store': { 
+    template: 'store-template', 
+    authRequired: false, 
+    script: '/assets/js/findastore.js', 
+    init: initializeStorePage 
+  },
+  'topicsbar': { 
+    template: 'topicsbar-template', 
+    authRequired: true 
+  },
+  'account': { 
+    template: 'account-template', 
+    authRequired: true, 
+    init: initializeAccountPage, 
+    script: '/assets/js/account.js' 
+  },
+  'signin': { 
+    template: 'signin-template', 
+    authRequired: false, 
+    script: '/assets/js/signinpage.js' 
+  },
+  'register': { 
+    template: 'register-template', 
+    authRequired: false, 
+    init: initializeRegisterPage, 
+    script: '/assets/js/registerfront.js' 
+  },
+  'feed': { 
+    template: 'feed-template', 
+    authRequired: true, 
+    init: initializeFeedPage 
+  },
+  'create-post': { 
+    template: 'template-create-post', 
+    authRequired: true, 
+    script: '/assets/js/createpost.js', 
+    init: initializeCreatePostPage 
+  }
 };
 
 const loadedScripts = new Set();
-let isNavigating = false; // Add this flag to prevent duplicate navigation
+let isNavigating = false;
 
 document.addEventListener('DOMContentLoaded', () => {
+  // ✅ Initialize window.posts if it doesn't exist
+  if (!window.posts) window.posts = [];
+  
   handleRoute(getCurrentRoute());
 
   document.body.addEventListener('click', (e) => {
-    // Handle navigation links
-    if (e.target.matches('.nav-link[data-page]') || e.target.closest('.nav-link[data-page]')) {
+    const navLink = e.target.closest('.nav-link[data-page]');
+    const registerBtn = e.target.closest('#open-register-page');
+    const signInBtn = e.target.closest('#open-signin-page');
+    const showRegisterLink = e.target.closest('#show-register');
+    const closeSigninBtn = e.target.closest('#close-signin');
+    const accountLink = e.target.closest('#account-buttons a');
+    const createPostLink = e.target.closest('a[href="#/create-post"]');
+
+    if (navLink) {
       e.preventDefault();
-
-
-
-      
-      const element = e.target.matches('.nav-link[data-page]') ? e.target : e.target.closest('.nav-link[data-page]');
-      const page = element.dataset.page;
-      navigateTo(page);
-    }
-
-    // Handle sign-in button
-    if (e.target.id === 'open-signin-page' || e.target.closest('#open-signin-page')) {
+      navigateTo(navLink.dataset.page);
+    } else if (registerBtn) {
       e.preventDefault();
-      console.log('Sign-in button clicked, navigating to signin page');
+      navigateTo('register');
+    } else if (signInBtn) {
+      e.preventDefault();
       navigateTo('signin');
-    }
-
-    // Handle register button
-    if (e.target.id === 'open-register-modal' || e.target.closest('#open-register-modal')) {
+    } else if (showRegisterLink) {
       e.preventDefault();
-      console.log('Register button clicked, navigating to register page');
       navigateTo('register');
-    }
-
-    // Handle show register link in signin page
-    if (e.target.id === 'show-register' || e.target.closest('#show-register')) {
+    } else if (closeSigninBtn) {
       e.preventDefault();
-      console.log('Show register link clicked, navigating to register page');
-      navigateTo('register');
-    }
-    
-    // Handle close signin button
-    if (e.target.id === 'close-signin' || e.target.closest('#close-signin')) {
-      e.preventDefault();
-      e.stopPropagation();
-      console.log('Close sign-in button clicked, navigating to home page');
       navigateTo('home');
+    } else if (accountLink && accountLink.getAttribute('href') === '#/my-account') {
+      e.preventDefault();
+      navigateTo('account');
+    } else if (createPostLink) {
+      e.preventDefault();
+      if (isLoggedIn()) {
+        navigateTo('create-post');
+      } else {
+        alert('You must be logged in to create a post.');
+      }
     }
   });
 
@@ -65,18 +100,17 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// Get current route from hash
 function getCurrentRoute() {
-  const hash = window.location.hash || '#/home'; // Default to home
-  const route = hash.slice(2); // Remove "#/"
+  const hash = window.location.hash || '#/home';
+  const route = hash.slice(2);
   return route || 'home';
 }
 
-// Main route handler
 function handleRoute(route) {
-  console.log(`Handling route: ${route}`);
-  
-  // Hide all views
+  // Prevent multiple navigations at once
+  if (isNavigating) return;
+  isNavigating = true;
+
   const allSections = document.querySelectorAll('.view');
   allSections.forEach(section => section.classList.add('d-none'));
 
@@ -84,82 +118,90 @@ function handleRoute(route) {
   const routeConfig = routes[page] || routes['home'];
 
   if (routeConfig.authRequired && !isLoggedIn()) {
-    // Store the intended page before redirecting to login
     localStorage.setItem('redirectAfterLogin', page);
     const action = page === 'create-post' ? 'create a post' : 'access this page';
     alert(`Please sign in to ${action}`);
-
+    isNavigating = false;
     return navigateTo('signin');
   }
 
-  loadPage(page || 'home', routeConfig);
+  loadPage(page || 'home', routeConfig)
+    .then(() => {
+      isNavigating = false;
+    })
+    .catch(err => {
+      console.error('Error loading page:', err);
+      isNavigating = false;
+    });
 }
 
-// Navigation function
 function navigateTo(page) {
-  console.log(`Navigating to: ${page}`);
-  window.location.hash = `#/${page}`;
+  window.location.hash = `/${page}`;
 }
 
-// Page loader
+// ✅ Modified to return a Promise for better control flow
 function loadPage(page, routeConfig = routes[page]) {
-  console.log(`Loading page: ${page}`);
-  if (!routeConfig) {
-    console.error(`No route configuration for ${page}`);
-    return navigateTo('home');
-  }
-
-  const template = document.getElementById(routeConfig.template);
-  if (!template) {
-    console.error(`Template ${routeConfig.template} not found`);
-    return navigateTo('home');
-  }
-
-  injectTemplateContent(template);
-
-  // Load script if it exists (and not already loaded)
-  if (routeConfig.script && !loadedScripts.has(routeConfig.script)) {
-    loadScript(routeConfig.script)
-      .then(() => {
-        console.log(`Script ${routeConfig.script} loaded.`);
-        // After script is loaded, check if there's an init function
-        if (page === 'register' && typeof window.setupRegisterPage === 'function') {
-          console.log('Calling setupRegisterPage after script load.');
-          window.setupRegisterPage();
-        } else if (routeConfig.init) {
-          routeConfig.init();
-        }
-      })
-      .catch(err => console.error(`Error loading script ${routeConfig.script}:`, err));
-    
-    loadedScripts.add(routeConfig.script);
-  } else {
-    // If script already loaded or not needed
-    if (page === 'register' && typeof window.setupRegisterPage === 'function') {
-        console.log('Calling setupRegisterPage as script was already loaded.');
-        window.setupRegisterPage();
-    } else if (routeConfig.init) {
-        routeConfig.init();
+  return new Promise((resolve, reject) => {
+    const template = document.getElementById(routeConfig.template);
+    if (!template) {
+      console.error(`Template not found: ${routeConfig.template}`);
+      navigateTo('home');
+      return reject(new Error(`Template not found: ${routeConfig.template}`));
     }
-  }
 
-  updateAuthUI();
-  
-  // Special case for signin page - ensure close button works
-  if (page === 'signin') {
-    setTimeout(() => {
-      const closeButton = document.getElementById('close-signin');
-      if (closeButton) {
-        console.log('Setting up close button in router.js');
-        closeButton.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          console.log('Close button clicked (from router.js handler)');
-          navigateTo('home');
-        });
-      }
-    }, 100);
-  }
+    injectTemplateContent(template);
+
+    const scriptPromise = routeConfig.script && !loadedScripts.has(routeConfig.script)
+      ? loadScript(routeConfig.script)
+      : Promise.resolve();
+
+    scriptPromise
+      .then(() => {
+        // Add a small delay to ensure DOM is ready and scripts are fully loaded
+        setTimeout(() => {
+          try {
+            if (page === 'register' && typeof window.setupRegisterPage === 'function') {
+              window.setupRegisterPage();
+            } else if (routeConfig.init) {
+              routeConfig.init();
+            }
+            
+            updateAuthUI();
+    
+            if (page === 'signin') {
+              const closeButton = document.getElementById('close-signin');
+              if (closeButton) {
+                closeButton.addEventListener('click', (e) => {
+                  e.preventDefault();
+                  navigateTo('home');
+                });
+              }
+              
+              const redirectPage = localStorage.getItem('redirectAfterLogin');
+              if (isLoggedIn() && redirectPage) {
+                localStorage.removeItem('redirectAfterLogin');
+                navigateTo(redirectPage);
+              } else if (isLoggedIn()) {
+                navigateTo('feed');
+              }
+            }
+            
+            resolve();
+          } catch (error) {
+            console.error('Error initializing page:', error);
+            reject(error);
+          }
+        }, 100);
+      })
+      .catch(err => {
+        console.error(`Error loading script for page "${page}":`, err);
+        reject(err);
+      });
+
+    if (routeConfig.script) {
+      loadedScripts.add(routeConfig.script);
+    }
+  });
 }
 
 // Template injection
@@ -173,24 +215,6 @@ function injectTemplateContent(template) {
   container.innerHTML = '';
   const clone = document.importNode(template.content, true);
   container.appendChild(clone);
-}
-
-// Auth-related functions
-function isLoggedIn() {
-  return localStorage.getItem('user') !== null;
-}
-
-function updateAuthUI() {
-  const authButtons = document.getElementById('account-buttons');
-  const noAuthButtons = document.getElementById('registerlogin-buttons');
-  
-  if (isLoggedIn()) {
-    authButtons?.classList.remove('d-none');
-    noAuthButtons?.classList.add('d-none');
-  } else {
-    authButtons?.classList.add('d-none');
-    noAuthButtons?.classList.remove('d-none');
-  }
 }
 
 // Script loader helper
@@ -214,11 +238,16 @@ function loadScript(src) {
 
 // Expose functions to window for use in other scripts
 window.navigateTo = navigateTo;
-window.isLoggedIn = isLoggedIn;
-window.updateAuthUI = updateAuthUI;
 
-// Stub functions for page initialization
-
+// Page initialization functions
+function initializeHomePage() {
+  console.log('Home page initialization from router.js');
+  if (typeof window.initializeHomePage === 'function') {
+    window.initializeHomePage();
+  } else {
+    console.warn('initializeHomePage function not found');
+  }
+}
 
 function initializeRegisterPage() {
   console.log('Register page initialization');
@@ -228,7 +257,43 @@ function initializeSignInPage() {
   console.log('Sign in page initialization called from router.js');
   // The actual implementation is in signinpage.js
 }
-function initializeAccountPage() { 
+
+function initializeAccountPage() {
   console.log('Account page initialization');
 }
 
+function initializeFeedPage() {
+  console.log('Feed page initialization');
+  // If user is logged in, initialize feed data
+  if (isLoggedIn()) {
+    console.log('User is logged in, loading feed data');
+    // Check if loadFeedContent exists before calling
+    if (typeof loadFeedContent === 'function') {
+      loadFeedContent();
+    } else {
+      console.warn('loadFeedContent function not found');
+    }
+  }
+}
+
+function initializeStorePage() {
+  console.log('Store page initialization from router.js');
+    // Call the actual rendering logic from findastore.js
+  if (typeof renderStoreList === 'function') {
+    renderStoreList();
+  } else {
+    console.warn('renderStoreList function not found');
+  }
+}
+
+
+function initializeCreatePostPage() {
+  console.log('Create Post page initialization from router.js');
+  if (typeof window.initializeCreatePostPage === 'function') {
+    window.initializeCreatePostPage();
+  } else {
+    console.warn('initializeCreatePostPage function not found');
+  }
+}
+
+window.updateUIForAuthState = updateAuthUI;
