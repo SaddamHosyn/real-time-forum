@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"realtimeforum/auth"
-	"realtimeforum/database"
 	"strings"
 )
 
@@ -56,35 +55,11 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("Login attempt for identity: %s", loginData.Identity)
 
-	// Check for existing session
-	var existingSession string
-	var userID int
-	err := database.DB.QueryRow(`
-		SELECT s.session_token, s.user_id 
-		FROM sessions s
-		JOIN users u ON s.user_id = u.id
-		WHERE u.username = ? OR u.email = ?`,
-		loginData.Identity, loginData.Identity).Scan(&existingSession, &userID)
-
-	if err == nil && existingSession != "" {
-		_, err = database.DB.Exec("DELETE FROM sessions WHERE user_id = ?", userID)
-		if err != nil {
-			log.Printf("Error removing existing session: %v", err)
-			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(map[string]string{
-				"message": "Internal server error",
-				"status":  "error",
-			})
-			return
-		}
-	}
-
 	loginResp, err := auth.LoginUser(loginData.Identity, loginData.Password)
 	if err != nil {
 		log.Printf("Failed login attempt for: %s - %v", loginData.Identity, err)
 		w.WriteHeader(http.StatusUnauthorized)
 
-		// Enhanced error messaging
 		var errorMsg string
 		if strings.Contains(err.Error(), "user not found") {
 			errorMsg = "User not found. Please check your username/email"
@@ -101,6 +76,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Set the session cookie
 	auth.SetSessionCookie(w, loginResp.Token)
 	log.Printf("Successful login for user: %s", loginData.Identity)
 

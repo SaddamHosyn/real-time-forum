@@ -70,15 +70,18 @@
 
           <!-- Register Button and Sign in Button -->
 
-          <div class="registerlogin-buttons d-flex gap-2" id="registerlogin-buttons">
-            <button type="button" class="btn btn-register" id="open-register-page">Register</button>
-            <button type="button" class="btn btn-light" id="open-signin-page">Sign In</button>
-          </div>
+          <div class="registerlogin-buttons d-flex gap-2 logout-required" id="registerlogin-buttons">
+          <button type="button" class="btn btn-register" id="open-register-page">Register</button>
+          <button type="button" class="btn btn-light" id="open-signin-page">Sign In</button>
+        </div>
             <!-- when login after that it should have these buttons -->
-             <div class="d-none" id="account-buttons">
-               <a href="#/my-account" class="btn btn-light">My Account</a>
-               <button class="btn btn-secondary"             id="logout-btn">Logout</button>
-             </div>
+ <div class="d-none login-required" id="account-buttons">
+          <!-- logout success message -->
+          <div id="logout-message" class="alert alert-success d-none mb-2"></div>
+          <a href="#/my-account" class="btn btn-light">My Account</a>
+          <button type="button" class="btn btn-secondary" id="logout-btn" onclick="handleLogout()">Logout</button>
+        </div>
+
           
 
           </div>

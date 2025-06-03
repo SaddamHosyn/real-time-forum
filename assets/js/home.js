@@ -1,4 +1,3 @@
-// home.js
 (function() {
   let carouselInterval = null;
   let currentCarouselIndex = 0;
@@ -160,9 +159,23 @@
     });
   }
 
-  // Main initialization function
+  // ✅ Main initialization function
   window.initializeHomePage = function() {
     console.log('Home page initialized');
+
+    // ✅ Show logout message if present
+    if (window.logoutSuccessMessage) {
+      const msgBox = document.getElementById('logout-message');
+      if (msgBox) {
+        msgBox.textContent = window.logoutSuccessMessage;
+        msgBox.classList.remove('d-none');
+        setTimeout(() => {
+          msgBox.classList.add('d-none');
+        }, 3000);
+      }
+      window.logoutSuccessMessage = null;
+    }
+
     setupNavigation();
     setupHamburgerMenu();
     loadPage('home');

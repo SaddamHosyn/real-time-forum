@@ -7,7 +7,7 @@ const routes = {
     template: 'home-template', 
     authRequired: false, 
     script: '/assets/js/home.js',
-    init: initializeHomePage  // ✅ Added init function for home page
+    init: initializeHomePage
   },
   'store': { 
     template: 'store-template', 
@@ -95,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Listen for hash changes
   window.addEventListener('hashchange', () => {
     handleRoute(getCurrentRoute());
   });
@@ -107,6 +108,18 @@ function getCurrentRoute() {
 }
 
 function handleRoute(route) {
+  // ✅ AUTH STABILIZATION CHECK - Give time for auth state to stabilize
+  if (window.appState && typeof window.appState.isAuthenticated === 'undefined') {
+    setTimeout(() => handleRoute(route), 200);
+    return;
+  }
+
+  // ✅ Additional check for auth state initialization
+  if (window.appState && window.appState.isAuthChecking) {
+    setTimeout(() => handleRoute(route), 100);
+    return;
+  }
+
   // Prevent multiple navigations at once
   if (isNavigating) return;
   isNavigating = true;
@@ -278,14 +291,13 @@ function initializeFeedPage() {
 
 function initializeStorePage() {
   console.log('Store page initialization from router.js');
-    // Call the actual rendering logic from findastore.js
+  // Call the actual rendering logic from findastore.js
   if (typeof renderStoreList === 'function') {
     renderStoreList();
   } else {
     console.warn('renderStoreList function not found');
   }
 }
-
 
 function initializeCreatePostPage() {
   console.log('Create Post page initialization from router.js');

@@ -1,9 +1,20 @@
-// signinpage.js
+// signinpage.js - RESTORED VERSION
 function initializeSignInPage() {
   console.log('Initializing sign-in page');
+  
+  // Only clear session if we're explicitly on signin page (not from redirect)
+  const urlParams = new URLSearchParams(window.location.search);
+  if (!urlParams.has('redirectAfterLogin')) {
+    clearSessionCookie();
+  }
+  
   setupCloseButton();
   setupLoginForm();
   setTimeout(reinforceCloseButtonHandler, 200);
+}
+
+function clearSessionCookie() {
+  document.cookie = "session_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 }
 
 function setupCloseButton() {
@@ -52,14 +63,6 @@ function reinforceCloseButtonHandler() {
   }
 }
 
-function navigateToHome() {
-  if (window.navigateTo) {
-    window.navigateTo('home');
-  } else {
-    window.location.hash = '#/home';
-  }
-}
-
 function setupLoginForm() {
   const loginForm = document.getElementById('login-form');
   if (!loginForm) {
@@ -105,32 +108,6 @@ function setupLoginForm() {
   }
 }
 
-// Only declare observer once
-const observer = window.observer || new MutationObserver((mutations) => {
-  mutations.forEach((mutation) => {
-    mutation.addedNodes.forEach((node) => {
-      if (node.nodeType === 1 && node.querySelector('#close-signin')) {
-        const closeButton = node.querySelector('#close-signin');
-        closeButton.onclick = null;
-        closeButton.onclick = function(e) {
-          e.preventDefault();
-          navigateTo('home');
-          return false;
-        };
-        closeButton.style.cursor = 'pointer';
-      }
-      if (node.nodeType === 1 && (node.id === 'login-form' || node.querySelector('#login-form'))) {
-        setupLoginForm();
-      }
-    });
-  });
-});
-
-if (!window.observer) {
-  observer.observe(document.body, { childList: true, subtree: true });
-  window.observer = observer;
-}
-
 async function handleLogin(form, errorElementId) {
   const formData = new FormData(form);
   const identity = formData.get('identity');
@@ -151,51 +128,73 @@ async function handleLogin(form, errorElementId) {
     submitButton.textContent = 'Signing in...';
   }
 
-   try {
-    const response = await fetch('/api/login', { // Replace with your actual login API endpoint
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ identity, password }),
-      credentials: 'same-origin',
-    });
+  try {
+    const response = await fetch('/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ identity, password }),
+      credentials: 'include',
+    });
 
-    const result = await response.json();
+    const result = await response.json();
 
-    if (response.ok) {
-      // Store user data and token
-      localStorage.setItem('user', JSON.stringify(result.user));
-      localStorage.setItem('session_token', result.token);
-      window.appState.user = result.user;
-      window.appState.token = result.token;
-      window.updateUIForAuthState();
-
-      // Navigate to the feed page after successful login
-      window.navigateTo('feed');
-    } else {
-      if (errorElement) {
-        errorElement.textContent = result.error || 'Login failed.';
-        errorElement.classList.remove('d-none');
-      } else {
-        alert(result.error || 'Login failed.');
-      }
-    }
-  } catch (error) {
-    console.error('Login error:', error);
-    if (errorElement) {
-      errorElement.textContent = 'An error occurred during login.';
-      errorElement.classList.remove('d-none');
-    } else {
-      alert('An error occurred during login.');
-    }
-  }
+    if (response.ok) {
+      // Store user info in localStorage
+      localStorage.setItem('user', JSON.stringify(result.user));
+      
+      // Update global app state
+      if (window.appState) {
+        window.appState.user = result.user;
+        window.appState.isAuthenticated = true;
+      }
+      
+      // Update UI for authenticated state
+      if (window.updateAuthUI) {
+        window.updateAuthUI();
+      }
+      
+      // Navigate to redirect page or feed
+      const redirectPage = localStorage.getItem('redirectAfterLogin') || 'feed';
+      localStorage.removeItem('redirectAfterLogin');
+      
+      if (window.navigateTo) {
+        window.navigateTo(redirectPage);
+      } else {
+        window.location.hash = `#/${redirectPage}`;
+      }
+    } else {
+      if (errorElement) {
+        errorElement.textContent = result.message || 'Login failed.';
+        errorElement.classList.remove('d-none');
+        errorElement.style.display = 'block';
+      } else {
+        alert(result.message || 'Login failed.');
+      }
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    if (errorElement) {
+      errorElement.textContent = 'An error occurred during login.';
+      errorElement.classList.remove('d-none');
+      errorElement.style.display = 'block';
+    } else {
+      alert('An error occurred during login.');
+    }
+  } finally {
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = originalButtonText;
+    }
+  }
 }
+
 async function handleLogout() {
   try {
     const response = await fetch('/api/logout', {
       method: 'POST',
-      credentials: 'same-origin',
+      credentials: 'include',
     });
 
     if (response.ok) {
@@ -207,10 +206,24 @@ async function handleLogout() {
     console.error('Logout request failed:', error);
   }
 
-  localStorage.removeItem('session_token');
+  // Clear local storage
   localStorage.removeItem('user');
-  window.userToken = null;
+  
+  // Update global app state
+  if (window.appState) {
+    window.appState.user = null;
+    window.appState.isAuthenticated = false;
+  }
 
+  // Clear session cookie
+  clearSessionCookie();
+
+  // Update UI
+  if (window.updateAuthUI) {
+    window.updateAuthUI();
+  }
+
+  // Navigate to signin
   if (window.navigateTo) {
     window.navigateTo('signin');
   } else {
@@ -218,12 +231,52 @@ async function handleLogout() {
   }
 }
 
-// Expose functions globally
+// Simple auth status check (keep it simple)
+async function checkAuthStatus() {
+  try {
+    const response = await fetch('/api/check-session', {
+      credentials: 'include'
+    });
+    
+    const result = await response.json();
+    
+    if (result.authenticated) {
+      if (window.appState) {
+        window.appState.user = result.user;
+        window.appState.isAuthenticated = true;
+      }
+      localStorage.setItem('user', JSON.stringify(result.user));
+    } else {
+      if (window.appState) {
+        window.appState.user = null;
+        window.appState.isAuthenticated = false;
+      }
+      localStorage.removeItem('user');
+    }
+    
+    if (window.updateAuthUI) {
+      window.updateAuthUI();
+    }
+  } catch (error) {
+    console.error('Auth check failed:', error);
+    if (window.appState) {
+      window.appState.user = null;
+      window.appState.isAuthenticated = false;
+    }
+    localStorage.removeItem('user');
+  }
+}
+
 window.handleLogin = handleLogin;
 window.handleLogout = handleLogout;
+window.checkAuthStatus = checkAuthStatus;
 window.initializeSignInPage = initializeSignInPage;
 
-// Initialize sign-in page
+// Only check auth on page load if not on signin page
+if (!window.location.hash.includes('#/signin')) {
+  document.addEventListener('DOMContentLoaded', checkAuthStatus);
+}
+
 if (window.location.hash.includes('#/signin')) {
   initializeSignInPage();
 }

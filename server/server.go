@@ -30,6 +30,9 @@ func StartServer() {
 	http.HandleFunc("/api/user/posts", handler.GetUserPostsHandler)
 	http.HandleFunc("/api/user/comments", handler.GetUserCommentsHandler)
 	http.HandleFunc("/api/user/update", handler.UpdateUserHandler)
+	http.HandleFunc("/api/logout", handler.LogoutHandler)
+
+
 
 	// Start the server
 	log.Println("Server started on http://localhost:8080")

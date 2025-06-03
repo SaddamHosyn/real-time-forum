@@ -1,4 +1,6 @@
-import { saveUserSession, updateAuthUI } from './authutils.js';
+// auth.js
+
+import { saveUserSession, updateAuthUI, clearUserSession } from './authutils.js';
 
 async function handleLogin(form, errorElementId = 'login-error') {
   const identity = form.querySelector('#login-identity')?.value.trim();
@@ -21,8 +23,8 @@ async function handleLogin(form, errorElementId = 'login-error') {
     const response = await fetch('/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ identity, password })
+      credentials: 'same-origin', // crucial to get cookie from server
+      body: JSON.stringify({ identity, password }),
     });
 
     if (!response.ok) {
@@ -31,17 +33,52 @@ async function handleLogin(form, errorElementId = 'login-error') {
     }
 
     const data = await response.json();
-    saveUserSession(data.user, data.token);
+    saveUserSession(data.user); // This now also sets isAuthenticated = true
     updateAuthUI();
 
     const redirect = localStorage.getItem('redirectAfterLogin') || 'home';
     localStorage.removeItem('redirectAfterLogin');
-    window.navigateTo ? window.navigateTo(redirect) : window.location.hash = `#/${redirect}`;
-
+    window.navigateTo ? window.navigateTo(redirect) : (window.location.hash = `#/${redirect}`);
   } catch (error) {
     errorElement.textContent = error.message;
     console.error('Login error:', error);
   }
 }
 
+// Enhanced logout function
+async function handleLogout() {
+  try {
+    const response = await fetch('/api/logout', {
+      method: 'POST',
+      credentials: 'same-origin',
+    });
+
+    if (response.ok) {
+      console.log('Logout successful');
+    } else {
+      console.warn('Logout failed on server:', await response.text());
+    }
+  } catch (error) {
+    console.error('Logout request failed:', error);
+  }
+
+  // Clear session and update UI
+  clearUserSession(); // This now also sets isAuthenticated = false
+  updateAuthUI();
+
+  // Show logout message
+  const logoutMessage = document.getElementById('logout-message');
+  if (logoutMessage) {
+    logoutMessage.textContent = 'You have been logged out successfully';
+    logoutMessage.classList.remove('d-none');
+    setTimeout(() => {
+      logoutMessage.classList.add('d-none');
+    }, 3000);
+  }
+
+  // Navigate to signin or home
+  window.navigateTo ? window.navigateTo('signin') : (window.location.hash = '#/signin');
+}
+
 window.handleLogin = handleLogin;
+window.handleLogout = handleLogout;

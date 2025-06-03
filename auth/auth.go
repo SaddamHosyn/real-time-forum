@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"net/http"
+	"time"
 	"realtimeforum/database"
 	"realtimeforum/model"
 	"realtimeforum/utils"
@@ -39,43 +41,122 @@ func LoginUser(usernameOrEmail, password string) (*LoginResponse, error) {
 	log.Printf("User found with ID: %s", user.ID)
 
 	// Validate password hash
-	log.Printf("Comparing password with stored hash for user: %s", user.Username)
 	if !utils.CheckPasswordHash(password, user.PasswordHash) {
 		return nil, errors.New("invalid credentials")
 	}
 
-	// Generate a new session token
-	token, err := utils.GenerateSessionToken(user)
+	// ENFORCE SINGLE SESSION: Delete ALL existing sessions for this user
+	_, err = database.DB.Exec("DELETE FROM sessions WHERE user_id = ?", user.ID)
 	if err != nil {
-		log.Printf("Failed to generate token: %v", err)
-		return nil, fmt.Errorf("failed to generate token: %w", err)
+		log.Printf("Failed to delete existing sessions: %v", err)
+		return nil, fmt.Errorf("failed to clear existing sessions: %w", err)
 	}
 
-	// Insert the new session in the database (create or update)
-	if err := UpdateUserSession(user, token); err != nil {
-		log.Printf("Failed to update session: %v", err)
-		return nil, fmt.Errorf("failed to update session: %w", err)
+	// Generate a new session token
+	token := uuid.New().String()
+	expiryTime := time.Now().Add(24 * time.Hour) // 24 hour session
+
+	// Insert the new session in the database
+	_, err = database.DB.Exec(`
+		INSERT INTO sessions (user_id, session_token, session_expiry)
+		VALUES (?, ?, ?)`,
+		user.ID, token, expiryTime)
+	if err != nil {
+		log.Printf("Failed to create new session: %v", err)
+		return nil, fmt.Errorf("failed to create session: %w", err)
 	}
+
+	log.Printf("New session created for user %s with token: %s", user.Username, token)
 
 	return &LoginResponse{
 		User:      user,
 		Token:     token,
-		ExpiresIn: 86400, // Token expiration (e.g., 1 hour)
+		ExpiresIn: 86400, // 24 hours in seconds
 	}, nil
 }
 
-// Helper function to update the session for the user
+func GetUserBySessionToken(sessionToken string) (*model.User, error) {
+	var user model.User
+
+	err := database.DB.QueryRow(`
+		SELECT u.id, u.first_name, u.last_name, u.username, u.email, u.password_hash, 
+		       u.age, u.gender, u.terms_accepted, u.created_at, s.session_expiry
+		FROM users u
+		JOIN sessions s ON u.id = s.user_id
+		WHERE s.session_token = ? AND s.session_expiry > ?`,
+		sessionToken, time.Now()).
+		Scan(&user.ID, &user.FirstName, &user.LastName, &user.Username, &user.Email, 
+			 &user.PasswordHash, &user.Age, &user.Gender, &user.TermsAccepted, 
+			 &user.CreatedAt, &user.SessionExpiry)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, errors.New("invalid session token")
+		}
+		return nil, err
+	}
+	return &user, nil
+}
+
+func LogoutUser(sessionToken string) error {
+	// Delete the specific session
+	result, err := database.DB.Exec("DELETE FROM sessions WHERE session_token = ?", sessionToken)
+	if err != nil {
+		return err
+	}
+	
+	rowsAffected, _ := result.RowsAffected()
+	log.Printf("Logout: deleted %d sessions", rowsAffected)
+	return nil
+}
+
+func CheckUserLoggedIn(r *http.Request) (bool, string) {
+	cookie, err := r.Cookie("session_token")
+	if err != nil || cookie.Value == "" {
+		return false, ""
+	}
+
+	user, err := GetUserBySessionToken(cookie.Value)
+	if err != nil {
+		return false, ""
+	}
+
+	return true, user.ID
+}
+
+func SetSessionCookie(w http.ResponseWriter, token string) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_token",
+		Value:    token,
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   false, // Set to true in production with HTTPS
+		SameSite: http.SameSiteLaxMode,
+		Expires:  time.Now().Add(24 * time.Hour),
+	})
+}
+
+func ClearSessionCookie(w http.ResponseWriter) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_token",
+		Value:    "",
+		Path:     "/",
+		HttpOnly: true,
+		Expires:  time.Unix(0, 0),
+		MaxAge:   -1,
+	})
+}
 
 func UserExist(db *sql.DB, identity string) (string, error) {
 	var id string
 	err := db.QueryRow(`SELECT id FROM users WHERE username = ? OR email = ?`, identity, identity).Scan(&id)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return "", nil // user does not exist
+			return "", nil
 		}
-		return "", err // actual error
+		return "", err
 	}
-	return id, nil // user exists
+	return id, nil
 }
 
 func AddUser(db *sql.DB, username, email, password, firstName, lastName string, age int, gender string, termsAccepted bool) error {
@@ -92,5 +173,11 @@ func AddUser(db *sql.DB, username, email, password, firstName, lastName string, 
 		uuid.New().String(), username, email, hashedPassword,
 		firstName, lastName, age, gender, termsAccepted,
 	)
+	return err
+}
+
+// Clean up expired sessions
+func CleanupExpiredSessions() error {
+	_, err := database.DB.Exec("DELETE FROM sessions WHERE session_expiry < ?", time.Now())
 	return err
 }

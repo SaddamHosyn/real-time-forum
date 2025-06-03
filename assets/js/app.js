@@ -1,19 +1,20 @@
-// app.js
+import { checkUserSession, updateAuthUI, clearUserSession } from './authutils.js';
 
-import { checkUserSession, updateAuthUI, clearUserSession } from './authutils.js'; // ✅ Added clearUserSession import
-
-
-// ✅ Initialize appState early before anything else uses it
+// Simple appState (back to your working version)
 window.appState = {
   user: null,
-  token: null
+  token: null,
+  isAuthenticated: false
 };
-
 
 document.addEventListener('DOMContentLoaded', () => {
   initializeApp();
   setupEventListeners();
-  checkUserSession();
+  
+  // Simple approach: just check session without complex waiting
+  setTimeout(() => {
+    checkUserSession();
+  }, 100);
 });
 
 function initializeApp() {
@@ -21,12 +22,6 @@ function initializeApp() {
 }
 
 function setupEventListeners() {
-  const logoutBtn = document.getElementById('logout-btn');
-
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', logoutUser);
-  }
-
   document.body.addEventListener('click', e => {
     if (e.target.matches('.nav-link')) {
       e.preventDefault();
@@ -34,26 +29,4 @@ function setupEventListeners() {
       window.navigateTo ? window.navigateTo(page) : window.location.hash = `#/${page}`;
     }
   });
-}
-
-async function logoutUser() {
-  try {
-    const response = await fetch('/api/logout', {
-      method: 'POST',
-      credentials: 'same-origin'
-    });
-
-    if (response.ok) {
-      clearUserSession();
-    } else {
-      console.error('Logout failed with status:', response.status);
-      clearUserSession();
-    }
-  } catch (error) {
-    console.error('Logout failed:', error);
-    clearUserSession();
-  }
-
-  updateAuthUI();
-  window.navigateTo ? window.navigateTo('home') : window.location.hash = '#/home';
 }

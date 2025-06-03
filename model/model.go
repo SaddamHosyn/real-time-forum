@@ -70,7 +70,6 @@ type Comment struct {
 	UserID    string       `json:"user_id"`
 	PostID    int       `json:"post_id"`
 	CreatedAt time.Time `json:"created_at"`
-
 	TimeAgo   string    `json:"time_ago"`
 }
 
