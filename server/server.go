@@ -28,6 +28,17 @@ func StartServer() {
 	http.HandleFunc("/api/register", handler.RegisterHandler)
 	http.HandleFunc("/api/check-session", auth.CheckSessionHandler)
 	http.HandleFunc("/api/user/posts", handler.GetUserPostsHandler)
+	// Add this to your main.go or server routing file
+http.HandleFunc("/api/posts/topic/", handler.GetPostsByTopicHandler)
+
+
+// Add these to your main.go or wherever you register routes
+http.HandleFunc("/api/comments/create", handler.CreateCommentHandler)
+http.HandleFunc("/api/posts/", handler.GetCommentsByPostHandler) // This handles /api/posts/{id}/comments
+
+
+
+
 	http.HandleFunc("/api/user/comments", handler.GetUserCommentsHandler)
 	http.HandleFunc("/api/user/update", handler.UpdateUserHandler)
 	http.HandleFunc("/api/logout", handler.LogoutHandler)

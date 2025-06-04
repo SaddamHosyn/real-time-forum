@@ -116,3 +116,33 @@ func UpdateUser(userID, firstName, lastName, email string) error {
         firstName, lastName, email, userID)
     return err
 }
+
+
+// Add this function to your existing fetch.go file
+func GetCommentsByPostID(postID int) ([]model.Comment, error) {
+	query := `
+		SELECT c.id, c.content, u.username, c.user_id, c.post_id, c.created_at
+		FROM comments c
+		JOIN users u ON c.user_id = u.id
+		WHERE c.post_id = ?
+		ORDER BY c.created_at ASC
+	`
+
+	rows, err := DB.Query(query, postID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var comments []model.Comment
+	for rows.Next() {
+		var comment model.Comment
+		err := rows.Scan(&comment.ID, &comment.Content, &comment.Author, &comment.UserID, &comment.PostID, &comment.CreatedAt)
+		if err != nil {
+			return nil, err
+		}
+		comments = append(comments, comment)
+	}
+
+	return comments, nil
+}

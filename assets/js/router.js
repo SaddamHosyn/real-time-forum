@@ -17,7 +17,9 @@ const routes = {
   },
   'topicsbar': { 
     template: 'topicsbar-template', 
-    authRequired: true 
+    authRequired: true,
+    script: '/assets/js/topicsbar.js',
+    init: initializeTopicsBarPage
   },
   'account': { 
     template: 'account-template', 
@@ -127,6 +129,15 @@ function handleRoute(route) {
   const allSections = document.querySelectorAll('.view');
   allSections.forEach(section => section.classList.add('d-none'));
 
+  // Handle dynamic topic routes
+  if (route.startsWith('topic/')) {
+    const topicSlug = route.split('/')[1];
+    if (topicSlug) {
+      handleTopicRoute(topicSlug);
+      return;
+    }
+  }
+
   const [page] = route.split('/').filter(Boolean);
   const routeConfig = routes[page] || routes['home'];
 
@@ -146,6 +157,39 @@ function handleRoute(route) {
       console.error('Error loading page:', err);
       isNavigating = false;
     });
+}
+
+function handleTopicRoute(topicSlug) {
+  console.log(`Handling topic route: ${topicSlug}`);
+  
+  // Check auth for topic posts (assuming it requires auth)
+  if (!isLoggedIn()) {
+    localStorage.setItem('redirectAfterLogin', `topic/${topicSlug}`);
+    alert('Please sign in to view topic posts');
+    isNavigating = false;
+    return navigateTo('signin');
+  }
+
+  // Load the topic posts template and initialize
+  const template = document.getElementById('topic-posts-template');
+  if (!template) {
+    console.error('Topic posts template not found');
+    isNavigating = false;
+    return;
+  }
+
+  injectTemplateContent(template);
+  
+  // Initialize the topic posts page
+  setTimeout(() => {
+    if (typeof window.renderPostsForTopic === 'function') {
+      window.renderPostsForTopic(topicSlug);
+    } else {
+      console.error('renderPostsForTopic function not found');
+    }
+    updateAuthUI();
+    isNavigating = false;
+  }, 100);
 }
 
 function navigateTo(page) {
@@ -305,6 +349,15 @@ function initializeCreatePostPage() {
     window.initializeCreatePostPage();
   } else {
     console.warn('initializeCreatePostPage function not found');
+  }
+}
+
+function initializeTopicsBarPage() {
+  console.log('TopicsBar page initialization from router.js');
+  if (typeof window.initializeTopicsBarPage === 'function') {
+    window.initializeTopicsBarPage();
+  } else {
+    console.warn('initializeTopicsBarPage function not found');
   }
 }
 

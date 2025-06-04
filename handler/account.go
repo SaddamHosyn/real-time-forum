@@ -1,4 +1,5 @@
-// account.go
+// account.go 
+
 package handler
 
 import (
@@ -84,3 +85,4 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 		"message": "User updated successfully",
 	})
 }
+

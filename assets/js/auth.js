@@ -45,40 +45,6 @@ async function handleLogin(form, errorElementId = 'login-error') {
   }
 }
 
-// Enhanced logout function
-async function handleLogout() {
-  try {
-    const response = await fetch('/api/logout', {
-      method: 'POST',
-      credentials: 'same-origin',
-    });
-
-    if (response.ok) {
-      console.log('Logout successful');
-    } else {
-      console.warn('Logout failed on server:', await response.text());
-    }
-  } catch (error) {
-    console.error('Logout request failed:', error);
-  }
-
-  // Clear session and update UI
-  clearUserSession(); // This now also sets isAuthenticated = false
-  updateAuthUI();
-
-  // Show logout message
-  const logoutMessage = document.getElementById('logout-message');
-  if (logoutMessage) {
-    logoutMessage.textContent = 'You have been logged out successfully';
-    logoutMessage.classList.remove('d-none');
-    setTimeout(() => {
-      logoutMessage.classList.add('d-none');
-    }, 3000);
-  }
-
-  // Navigate to signin or home
-  window.navigateTo ? window.navigateTo('signin') : (window.location.hash = '#/signin');
-}
 
 window.handleLogin = handleLogin;
-window.handleLogout = handleLogout;
+

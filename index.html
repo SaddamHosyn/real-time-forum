@@ -254,123 +254,168 @@
     <!-- Topics Grid Template (Shows ALL topics with icons) -->
    
     <template id="topicsbar-template">
-      <section class="forum-topics">
-        <h2 class="text-center mb-5 fw-bold">Explore Topics</h2>
-        <div class="row justify-content-center">  <!-- Added justify-content-center -->
-        <div class="container">
-          <div class="row g-2">
-            <!-- Topic 1 - Daily Essentials -->
-            <div class="col-12 col-md-6 col-lg-4">
-              <div class="topic-card h-100">
-                <i class="fas fa-shopping-basket"></i>
-                <h3>Daily Essentials</h3>
-                <p>Discuss everyday must-haves</p>
-              </div>
-            </div>
-
-            <!-- Topic 2 - Home & Lifestyle -->
-            <div class="col-12 col-md-6 col-lg-4">
-              <div class="topic-card h-100">
-                <i class="fas fa-home"></i>
-                <h3>Home & Lifestyle</h3>
-                <p>Home decor, organization tips</p>
-              </div>
-            </div>
-
-            <!-- Topic 3 - Personal Well-being -->
-            <div class="col-12 col-md-6 col-lg-4">
-              <div class="topic-card h-100">
-                <i class="fas fa-heartbeat"></i>
-                <h3>Personal Well-being</h3>
-                <p>Health, fitness, and mindfulness</p>
-              </div>
-            </div>
-
-            <!-- Topic 4 - Technology & Innovation -->
-            <div class="col-12 col-md-6 col-lg-4">
-              <div class="topic-card h-100">
-                <i class="fas fa-microchip"></i>
-                <h3>Technology & Innovation</h3>
-                <p>Gadgets, software, and future tech</p>
-              </div>
-            </div>
-
-            <!-- Topic 5 - Leisure & Entertainment -->
-            <div class="col-12 col-md-6 col-lg-4">
-              <div class="topic-card h-100">
-                <i class="fas fa-gamepad"></i>
-                <h3>Leisure & Entertainment</h3>
-                <p>Games, movies, and hobbies</p>
-              </div>
-            </div>
-
-            <!-- Topic 6 - Commerce & Shopping -->
-            <div class="col-12 col-md-6 col-lg-4">
-              <div class="topic-card h-100">
-                <i class="fas fa-store"></i>
-                <h3>Commerce & Shopping</h3>
-                <p>Deals, reviews, and shopping guides</p>
-              </div>
-            </div>
-
-            <!-- Topic 7 - Mobility & Transportation -->
-            <div class="col-12 col-md-6 col-lg-4">
-              <div class="topic-card h-100">
-                <i class="fas fa-car"></i>
-                <h3>Mobility & Transportation</h3>
-                <p>Vehicles, public transit, and travel solutions</p>
-              </div>
-            </div>
-
-            <!-- Topic 8 - Services & Support -->
-            <div class="col-12 col-md-6 col-lg-4">
-              <div class="topic-card h-100">
-                <i class="fas fa-hands-helping"></i>
-                <h3>Services & Support</h3>
-                <p>Professional services and community help</p>
-              </div>
-            </div>
-
-            <!-- Topic 9 - Culture & Community -->
-            <div class="col-12 col-md-6 col-lg-4">
-              <div class="topic-card h-100">
-                <i class="fas fa-globe-americas"></i>
-                <h3>Culture & Community</h3>
-                <p>Local events, traditions, and social groups</p>
-              </div>
-            </div>
-
-            <!-- Topic 10 - Information & Learning -->
-            <div class="col-12 col-md-6 col-lg-4">
-              <div class="topic-card h-100">
-                <i class="fas fa-graduation-cap"></i>
-                <h3>Information & Learning</h3>
-                <p>Education, tutorials, and knowledge sharing</p>
-              </div>
-            </div>
-   <!-- Topic 11 - Quick Recipes -->
-  <div class="col-12 col-md-6 col-lg-4">
-    <div class="topic-card h-100">
-    <i class="fas fa-utensils fa-2x text-danger"></i>  <!-- Red color -->
-    <h3>Quick Recipes</h3>
-    <p>Make food quickly</p>
-    </div>
-  </div>
-
-  <!-- Topic 12 - Nutrition Insights -->
-  <div class="col-12 col-md-6 col-lg-4">
-    <div class="topic-card h-100">
-    <i class="fas fa-apple-alt fa-2x text-success"></i>  <!-- Green color -->
-    <h3>Nutrition Insights</h3>
-    <p>Healthy eating tips</p>
-    </div>
-  </div>
+  <section class="forum-topics">
+    <h2 class="text-center mb-5 fw-bold">Explore Topics</h2>
+    <div class="row justify-content-center">
+    <div class="container">
+      <div class="row g-2">
+        <!-- Topic 1 - Daily Essentials -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="topic-card h-100" onclick="navigateToTopic('daily-essentials')">
+            <i class="fas fa-shopping-basket"></i>
+            <h3>Daily Essentials</h3>
+            <p>Discuss everyday must-haves</p>
           </div>
         </div>
-      </section>
-    </template>
+
+        <!-- Topic 2 - Home & Lifestyle -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="topic-card h-100" onclick="navigateToTopic('home-lifestyle')">
+            <i class="fas fa-home"></i>
+            <h3>Home & Lifestyle</h3>
+            <p>Home decor, organization tips</p>
+          </div>
+        </div>
+
+        <!-- Topic 3 - Personal Well-being -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="topic-card h-100" onclick="navigateToTopic('personal-well-being')">
+            <i class="fas fa-heartbeat"></i>
+            <h3>Personal Well-being</h3>
+            <p>Health, fitness, and mindfulness</p>
+          </div>
+        </div>
+
+        <!-- Topic 4 - Technology & Innovation -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="topic-card h-100" onclick="navigateToTopic('technology-innovation')">
+            <i class="fas fa-microchip"></i>
+            <h3>Technology & Innovation</h3>
+            <p>Gadgets, software, and future tech</p>
+          </div>
+        </div>
+
+        <!-- Topic 5 - Leisure & Entertainment -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="topic-card h-100" onclick="navigateToTopic('leisure-entertainment')">
+            <i class="fas fa-gamepad"></i>
+            <h3>Leisure & Entertainment</h3>
+            <p>Games, movies, and hobbies</p>
+          </div>
+        </div>
+
+        <!-- Topic 6 - Commerce & Shopping -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="topic-card h-100" onclick="navigateToTopic('commerce-shopping')">
+            <i class="fas fa-store"></i>
+            <h3>Commerce & Shopping</h3>
+            <p>Deals, reviews, and shopping guides</p>
+          </div>
+        </div>
+
+        <!-- Topic 7 - Mobility & Transportation -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="topic-card h-100" onclick="navigateToTopic('mobility-transportation')">
+            <i class="fas fa-car"></i>
+            <h3>Mobility & Transportation</h3>
+            <p>Vehicles, public transit, and travel solutions</p>
+          </div>
+        </div>
+
+        <!-- Topic 8 - Services & Support -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="topic-card h-100" onclick="navigateToTopic('services-support')">
+            <i class="fas fa-hands-helping"></i>
+            <h3>Services & Support</h3>
+            <p>Professional services and community help</p>
+          </div>
+        </div>
+
+        <!-- Topic 9 - Culture & Community -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="topic-card h-100" onclick="navigateToTopic('culture-community')">
+            <i class="fas fa-globe-americas"></i>
+            <h3>Culture & Community</h3>
+            <p>Local events, traditions, and social groups</p>
+          </div>
+        </div>
+
+        <!-- Topic 10 - Information & Learning -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="topic-card h-100" onclick="navigateToTopic('information-learning')">
+            <i class="fas fa-graduation-cap"></i>
+            <h3>Information & Learning</h3>
+            <p>Education, tutorials, and knowledge sharing</p>
+          </div>
+        </div>
+
+        <!-- Topic 11 - Quick Recipes -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="topic-card h-100" onclick="navigateToTopic('quick-recipes')">
+            <i class="fas fa-utensils fa-2x text-danger"></i>
+            <h3>Quick Recipes</h3>
+            <p>Make food quickly</p>
+          </div>
+        </div>
+
+        <!-- Topic 12 - Nutrition Insights -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="topic-card h-100" onclick="navigateToTopic('nutrition-insights')">
+            <i class="fas fa-apple-alt fa-2x text-success"></i>
+            <h3>Nutrition Insights</h3>
+            <p>Healthy eating tips</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+</template>
 
     <!-- Topics Grid Template (Shows ALL topics with icons) -->
+
+
+
+
+
+ <!-- posts against each Topic Template  -->
+  <!-- posts against each Topic Template  -->
+
+<template id="topic-posts-template">
+  <div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="fw-bold topic-posts-title">Posts in: Topic Name</h2>
+      <button class="btn btn-secondary btn-back-to-topics">← Back to Topics</button>
+    </div>
+    <div class="topic-posts-content">
+      <!-- Posts will be rendered here -->
+    </div>
+  </div>
+</template>
+
+  <!-- posts against each Topic Template  -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     <!-- main Page slider Templates -->
     <!-- main Page slider Templates -->
@@ -433,19 +478,19 @@
 
           <div class="create-post-topics-column">
             <label>
-              <input type="checkbox" name="create-post-topic" value="Daily Essentials" />
+              <input type="checkbox" name="create-post-topic" value="1" />
               <span class="create-post-topic-icon icon-daily"></span>
               Daily Essentials
             </label>
 
             <label>
-              <input type="checkbox" name="create-post-topic" value="Home & Lifestyle" />
+              <input type="checkbox" name="create-post-topic" value="2" />
               <span class="create-post-topic-icon icon-home"></span>
               Home & Lifestyle
             </label>
 
             <label>
-              <input type="checkbox" name="create-post-topic" value="Personal Well-being" />
+              <input type="checkbox" name="create-post-topic" value="3" />
               <span class="create-post-topic-icon icon-personal"></span>
               Personal Well-being
             </label>
@@ -453,19 +498,19 @@
 
           <div class="create-post-topics-column">
             <label>
-              <input type="checkbox" name="create-post-topic" value="Leisure & Entertainment" />
+              <input type="checkbox" name="create-post-topic" value="5" />
               <span class="create-post-topic-icon icon-leisure"></span>
               Leisure & Entertainment
             </label>
 
             <label>
-              <input type="checkbox" name="create-post-topic" value="Commerce & Shopping" />
+              <input type="checkbox" name="create-post-topic" value="6" />
               <span class="create-post-topic-icon icon-commerce"></span>
               Commerce & Shopping
             </label>
 
             <label>
-              <input type="checkbox" name="create-post-topic" value="Mobility & Transportation" />
+              <input type="checkbox" name="create-post-topic" value="7" />
               <span class="create-post-topic-icon icon-mobility"></span>
               Mobility & Transportation
             </label>
@@ -473,19 +518,19 @@
 
           <div class="create-post-topics-column">
             <label>
-              <input type="checkbox" name="create-post-topic" value="Services & Support" />
+              <input type="checkbox" name="create-post-topic" value="8" />
               <span class="create-post-topic-icon icon-services"></span>
               Services & Support
             </label>
 
             <label>
-              <input type="checkbox" name="create-post-topic" value="Culture & Community" />
+              <input type="checkbox" name="create-post-topic" value="9" />
               <span class="create-post-topic-icon icon-culture"></span>
               Culture & Community
             </label>
 
             <label>
-              <input type="checkbox" name="create-post-topic" value="Technology & Innovation" />
+              <input type="checkbox" name="create-post-topic" value="4" />
               <span class="create-post-topic-icon icon-technology"></span>
               Technology & Innovation
             </label>
@@ -493,19 +538,19 @@
 
           <div class="create-post-topics-column">
             <label>
-              <input type="checkbox" name="create-post-topic" value="Information & Learning" />
+              <input type="checkbox" name="create-post-topic" value="10" />
               <span class="create-post-topic-icon icon-information"></span>
               Information & Learning
             </label>
 
             <label>
-              <input type="checkbox" name="create-post-topic" value="Quick Recipes" />
+              <input type="checkbox" name="create-post-topic" value="11" />
               <span class="create-post-topic-icon icon-recipes"></span>
               Quick Recipes
             </label>
 
             <label>
-              <input type="checkbox" name="create-post-topic" value="Nutrition Insights" />
+              <input type="checkbox" name="create-post-topic" value="12" />
               <span class="create-post-topic-icon icon-nutrition"></span>
               Nutrition Insights
             </label>

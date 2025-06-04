@@ -49,10 +49,7 @@ export function updateAuthUI() {
     btn.style.display = isAuthenticated ? 'none' : 'block';
   });
 
-  const createPostLink = document.querySelector('a[href="#/create-post"]');
-  if (createPostLink) {
-    createPostLink.style.display = isAuthenticated ? 'inline-block' : 'none';
-  }
+ 
 }
 
 export async function checkUserSession() {

@@ -1016,6 +1016,25 @@ h2 {
 /* css for all topics options and related icons */
 
 /* css for all topics options and related icons */
+  
+
+/* Topic badge spacing */
+.post-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.topic-badge {
+  background-color: rgba(7, 118, 173, 0.8);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin: 0; /* Reset any existing margin */
+}
 
 
 .topic-card {
@@ -1033,6 +1052,7 @@ h2 {
    word-wrap: break-word; /* break long words */
    width: 100%;
    box-sizing: border-box;
+   cursor: pointer; /* Change cursor to pointer */
 
  }
 
