@@ -1,88 +1,66 @@
-// account.go 
-
 package handler
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
-	"realtimeforum/auth"
 	"realtimeforum/database"
 )
 
-// GetUserPostsHandler handles GET /user/posts
+// GetUserPostsHandler handles GET /api/user/posts
 func GetUserPostsHandler(w http.ResponseWriter, r *http.Request) {
-	authenticated, userID := auth.CheckUserLoggedIn(r)
-	if !authenticated {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+	if r.Method != http.MethodGet {
+		http.Error(w, "Only GET method is allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	userID, err := getUserIDFromSession(r)
+	if err != nil {
+		http.Error(w, "Unauthorized: "+err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	posts, err := database.GetUserPosts(userID)
 	if err != nil {
-		log.Printf("Error getting user posts: %v", err)
-		http.Error(w, "Failed to get posts", http.StatusInternalServerError)
+		http.Error(w, "Failed to fetch user posts: "+err.Error(), http.StatusInternalServerError)
 		return
+	}
+
+	// For each post, get its topics
+	for i := range posts {
+		topics, err := getTopicsForPost(posts[i].ID)
+		if err != nil {
+			posts[i].Topics = []string{} // Empty topics if error
+		} else {
+			posts[i].Topics = topics
+		}
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(posts)
 }
 
-// GetUserCommentsHandler handles GET /user/comments
+// GetUserCommentsHandler handles GET /api/user/comments
+// GetUserCommentsHandler handles GET /api/user/comments
 func GetUserCommentsHandler(w http.ResponseWriter, r *http.Request) {
-	authenticated, userID := auth.CheckUserLoggedIn(r)
-	if !authenticated {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
+    if r.Method != http.MethodGet {
+        http.Error(w, "Only GET method is allowed", http.StatusMethodNotAllowed)
+        return
+    }
 
-	comments, err := database.GetUserComments(userID)
-	if err != nil {
-		log.Printf("Error getting user comments: %v", err)
-		http.Error(w, "Failed to get comments", http.StatusInternalServerError)
-		return
-	}
+    userID, err := getUserIDFromSession(r)
+    if err != nil {
+        http.Error(w, "Unauthorized: "+err.Error(), http.StatusUnauthorized)
+        return
+    }
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(comments)
+    comments, err := database.GetUserComments(userID)
+    if err != nil {
+        http.Error(w, "Failed to fetch user comments: "+err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    // REMOVE the problematic loop that overwrites Author field
+
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(comments)
 }
-
-// UpdateUserHandler handles POST /user/update
-func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
-	authenticated, userID := auth.CheckUserLoggedIn(r)
-	if !authenticated {
-		http.Error(w, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
-
-	var updateData struct {
-		FirstName string `json:"first_name"`
-		LastName  string `json:"last_name"`
-		Email     string `json:"email"`
-	}
-
-	if err := json.NewDecoder(r.Body).Decode(&updateData); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
-		return
-	}
-
-	if updateData.FirstName == "" || updateData.LastName == "" || updateData.Email == "" {
-		http.Error(w, "Missing fields in request body", http.StatusBadRequest)
-		return
-	}
-
-	err := database.UpdateUser(userID, updateData.FirstName, updateData.LastName, updateData.Email)
-	if err != nil {
-		log.Printf("Error updating user: %v", err)
-		http.Error(w, "Failed to update user", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{
-		"status":  "success",
-		"message": "User updated successfully",
-	})
-}
-

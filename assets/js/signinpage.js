@@ -1,4 +1,5 @@
-// signinpage.js - RESTORED VERSION
+// signinpage.js - REMOVE THE LOGOUT FUNCTION FROM HERE
+
 function initializeSignInPage() {
   console.log('Initializing sign-in page');
   
@@ -190,46 +191,8 @@ async function handleLogin(form, errorElementId) {
   }
 }
 
-async function handleLogout() {
-  try {
-    const response = await fetch('/api/logout', {
-      method: 'POST',
-      credentials: 'include',
-    });
-
-    if (response.ok) {
-      console.log('Logout successful');
-    } else {
-      console.warn('Logout failed on server:', await response.text());
-    }
-  } catch (error) {
-    console.error('Logout request failed:', error);
-  }
-
-  // Clear local storage
-  localStorage.removeItem('user');
-  
-  // Update global app state
-  if (window.appState) {
-    window.appState.user = null;
-    window.appState.isAuthenticated = false;
-  }
-
-  // Clear session cookie
-  clearSessionCookie();
-
-  // Update UI
-  if (window.updateAuthUI) {
-    window.updateAuthUI();
-  }
-
-  // Navigate to signin
-  if (window.navigateTo) {
-    window.navigateTo('signin');
-  } else {
-    window.location.hash = '#/signin';
-  }
-}
+// REMOVE THESE LINES - handleLogout should not be in signin.js
+// async function handleLogout() { ... }
 
 // Simple auth status check (keep it simple)
 async function checkAuthStatus() {
@@ -268,7 +231,8 @@ async function checkAuthStatus() {
 }
 
 window.handleLogin = handleLogin;
-window.handleLogout = handleLogout;
+// REMOVE THIS LINE - logout should not be handled in signin.js
+// window.handleLogout = handleLogout;
 window.checkAuthStatus = checkAuthStatus;
 window.initializeSignInPage = initializeSignInPage;
 

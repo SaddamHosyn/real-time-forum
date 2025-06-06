@@ -218,31 +218,37 @@
 
 <!-- Store Results Section -->
 <!-- Container always present -->
-<div id="storeResults" class="view d-none" aria-live="polite">
+
+<!-- Store Page Template -->
+<!-- Store Page Template (for router) -->
+<template id="store-template-page">
   <div class="container my-4">
     <h2 class="mb-4">Available Stores</h2>
     <div id="storesList" class="row"></div>
   </div>
-</div>
+</template>
 
-<!-- Only the card goes in the template -->
+<!-- Individual Store Card Template (for rendering) -->
 <template id="store-template">
-  <div class="store-card col-12 col-md-4 mb-4">
-    <h3 class="store-name"></h3>
-    <p class="store-address-line">
-      <i class="fas fa-map-marker-alt"></i>
-      <span class="store-address"></span>
-    </p>
-    <p class="store-phone-line">
-      <i class="fas fa-phone"></i>
-      <span class="store-phone"></span>
-    </p>
-    <p class="store-hours-line">
-      <i class="fas fa-clock"></i>
-      <span class="store-hours"></span>
-    </p>
+  <div class="col-12 col-md-4 mb-4">
+    <div class="store-card">
+      <h3 class="store-name"></h3>
+      <p class="store-address-line">
+        <i class="fas fa-map-marker-alt"></i>
+        <span class="store-address"></span>
+      </p>
+      <p class="store-phone-line">
+        <i class="fas fa-phone"></i>
+        <span class="store-phone"></span>
+      </p>
+      <p class="store-hours-line">
+        <i class="fas fa-clock"></i>
+        <span class="store-hours"></span>
+      </p>
+    </div>
   </div>
 </template>
+
 
 
 
@@ -394,6 +400,73 @@
 </template>
 
   <!-- posts against each Topic Template  -->
+
+
+  <!-- SINGLE COMMENT TEMPLATE aganist each post -->
+   
+  <!-- SINGLE COMMENT TEMPLATE aganist each post -->
+<template id="single-comment-template">
+  <div class="comment">
+    <div class="comment-author"></div>
+    <div class="comment-date"></div>
+    <div class="comment-content"></div>
+  </div>
+</template>
+
+  <!-- SINGLE COMMENT TEMPLATE aganist each post -->
+
+
+<!-- Post Card Template (with comments section) -->
+<template id="post-card-template">
+  <div class="post-card mb-3">
+    <div class="post-header">
+      <h5 class="post-title"></h5>
+      <div class="post-meta">
+        <span class="post-author"></span>
+        <span class="post-date"></span>
+      </div>
+    </div>
+    <div class="post-content">
+      <p class="post-text"></p>
+    </div>
+    <div class="post-topics"></div>
+    
+    <!-- Comments Section -->
+    <div class="comments-section mt-3">
+      <div class="comments-header d-flex justify-content-between align-items-center mb-2">
+        <h6 class="mb-0">Comments</h6>
+        <button class="btn btn-sm btn-outline-primary toggle-comments">Show Comments</button>
+      </div>
+      <div class="comments-container" style="display: none;"></div>
+    </div>
+  </div>
+</template>
+
+<!-- Comment Form Template -->
+<template id="comment-form-template">
+  <form class="comment-form mb-3">
+    <textarea class="form-control mb-2" placeholder="Write a comment..." rows="3"></textarea>
+    <button type="submit" class="btn btn-primary btn-sm">Post Comment</button>
+  </form>
+</template>
+
+<!-- Individual Comment Template -->
+<template id="comment-item-template">
+  <div class="comment mb-2 p-2 border-start border-3">
+    <div class="comment-header d-flex justify-content-between align-items-center mb-1">
+      <small class="text-muted fw-bold comment-author"></small>
+      <small class="text-muted comment-date"></small>
+    </div>
+    <p class="comment-content mb-0"></p>
+  </div>
+</template>
+
+<!-- Login Prompt Template -->
+<template id="login-prompt-template">
+  <p class="text-muted">Please log in to post comments.</p>
+</template>
+
+
 
 
 
@@ -579,49 +652,98 @@
     <!-- my account details( posts, my comments) -->
     <!-- my account details( posts, my comments) -->
 
-<template id="account-template">
-  <div class="account-container">
-    <div class="account-header">
-      <h2>My Account</h2>
-    </div>
-    <div class="account-info">
-      <p><strong>Username:</strong> <span id="account-username">Username</span></p>
-      <p><strong>Email:</strong> <span id="account-email">user@example.com</span></p>
+<!-- My Account Page Template -->
+
+<template id="account-page-template">
+  <div class="container-fluid my-4 account-page">
+    <div class="row">
+      <div class="col-12">
+        <h2 class="mb-4 text-center account-title">My Account</h2>
+      </div>
     </div>
     
-    <div class="user-activity">
-      <div class="user-posts">
-        <h3>My Posts</h3>
-        <div class="posts-list" id="user-posts-list">
-          <template id="post-item-template">
-            <div class="post-item">
-              <h4><a class="post-link" href=""></a></h4>
-              <p class="post-meta"></p>
-              <p class="post-excerpt"></p>
+    <div class="row g-4">
+      <!-- Profile Column -->
+      <div class="col-lg-4 col-md-12">
+        <div class="profile-column">
+          <div class="card profile-card">
+            <div class="card-header profile-header">
+              <h4><i class="fas fa-user-circle me-2"></i>Profile Information</h4>
             </div>
-          </template>
-          <p class="no-posts">You have not created any posts yet.</p>
+            <div class="card-body profile-body">
+              <div class="profile-item">
+                <label>Username:</label>
+                <span id="account-username" class="profile-value">Loading...</span>
+              </div>
+              <div class="profile-item">
+                <label>Email:</label>
+                <span id="account-email" class="profile-value">Loading...</span>
+              </div>
+              <div class="profile-stats">
+                <div class="stat-item">
+                  <span class="stat-number" id="posts-count">0</span>
+                  <span class="stat-label">Posts</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-number" id="comments-count">0</span>
+                  <span class="stat-label">Comments</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="user-comments">
-        <h3>My Comments</h3>
-        <div class="comments-list" id="user-comments-list">
-          <template id="comment-item-template">
-            <div class="comment-item">
-              <p class="comment-content"></p>
-              <p class="comment-meta">
-                Posted on <span class="comment-date"></span>
-                in <a class="comment-post-link" href="">post</a>
-              </p>
+      <!-- Posts Column -->
+      <div class="col-lg-4 col-md-6 col-sm-12">
+        <div class="posts-column">
+          <div class="card posts-card">
+            <div class="card-header posts-header">
+              <h4><i class="fas fa-edit me-2"></i>My Posts</h4>
             </div>
-          </template>
-          <p class="no-comments">You have not made any comments yet.</p>
+            <div class="card-body posts-body">
+              <div id="user-posts-list" class="content-list">
+                <div class="text-center loading-spinner">
+                  <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comments Column -->
+      <div class="col-lg-4 col-md-6 col-sm-12">
+        <div class="comments-column">
+          <div class="card comments-card">
+            <div class="card-header comments-header">
+              <h4><i class="fas fa-comments me-2"></i>My Comments</h4>
+            </div>
+            <div class="card-body comments-body">
+              <div id="user-comments-list" class="content-list">
+                <div class="text-center loading-spinner">
+                  <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
+
+
+
+
+
+
+
+
 
     <!-- my account details( posts,  my comments) -->
 
@@ -706,15 +828,185 @@
   <!-- when user login, then feed should be there -->
     <!-- when user login, then feed should be there -->
 
-    <template id="feed-template">
-      <section class="feed-section">
-        <h2>Welcome to the Forum Feed</h2>
-        <div id="posts-container" class="posts-container">
-          <!-- JS will inject individual posts here -->
+  <!-- Feed Template -->
+<template id="feed-template">
+  <div class="container-fluid feed-container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 col-md-10 col-12">
+        <div class="feed-header">
+          <h2 class="feed-title">Forum Feed</h2>
+          <p class="feed-subtitle">Stay updated with the latest posts and discussions</p>
         </div>
-      </section>
-    </template>
-    
+        
+        <!-- Posts Container -->
+        <div id="posts-container" class="posts-container">
+          <!-- Loading spinner -->
+          <div id="feed-loading" class="text-center loading-spinner">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading posts...</p>
+          </div>
+        </div>
+        
+        <!-- Load More Section -->
+        <div id="load-more-section" class="load-more-section text-center d-none">
+          <button id="load-more-btn" class="btn btn-primary btn-lg">
+            <i class="fas fa-plus-circle me-2"></i>Load More Posts
+          </button>
+          <div id="load-more-loading" class="d-none mt-3">
+            <div class="spinner-border spinner-border-sm" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <span class="ms-2">Loading more posts...</span>
+          </div>
+        </div>
+        
+        <!-- End of Posts Message -->
+        <div id="end-of-posts" class="text-center mt-4 d-none">
+          <p class="text-muted">You've reached the end of the feed</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<!-- Post Item Template -->
+<template id="post-item-template">
+  <article class="post-card card mb-4">
+    <div class="card-body">
+      <!-- Post Header -->
+      <div class="post-header d-flex justify-content-between align-items-start mb-3">
+        <div class="author-info d-flex align-items-center">
+          <div class="avatar-placeholder">
+            <i class="fas fa-user-circle fa-2x text-primary"></i>
+          </div>
+          <div class="ms-3">
+            <h6 class="author-name mb-0"></h6>
+            <small class="post-date text-muted"></small>
+          </div>
+        </div>
+        <div class="post-actions dropdown">
+          <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+            <i class="fas fa-ellipsis-h"></i>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#"><i class="fas fa-bookmark me-2"></i>Save Post</a></li>
+            <li><a class="dropdown-item" href="#"><i class="fas fa-share me-2"></i>Share</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <!-- Post Content -->
+      <div class="post-content">
+        <h5 class="post-title mb-3"></h5>
+        <div class="post-body mb-3"></div>
+        <div class="post-topics d-flex flex-wrap gap-1 mb-3"></div>
+      </div>
+      
+      <!-- Post Stats -->
+      <div class="post-stats d-flex justify-content-between align-items-center mb-3">
+        <div class="stats-left d-flex gap-3">
+          <span class="comment-count">
+            <i class="fas fa-comments text-primary"></i>
+            <span class="count">0</span> comments
+          </span>
+          <span class="like-count">
+            <i class="fas fa-heart text-danger"></i>
+            <span class="count">0</span> likes
+          </span>
+        </div>
+        <div class="stats-right">
+          <small class="text-muted view-count">
+            <i class="fas fa-eye"></i> <span class="count">0</span> views
+          </small>
+        </div>
+      </div>
+      
+      <!-- Post Actions -->
+      <div class="post-actions-bar d-flex gap-2 mb-3">
+        <button class="btn btn-outline-danger btn-sm like-btn">
+          <i class="fas fa-heart me-1"></i>Like
+        </button>
+        <button class="btn btn-outline-primary btn-sm toggle-comments">
+          <i class="fas fa-comments me-1"></i>Comments
+        </button>
+        <button class="btn btn-outline-secondary btn-sm share-btn">
+          <i class="fas fa-share me-1"></i>Share
+        </button>
+      </div>
+      
+      <!-- Comments Section -->
+      <div class="comments-section d-none">
+        <div class="comments-header d-flex justify-content-between align-items-center mb-3">
+          <h6 class="mb-0">Comments</h6>
+          <small class="text-muted comments-count">0 comments</small>
+        </div>
+        
+        <!-- Comment Form -->
+        <div class="comment-form mb-3">
+          <div class="d-flex gap-2">
+            <div class="avatar-placeholder">
+              <i class="fas fa-user-circle fa-lg text-secondary"></i>
+            </div>
+            <div class="flex-fill">
+              <textarea class="form-control comment-input" rows="2" placeholder="Write a comment..."></textarea>
+              <div class="d-flex justify-content-end mt-2">
+                <button class="btn btn-primary btn-sm post-comment-btn">
+                  <i class="fas fa-paper-plane me-1"></i>Post Comment
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Comments List -->
+        <div class="comments-list">
+          <!-- Comments will be inserted here -->
+        </div>
+        
+        <!-- Load More Comments -->
+        <div class="load-more-comments text-center d-none">
+          <button class="btn btn-outline-primary btn-sm">Load More Comments</button>
+        </div>
+      </div>
+    </div>
+  </article>
+</template>
+
+<!-- Comment Item Template -->
+<template id="comment-item-template">
+  <div class="comment-item mb-3">
+    <div class="d-flex gap-2">
+      <div class="avatar-placeholder">
+        <i class="fas fa-user-circle text-secondary"></i>
+      </div>
+      <div class="comment-content flex-fill">
+        <div class="comment-bubble p-3 bg-light rounded">
+          <div class="comment-header d-flex justify-content-between align-items-start mb-2">
+            <strong class="comment-author"></strong>
+            <small class="comment-date text-muted"></small>
+          </div>
+          <div class="comment-text"></div>
+        </div>
+        <div class="comment-actions mt-1">
+          <button class="btn btn-link btn-sm text-muted">
+            <i class="fas fa-thumbs-up me-1"></i>Like
+          </button>
+          <button class="btn btn-link btn-sm text-muted">
+            <i class="fas fa-reply me-1"></i>Reply
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<!-- Topic Badge Template -->
+<template id="topic-badge-template">
+  <span class="badge bg-primary topic-badge"></span>
+</template>
+
 
   <!-- when user login, then feed should be there -->
 
@@ -876,45 +1168,9 @@
 
 
 
-   <!-- SINGLE POST TEMPLATE -->
-<template id="single-post-template">
-  <div class="single-post-container">
-    <!-- Post Content -->
-    <div class="post">
-      <h1 class="post-title"></h1>
-      <div class="post-meta">
-        <span class="post-author"></span>
-        <span class="post-date"></span>
-      </div>
-      <div class="post-content"></div>
-    </div>
 
-    <!-- Comments Section -->
-    <div class="comments-section">
-      <h2>Comments (<span class="comment-count">0</span>)</h2>
-      
-      <!-- Existing Comments List -->
-      <div class="comments-list">
-        <!-- Comments will be inserted here -->
-      </div>
 
-      <!-- Add Comment Form -->
-      <form class="add-comment-form">
-        <textarea placeholder="Write your comment..." required></textarea>
-        <button type="submit" class="btn btn-primary">Post Comment</button>
-      </form>
-    </div>
-  </div>
-</template>
 
-<!-- SINGLE COMMENT TEMPLATE -->
-<template id="single-comment-template">
-  <div class="comment">
-    <div class="comment-author"></div>
-    <div class="comment-date"></div>
-    <div class="comment-content"></div>
-  </div>
-</template>
 
 
 
@@ -1059,6 +1315,7 @@
         </div>
       </div>
     </footer>
+
     <!-- Footer -->
 
   </body>

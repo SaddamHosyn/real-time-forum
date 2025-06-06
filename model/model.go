@@ -61,7 +61,15 @@ type Post struct {
 	UpdatedAt time.Time `json:"updated_at"`
 
 	Comments  []Comment `json:"comments"`
+
+
+
+
 }
+
+
+
+
 
 type Comment struct {
 	ID        int       `json:"id"`
@@ -69,8 +77,49 @@ type Comment struct {
 	Author    string    `json:"author"`
 	UserID    string       `json:"user_id"`
 	PostID    int       `json:"post_id"`
+	PostTitle string    `json:"post_title"` // Add this field
 	CreatedAt time.Time `json:"created_at"`
 	TimeAgo   string    `json:"time_ago"`
 }
 
 
+// ADD THESE TO YOUR EXISTING model/model.go FILE
+
+// FeedPost represents a post in the feed with additional metadata
+// ADD THESE TO YOUR EXISTING model/model.go FILE
+
+// FeedPost represents a post in the feed with additional metadata
+type FeedPost struct {
+	ID            int           `json:"id"`
+	Title         string        `json:"title"`
+	Content       string        `json:"content"`
+	Author        string        `json:"author"`
+	UserID        string        `json:"user_id"`
+	CreatedAt     string        `json:"created_at"`
+	UpdatedAt     string        `json:"updated_at"`
+	Topics        []string      `json:"topics"`
+	CommentsCount int           `json:"comments_count"`
+	ViewsCount    int           `json:"views_count"`
+	RecentComments []FeedComment `json:"comments"`
+}
+
+// FeedComment represents a comment in the feed
+type FeedComment struct {
+	ID        int    `json:"id"`
+	Content   string `json:"content"`
+	Author    string `json:"author"`
+	UserID    string `json:"user_id"`
+	PostID    int    `json:"post_id"`
+	CreatedAt string `json:"created_at"`
+}
+
+
+// FeedData represents the complete feed response
+type FeedData struct {
+	Success   bool       `json:"success"`
+	Posts     []FeedPost `json:"posts"`
+	Page      int        `json:"page"`
+	Limit     int        `json:"limit"`
+	Total     int        `json:"total"`
+	HasMore   bool       `json:"has_more"`
+}

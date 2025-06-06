@@ -10,22 +10,22 @@ const routes = {
     init: initializeHomePage
   },
   'store': { 
-    template: 'store-template', 
-    authRequired: false, 
-    script: '/assets/js/findastore.js', 
-    init: initializeStorePage 
-  },
+  template: 'store-template-page',
+  authRequired: false, 
+  script: '/assets/js/findastore.js', 
+  init: initializeStorePage 
+},
   'topicsbar': { 
     template: 'topicsbar-template', 
     authRequired: true,
     script: '/assets/js/topicsbar.js',
     init: initializeTopicsBarPage
   },
-  'account': { 
-    template: 'account-template', 
+ 'my-account': { 
+    template: 'account-page-template', 
     authRequired: true, 
-    init: initializeAccountPage, 
-    script: '/assets/js/account.js' 
+    script: '/assets/js/account.js', 
+    init: initializeAccountPage 
   },
   'signin': { 
     template: 'signin-template', 
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
       navigateTo('home');
     } else if (accountLink && accountLink.getAttribute('href') === '#/my-account') {
       e.preventDefault();
-      navigateTo('account');
+      navigateTo('my-account');
     } else if (createPostLink) {
       e.preventDefault();
       if (isLoggedIn()) {
@@ -316,8 +316,14 @@ function initializeSignInPage() {
 }
 
 function initializeAccountPage() {
-  console.log('Account page initialization');
+  console.log('Account page initialization from router.js');
+  if (typeof window.initializeAccountPage === 'function') {
+    window.initializeAccountPage();
+  } else {
+    console.warn('initializeAccountPage function not found');
+  }
 }
+
 
 function initializeFeedPage() {
   console.log('Feed page initialization');

@@ -2,7 +2,6 @@
 
 document.addEventListener("DOMContentLoaded", () => {
     console.log("Account.js loaded on DOMContentLoaded");
-    // You might not need to do anything here if initializeAccountPage is the primary entry point
 });
 
 function initializeAccountPage() {
@@ -29,16 +28,27 @@ function initializeAccountPage() {
 
 async function fetchUserPosts() {
     console.log("Fetching user posts");
+    
+    const container = document.getElementById("user-posts-list");
+    const postsCountBadge = document.getElementById("posts-count"); // ✅ ADD THIS LINE
+    
     try {
-        const res = await fetch("/api/user/posts", { credentials: "same-origin" });
+        const res = await fetch("/api/user/posts", { credentials: "include" });
         const posts = await res.json();
-        const container = document.getElementById("user-posts-list");
+        
         if (container) {
-            container.innerHTML = "";
+            clearContainer(container);
+            
+            // ✅ ADD THIS - Update posts count
+            if (postsCountBadge) {
+                postsCountBadge.textContent = posts.length;
+            }
+            
             if (posts.length === 0) {
                 container.textContent = "You have not created any posts yet.";
                 return;
             }
+            
             posts.forEach((post) => {
                 const div = document.createElement("div");
                 div.className = "post-item";
@@ -67,51 +77,108 @@ async function fetchUserPosts() {
         }
     } catch (err) {
         console.error("Failed to load posts", err);
+        
+        // ✅ ADD THIS - Set count to 0 on error
+        if (postsCountBadge) {
+            postsCountBadge.textContent = "0";
+        }
     }
 }
 
 async function fetchUserComments() {
     console.log("Fetching user comments");
-    try {
-        const res = await fetch("/api/user/comments", { credentials: "same-origin" });
-        const comments = await res.json();
-        const container = document.getElementById("user-comments-list");
-        if (container) {
-            container.innerHTML = "";
-            if (comments.length === 0) {
-                container.textContent = "You have not made any comments yet.";
-                return;
-            }
-            comments.forEach((comment) => {
-                const div = document.createElement("div");
-                div.className = "comment-item";
-
-                const content = document.createElement("p");
-                content.className = "comment-content";
-                content.textContent = comment.content;
-
-                const meta = document.createElement("p");
-                meta.className = "comment-meta";
-
-                const link = document.createElement("a");
-                link.href = `#/post/${comment.post_id}`;
-                link.textContent = "post";
-
-                meta.append(
-                    `Posted on ${new Date(comment.created_at).toLocaleDateString()} in `,
-                    link
-                );
-
-                div.appendChild(content);
-                div.appendChild(meta);
-                container.appendChild(div);
-            });
-        } else {
-            console.warn("User comments list container not found");
-        }
-    } catch (err) {
-        console.error("Failed to load comments", err);
+    
+    const container = document.getElementById("user-comments-list");
+    const commentsCountBadge = document.getElementById("comments-count");
+    
+    if (!container) {
+        console.warn("User comments list container not found");
+        return;
     }
+
+    try {
+        const response = await fetch("/api/user/comments", { 
+            credentials: "include" 
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const comments = await response.json();
+        
+        console.log("Fetched comments:", comments);
+        console.log("Number of comments:", comments.length);
+        
+        // Clear loading spinner
+        clearContainer(container);
+        
+        // Update comments count
+        if (commentsCountBadge) {
+            commentsCountBadge.textContent = comments.length;
+        }
+
+        if (comments.length === 0) {
+            showNoComments(container);
+            return;
+        }
+
+        // Render comments using DOM creation (not templates for now)
+        comments.forEach(comment => {
+            const commentElement = createCommentElement(comment);
+            container.appendChild(commentElement);
+        });
+
+    } catch (error) {
+        console.error("Failed to load comments:", error);
+        clearContainer(container);
+        showError(container, "Failed to load comments");
+    }
+}
+
+// ✅ ADD THESE MISSING FUNCTIONS:
+
+function clearContainer(container) {
+    while (container.firstChild) {
+        container.removeChild(container.firstChild);
+    }
+}
+
+function showNoComments(container) {
+    const message = document.createElement("p");
+    message.className = "text-muted text-center";
+    message.textContent = "You have not made any comments yet.";
+    container.appendChild(message);
+}
+
+function showError(container, message) {
+    const errorDiv = document.createElement("div");
+    errorDiv.className = "alert alert-danger";
+    errorDiv.textContent = message;
+    container.appendChild(errorDiv);
+}
+
+function createCommentElement(comment) {
+    const div = document.createElement("div");
+    div.className = "comment-item border-bottom pb-3 mb-3";
+
+    const content = document.createElement("p");
+    content.className = "comment-content mb-2";
+    content.textContent = comment.content;
+
+    const meta = document.createElement("p");
+    meta.className = "text-muted small comment-meta";
+    meta.textContent = `Posted on ${formatDate(comment.created_at)} in "${comment.post_title || 'Unknown Post'}"`;
+
+    div.appendChild(content);
+    div.appendChild(meta);
+    
+    return div;
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'Unknown date';
+    return new Date(dateString).toLocaleDateString();
 }
 
 window.initializeAccountPage = initializeAccountPage;

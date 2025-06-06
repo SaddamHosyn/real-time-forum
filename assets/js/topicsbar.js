@@ -121,33 +121,27 @@ function renderTopicPostsHTML(posts) {
     contentElement.removeChild(contentElement.firstChild);
   }
 
-  if (posts.length === 0) {
-    const alert = document.createElement('div');
-    alert.className = 'alert alert-info';
 
-    const heading = document.createElement('h5');
-    heading.textContent = 'No posts found';
+if (posts.length === 0) {
+  const alert = document.createElement('div');
+  alert.className = 'alert alert-info';
 
-    const paragraph = document.createElement('p');
-    paragraph.textContent = 'Be the first to create a post in this topic!';
+  const heading = document.createElement('h5');
+  heading.textContent = 'No posts found';
 
-    const button = document.createElement('button');
-    button.className = 'btn btn-primary';
-    button.textContent = 'Create Post';
-    button.onclick = function() {
-      if (window.navigateTo) {
-        window.navigateTo('create-post');
-      } else {
-        window.location.hash = '/create-post';
-      }
-    };
+  const paragraph = document.createElement('p');
+  paragraph.textContent = 'No posts available in this topic yet.';
 
-    alert.appendChild(heading);
-    alert.appendChild(paragraph);
-    alert.appendChild(button);
-    contentElement.appendChild(alert);
-    return;
-  }
+  alert.appendChild(heading);
+  alert.appendChild(paragraph);
+  contentElement.appendChild(alert);
+  return;
+}
+
+
+
+
+
 
   posts.forEach(post => {
     const card = document.createElement('div');
@@ -158,7 +152,7 @@ function renderTopicPostsHTML(posts) {
 
     const title = document.createElement('h5');
     title.className = 'post-title';
-    title.textContent = post.title; // REMOVED escapeHtml()
+    title.textContent = post.title;
     header.appendChild(title);
 
     const meta = document.createElement('div');
@@ -166,7 +160,7 @@ function renderTopicPostsHTML(posts) {
 
     const author = document.createElement('span');
     author.className = 'post-author';
-    author.textContent = `By: ${post.author || 'Unknown'}`; // REMOVED escapeHtml()
+    author.textContent = `By: ${post.author || 'Unknown'}`;
 
     const date = document.createElement('span');
     date.className = 'post-date';
@@ -181,7 +175,7 @@ function renderTopicPostsHTML(posts) {
     body.className = 'post-content';
 
     const content = document.createElement('p');
-    content.textContent = post.content; // REMOVED escapeHtml()
+    content.textContent = post.content;
     body.appendChild(content);
     card.appendChild(body);
 
@@ -192,19 +186,166 @@ function renderTopicPostsHTML(posts) {
       post.topics.forEach(topic => {
         const badge = document.createElement('span');
         badge.className = 'topic-badge';
-        badge.textContent = topic; // REMOVED escapeHtml() - THIS WAS THE MAIN ISSUE
+        badge.textContent = topic;
         topicsDiv.appendChild(badge);
       });
     }
 
     card.appendChild(topicsDiv);
+
+    // ADD COMMENT SECTION - SIMPLE VERSION
+    const commentsSection = document.createElement('div');
+    commentsSection.className = 'comments-section mt-3';
+    
+    const commentsButton = document.createElement('button');
+    commentsButton.className = 'btn btn-sm btn-outline-primary';
+    commentsButton.textContent = 'Show Comments';
+    
+    const commentsContainer = document.createElement('div');
+    commentsContainer.style.display = 'none';
+    commentsContainer.className = 'mt-2';
+    
+ commentsButton.onclick = function() {
+  if (commentsContainer.style.display === 'none') {
+    commentsContainer.style.display = 'block';
+    commentsButton.textContent = 'Hide Comments';
+    
+    // Clear container
+    while (commentsContainer.firstChild) {
+      commentsContainer.removeChild(commentsContainer.firstChild);
+    }
+    
+    // Add comment form (only if logged in)
+    if (window.appState && window.appState.isAuthenticated) {
+      const commentForm = document.createElement('form');
+      commentForm.className = 'mb-3';
+      
+      const textarea = document.createElement('textarea');
+      textarea.className = 'form-control mb-2';
+      textarea.placeholder = 'Write a comment...';
+      textarea.rows = 3;
+      
+      const submitBtn = document.createElement('button');
+      submitBtn.type = 'submit';
+      submitBtn.className = 'btn btn-primary btn-sm';
+      submitBtn.textContent = 'Post Comment';
+      
+      commentForm.appendChild(textarea);
+      commentForm.appendChild(submitBtn);
+      
+      commentForm.onsubmit = function(e) {
+        e.preventDefault();
+        const content = textarea.value.trim();
+        
+        if (content.length === 0) {
+          alert('Comment cannot be empty');
+          return;
+        }
+        
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Posting...';
+        
+        fetch('/api/comments/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ content: content, post_id: post.id })
+        })
+        .then(response => {
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          return response.json();
+        })
+        .then(data => {
+          if (data.success) {
+            textarea.value = '';
+            alert('Comment posted successfully!');
+            // Reload comments section
+            commentsButton.click(); // This will refresh the comments
+            commentsButton.click(); // And show them again
+          }
+        })
+        .catch(error => {
+          console.error('Error posting comment:', error);
+          alert('Error posting comment');
+        })
+        .finally(() => {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Post Comment';
+        });
+      };
+      
+      commentsContainer.appendChild(commentForm);
+    } else {
+      const loginMsg = document.createElement('p');
+      loginMsg.className = 'text-muted';
+      loginMsg.textContent = 'Please log in to post comments.';
+      commentsContainer.appendChild(loginMsg);
+    }
+    
+    // Add existing comments section
+    const commentsListDiv = document.createElement('div');
+    commentsListDiv.textContent = 'Loading existing comments...';
+    commentsContainer.appendChild(commentsListDiv);
+    
+    // Fetch existing comments
+    fetch(`/api/posts/${post.id}/comments`, {
+      method: 'GET',
+      credentials: 'include'
+    })
+    .then(response => {
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return response.json();
+    })
+    .then(data => {
+      const comments = data.comments || [];
+      commentsListDiv.textContent = '';
+      
+      if (comments.length === 0) {
+        commentsListDiv.textContent = 'No comments yet. Be the first to comment!';
+      } else {
+        comments.forEach(comment => {
+          const commentDiv = document.createElement('div');
+          commentDiv.className = 'border-start border-3 ps-3 mb-2';
+          commentDiv.style.borderColor = '#007bff';
+          
+          const authorSpan = document.createElement('small');
+          authorSpan.className = 'text-muted fw-bold';
+          authorSpan.textContent = comment.author;
+          
+          const dateSpan = document.createElement('small');
+          dateSpan.className = 'text-muted ms-2';
+          dateSpan.textContent = formatDate(comment.created_at);
+          
+          const contentP = document.createElement('p');
+          contentP.className = 'mb-1';
+          contentP.textContent = comment.content;
+          
+          commentDiv.appendChild(authorSpan);
+          commentDiv.appendChild(dateSpan);
+          commentDiv.appendChild(contentP);
+          commentsListDiv.appendChild(commentDiv);
+        });
+      }
+    })
+    .catch(error => {
+      console.error('Error loading comments:', error);
+      commentsListDiv.textContent = 'Error loading comments';
+    });
+    
+  } else {
+    commentsContainer.style.display = 'none';
+    commentsButton.textContent = 'Show Comments';
+  }
+};
+
+    
+    commentsSection.appendChild(commentsButton);
+    commentsSection.appendChild(commentsContainer);
+    card.appendChild(commentsSection);
+
     contentElement.appendChild(card);
   });
 }
-
-
-
-
 
 function showTopicNotFound(topicSlug) {
   const contentElement = document.querySelector('.topic-posts-content');
@@ -220,7 +361,7 @@ function showTopicNotFound(topicSlug) {
   heading.textContent = 'Topic Not Found';
 
   const paragraph = document.createElement('p');
-  paragraph.textContent = `The requested topic "${topicSlug}" was not found.`; // REMOVED escapeHtml()
+  paragraph.textContent = `The requested topic "${topicSlug}" was not found.`;
 
   alert.appendChild(heading);
   alert.appendChild(paragraph);
@@ -241,22 +382,12 @@ function showErrorMessage(message) {
   heading.textContent = 'Error Loading Posts';
 
   const paragraph = document.createElement('p');
-  paragraph.textContent = message; // REMOVED escapeHtml()
+  paragraph.textContent = message;
 
   alert.appendChild(heading);
   alert.appendChild(paragraph);
   contentElement.appendChild(alert);
 }
-
-
-
-
-
-
-
-
-
-
 
 function formatDate(dateString) {
   if (!dateString) return 'Unknown date';

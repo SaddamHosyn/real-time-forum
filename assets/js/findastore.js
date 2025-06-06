@@ -1,21 +1,22 @@
 function renderStoreList() {
   console.log("Rendering store list");
 
-  const storeResults = document.getElementById('storeResults');
   const storeTemplate = document.getElementById('store-template');
   const storesList = document.getElementById('storesList');
 
-  if (!storeTemplate) {
-    console.error("Store template not found");
+  console.log("Store template found:", !!storeTemplate);
+  console.log("Stores list found:", !!storesList);
+
+  if (!storeTemplate || !storesList) {
+    console.error("Template or list container not found");
+    console.error("storeTemplate:", storeTemplate);
+    console.error("storesList:", storesList);
     return;
   }
 
-  if (!storesList) {
-    console.error("Stores list container not found");
-    return;
-  }
-
+  // Clear the list
   storesList.innerHTML = '';
+  console.log("Cleared stores list");
 
   const stores = [
     {
@@ -45,33 +46,40 @@ function renderStoreList() {
     }
   ];
 
+  console.log("Processing", stores.length, "stores");
+
   stores.forEach((store, index) => {
+    console.log("Processing store", index + 1, ":", store.name);
+    
     const storeClone = storeTemplate.content.cloneNode(true);
     const card = storeClone.querySelector('.store-card');
 
-    // Animation delay for nice appearance
-    card.style.animationDelay = `${index * 0.1}s`;
+    console.log("Card found:", !!card);
 
-    card.querySelector('.store-name').textContent = store.name;
-    card.querySelector('.store-address').textContent = store.address;
-    card.querySelector('.store-hours').textContent = store.hours;
+    if (card) {
+      card.style.animationDelay = `${index * 0.1}s`;
+      card.querySelector('.store-name').textContent = store.name;
+      card.querySelector('.store-address').textContent = store.address;
+      card.querySelector('.store-hours').textContent = store.hours;
 
-    const phonePara = card.querySelector('.store-phone-line');
-    if (store.phone) {
-      phonePara.querySelector('.store-phone').textContent = store.phone;
-    } else {
-      phonePara.style.display = 'none';
+      const phonePara = card.querySelector('.store-phone-line');
+      if (store.phone) {
+        phonePara.querySelector('.store-phone').textContent = store.phone;
+      } else {
+        phonePara.style.display = 'none';
+      }
+
+      storesList.appendChild(storeClone);
+      console.log("Added store", store.name, "to list");
     }
-
-    storesList.appendChild(storeClone);
   });
 
-  // ✅ Debugging: How many cards were rendered
-  const renderedCards = storesList.querySelectorAll('.store-card').length;
-  console.log("Total rendered store cards:", renderedCards);
+  console.log("Final stores list children count:", storesList.children.length);
+  console.log("Store list rendered successfully");
+}
 
-
-
-  // ✅ Make the results container visible
-  storeResults.classList.remove('d-none');
+// Initialize function for router
+function initializeStorePage() {
+  console.log('Store page initialized');
+  renderStoreList();
 }

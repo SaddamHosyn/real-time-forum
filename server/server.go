@@ -37,10 +37,10 @@ http.HandleFunc("/api/comments/create", handler.CreateCommentHandler)
 http.HandleFunc("/api/posts/", handler.GetCommentsByPostHandler) // This handles /api/posts/{id}/comments
 
 
-
+http.HandleFunc("/api/feed/posts", handler.GetFeedHandler)
 
 	http.HandleFunc("/api/user/comments", handler.GetUserCommentsHandler)
-	http.HandleFunc("/api/user/update", handler.UpdateUserHandler)
+
 	http.HandleFunc("/api/logout", handler.LogoutHandler)
 
 
