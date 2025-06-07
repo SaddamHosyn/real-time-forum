@@ -191,8 +191,6 @@ async function handleLogin(form, errorElementId) {
   }
 }
 
-// REMOVE THESE LINES - handleLogout should not be in signin.js
-// async function handleLogout() { ... }
 
 // Simple auth status check (keep it simple)
 async function checkAuthStatus() {
@@ -231,8 +229,7 @@ async function checkAuthStatus() {
 }
 
 window.handleLogin = handleLogin;
-// REMOVE THIS LINE - logout should not be handled in signin.js
-// window.handleLogout = handleLogout;
+
 window.checkAuthStatus = checkAuthStatus;
 window.initializeSignInPage = initializeSignInPage;
 

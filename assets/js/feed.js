@@ -56,80 +56,31 @@ class FeedManager {
     }
   }
 
-// Update the fetchPosts function in your feed.js
-async fetchPosts(page, limit) {
-  const response = await fetch(`/api/feed/posts?page=${page}&limit=${limit}`, {
-    credentials: 'include'
-  });
-  
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-  }
-  
-  const data = await response.json();
-  
-  if (!data.success) {
-    throw new Error('Failed to fetch posts');
-  }
-  
-  // Update hasMorePosts based on server response
-  this.hasMorePosts = data.has_more;
-  
-  return data.posts;
-}
-
-  generateMockPosts(page, limit) {
-    const posts = [];
-    const startIndex = (page - 1) * limit;
+  async fetchPosts(page, limit) {
+    const response = await fetch(`/api/feed/posts?page=${page}&limit=${limit}`, {
+      credentials: 'include'
+    });
     
-    for (let i = 0; i < limit; i++) {
-      const postIndex = startIndex + i + 1;
-      if (postIndex > 50) break; // Simulate finite data
-      
-      posts.push({
-        id: postIndex,
-        title: `Interesting Discussion Topic #${postIndex}`,
-        content: `This is the content of post #${postIndex}. It contains valuable information and sparks meaningful discussions among community members. The post covers various aspects of the topic and encourages engagement.`,
-        author: `User${Math.floor(Math.random() * 100) + 1}`,
-        created_at: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
-        topics: this.getRandomTopics(),
-        comments_count: Math.floor(Math.random() * 20),
-        likes_count: Math.floor(Math.random() * 50),
-        views_count: Math.floor(Math.random() * 200) + 50,
-        comments: this.generateMockComments(Math.floor(Math.random() * 5) + 1)
-      });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
     
-    return posts;
-  }
-
-  generateMockComments(count) {
-    const comments = [];
-    for (let i = 0; i < count; i++) {
-      comments.push({
-        id: Math.random().toString(36).substr(2, 9),
-        content: `This is a thoughtful comment #${i + 1} that adds value to the discussion.`,
-        author: `Commenter${Math.floor(Math.random() * 50) + 1}`,
-        created_at: new Date(Date.now() - Math.random() * 24 * 60 * 60 * 1000).toISOString(),
-        likes_count: Math.floor(Math.random() * 10)
-      });
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error('Failed to fetch posts');
     }
-    return comments;
-  }
-
-  getRandomTopics() {
-    const allTopics = [
-      'Technology', 'Science', 'Programming', 'Health', 'Travel',
-      'Food', 'Sports', 'Movies', 'Books', 'Music', 'Art', 'Politics'
-    ];
-    const count = Math.floor(Math.random() * 3) + 1;
-    const shuffled = allTopics.sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, count);
+    
+    this.hasMorePosts = data.has_more;
+    return data.posts;
   }
 
   renderPosts(posts, clearContainer = false) {
     const container = document.getElementById('posts-container');
-    if (!container) return;
+    if (!container) {
+      console.error('Posts container not found');
+      return;
+    }
 
     if (clearContainer) {
       this.clearContainer(container);
@@ -137,7 +88,9 @@ async fetchPosts(page, limit) {
 
     posts.forEach(post => {
       const postElement = this.createPostElement(post);
-      container.appendChild(postElement);
+      if (postElement) {
+        container.appendChild(postElement);
+      }
     });
 
     this.updateLoadMoreVisibility();
@@ -145,27 +98,45 @@ async fetchPosts(page, limit) {
 
   createPostElement(post) {
     const template = document.getElementById('post-item-template');
+    if (!template) {
+      console.error('Post item template not found');
+      return null;
+    }
+
     const clone = document.importNode(template.content, true);
 
-    // Fill post data
-    clone.querySelector('.author-name').textContent = post.author;
-    clone.querySelector('.post-date').textContent = this.formatDate(post.created_at);
-    clone.querySelector('.post-title').textContent = post.title;
-    clone.querySelector('.post-body').textContent = post.content;
-    
-    // Update stats
-    clone.querySelector('.comment-count .count').textContent = post.comments_count;
-    clone.querySelector('.like-count .count').textContent = post.likes_count;
-    clone.querySelector('.view-count .count').textContent = post.views_count;
-    
+    // Fill post data with null checks
+    const authorName = clone.querySelector('.author-name');
+    if (authorName) authorName.textContent = post.author || 'Unknown Author';
+
+    const postDate = clone.querySelector('.post-date');
+    if (postDate) postDate.textContent = this.formatDate(post.created_at);
+
+    const postTitle = clone.querySelector('.post-title');
+    if (postTitle) postTitle.textContent = post.title || 'Untitled';
+
+    const postBody = clone.querySelector('.post-body');
+    if (postBody) {
+      const content = post.content || '';
+      postBody.textContent = content.length > 200 ? content.substring(0, 200) + '...' : content;
+    }
+
+    // Update comment count only
+    const commentCount = clone.querySelector('.comment-count .count');
+    if (commentCount) commentCount.textContent = post.comments_count || 0;
+
     // Add topics
     const topicsContainer = clone.querySelector('.post-topics');
-    post.topics.forEach(topic => {
-      const badge = this.createTopicBadge(topic);
-      topicsContainer.appendChild(badge);
-    });
+    if (topicsContainer && post.topics && Array.isArray(post.topics)) {
+      post.topics.forEach(topic => {
+        const badge = this.createTopicBadge(topic);
+        if (badge) {
+          topicsContainer.appendChild(badge);
+        }
+      });
+    }
 
-    // Setup comments
+    // Setup comments section
     this.setupCommentsSection(clone, post);
 
     // Setup event listeners
@@ -176,52 +147,86 @@ async fetchPosts(page, limit) {
 
   createTopicBadge(topicText) {
     const template = document.getElementById('topic-badge-template');
+    if (!template) {
+      console.error('Topic badge template not found');
+      return null;
+    }
+
     const clone = document.importNode(template.content, true);
-    clone.querySelector('.topic-badge').textContent = topicText;
+    const badge = clone.querySelector('.topic-badge');
+    if (badge) {
+      badge.textContent = topicText;
+    }
     return clone;
   }
 
-  setupCommentsSection(postElement, post) {
-    const commentsSection = postElement.querySelector('.comments-section');
-    const commentsList = commentsSection.querySelector('.comments-list');
-    const commentsCountElement = commentsSection.querySelector('.comments-count');
-    
-    commentsCountElement.textContent = `${post.comments_count} comments`;
+setupCommentsSection(postElement, post) {
+  const commentsSection = postElement.querySelector('.comments-section');
+  if (!commentsSection) return;
 
-    // Render existing comments
-    post.comments.slice(0, 3).forEach(comment => { // Show first 3 comments
+  const commentsList = commentsSection.querySelector('.comments-list');
+  
+  // Render existing comments
+  const comments = post.comments || post.recent_comments || [];
+  if (commentsList && Array.isArray(comments)) {
+    comments.slice(0, 5).forEach(comment => { // Show first 5 comments
       const commentElement = this.createCommentElement(comment);
-      commentsList.appendChild(commentElement);
+      if (commentElement) {
+        commentsList.appendChild(commentElement);
+      }
     });
 
-    // Show "Load More Comments" if there are more than 3 comments
-    if (post.comments.length > 3) {
+    // Show "Load More Comments" if there are more than 5 comments
+    if (comments.length > 5) {
       const loadMoreSection = commentsSection.querySelector('.load-more-comments');
-      loadMoreSection.classList.remove('d-none');
+      if (loadMoreSection) {
+        loadMoreSection.classList.remove('d-none');
+      }
     }
   }
+}
 
   createCommentElement(comment) {
     const template = document.getElementById('comment-item-template');
+    if (!template) {
+      console.error('Comment item template not found');
+      return null;
+    }
+
     const clone = document.importNode(template.content, true);
 
-    clone.querySelector('.comment-author').textContent = comment.author;
-    clone.querySelector('.comment-date').textContent = this.formatDate(comment.created_at);
-    clone.querySelector('.comment-text').textContent = comment.content;
+    const commentAuthor = clone.querySelector('.comment-author');
+    if (commentAuthor) {
+      commentAuthor.textContent = comment.author || 'Anonymous';
+    }
+
+    const commentDate = clone.querySelector('.comment-date');
+    if (commentDate) {
+      commentDate.textContent = this.formatDate(comment.created_at);
+    }
+
+    const commentText = clone.querySelector('.comment-text');
+    if (commentText) {
+      commentText.textContent = comment.content || '';
+    }
 
     return clone;
   }
 
-  setupPostEventListeners(postElement, post) {
-    // Toggle comments
-    const toggleCommentsBtn = postElement.querySelector('.toggle-comments');
-    const commentsSection = postElement.querySelector('.comments-section');
-    
+
+
+
+
+setupPostEventListeners(postElement, post) {
+  // Toggle comments
+  const toggleCommentsBtn = postElement.querySelector('.toggle-comments');
+  const commentsSection = postElement.querySelector('.comments-section');
+  
+  if (toggleCommentsBtn && commentsSection) {
     toggleCommentsBtn.addEventListener('click', () => {
       commentsSection.classList.toggle('d-none');
       const isVisible = !commentsSection.classList.contains('d-none');
       
-      // Clear and rebuild button content using DOM methods
       this.clearElement(toggleCommentsBtn);
       const icon = document.createElement('i');
       icon.className = 'fas fa-comments me-1';
@@ -229,56 +234,85 @@ async fetchPosts(page, limit) {
       toggleCommentsBtn.appendChild(icon);
       toggleCommentsBtn.appendChild(text);
     });
-
-    // Post comment
-    const postCommentBtn = postElement.querySelector('.post-comment-btn');
-    const commentInput = postElement.querySelector('.comment-input');
-    
-    postCommentBtn.addEventListener('click', () => {
-      this.handlePostComment(post.id, commentInput, postElement);
-    });
-
-    // Like post
-    const likeBtn = postElement.querySelector('.like-btn');
-    likeBtn.addEventListener('click', () => {
-      this.handleLikePost(post.id, likeBtn);
-    });
   }
+}
+
+// Update the createCommentElement method
+createCommentElement(comment) {
+  const template = document.getElementById('comment-item-template');
+  if (!template) {
+    console.error('Comment item template not found');
+    return null;
+  }
+
+  const clone = document.importNode(template.content, true);
+
+  const commentAuthor = clone.querySelector('.comment-author');
+  if (commentAuthor) {
+    commentAuthor.textContent = comment.author || 'Anonymous';
+  }
+
+  const commentDate = clone.querySelector('.comment-date');
+  if (commentDate) {
+    commentDate.textContent = this.formatDate(comment.created_at);
+  }
+
+  const commentText = clone.querySelector('.comment-text');
+  if (commentText) {
+    commentText.textContent = comment.content || '';
+  }
+
+  return clone;
+}
+
+
+
+
+
+
 
   async handlePostComment(postId, commentInput, postElement) {
     const content = commentInput.value.trim();
     if (!content) return;
 
     try {
-      // TODO: Replace with actual API call
-      // const response = await fetch('/api/comments/create', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   credentials: 'include',
-      //   body: JSON.stringify({ post_id: postId, content })
-      // });
+      const response = await fetch('/api/comments/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ post_id: postId, content })
+      });
 
-      // Mock success for now
-      const newComment = {
-        id: Math.random().toString(36).substr(2, 9),
-        content: content,
-        author: window.appState.user?.username || 'Current User',
-        created_at: new Date().toISOString(),
-        likes_count: 0
-      };
+      if (!response.ok) {
+        throw new Error('Failed to post comment');
+      }
 
-      // Add comment to UI
-      const commentsList = postElement.querySelector('.comments-list');
-      const commentElement = this.createCommentElement(newComment);
-      commentsList.appendChild(commentElement);
+      const result = await response.json();
+      
+      if (result.success) {
+        const newComment = {
+          id: result.comment_id,
+          content: content,
+          author: window.appState.user?.username || 'Current User',
+          created_at: new Date().toISOString()
+        };
 
-      // Update comment count
-      const commentCountElement = postElement.querySelector('.comment-count .count');
-      const currentCount = parseInt(commentCountElement.textContent);
-      commentCountElement.textContent = currentCount + 1;
+        const commentsList = postElement.querySelector('.comments-list');
+        if (commentsList) {
+          const commentElement = this.createCommentElement(newComment);
+          if (commentElement) {
+            commentsList.appendChild(commentElement);
+          }
+        }
 
-      // Clear input
-      commentInput.value = '';
+        const commentCountElement = postElement.querySelector('.comment-count .count');
+        if (commentCountElement) {
+          const currentCount = parseInt(commentCountElement.textContent) || 0;
+          commentCountElement.textContent = currentCount + 1;
+        }
+
+        commentInput.value = '';
+      }
 
     } catch (error) {
       console.error('Error posting comment:', error);
@@ -286,56 +320,13 @@ async fetchPosts(page, limit) {
     }
   }
 
-  async handleLikePost(postId, likeBtn) {
-    try {
-      // TODO: Replace with actual API call
-      // const response = await fetch(`/api/posts/${postId}/like`, {
-      //   method: 'POST',
-      //   credentials: 'include'
-      // });
-
-      // Mock like toggle for now
-      const isLiked = likeBtn.classList.contains('liked');
-      const likeCountElement = likeBtn.closest('.post-card').querySelector('.like-count .count');
-      const currentCount = parseInt(likeCountElement.textContent);
-
-      if (isLiked) {
-        likeBtn.classList.remove('liked', 'btn-danger');
-        likeBtn.classList.add('btn-outline-danger');
-        
-        // Clear and rebuild button content using DOM methods
-        this.clearElement(likeBtn);
-        const icon = document.createElement('i');
-        icon.className = 'fas fa-heart me-1';
-        const text = document.createTextNode('Like');
-        likeBtn.appendChild(icon);
-        likeBtn.appendChild(text);
-        
-        likeCountElement.textContent = currentCount - 1;
-      } else {
-        likeBtn.classList.add('liked', 'btn-danger');
-        likeBtn.classList.remove('btn-outline-danger');
-        
-        // Clear and rebuild button content using DOM methods
-        this.clearElement(likeBtn);
-        const icon = document.createElement('i');
-        icon.className = 'fas fa-heart me-1';
-        const text = document.createTextNode('Liked');
-        likeBtn.appendChild(icon);
-        likeBtn.appendChild(text);
-        
-        likeCountElement.textContent = currentCount + 1;
-      }
-
-    } catch (error) {
-      console.error('Error liking post:', error);
-    }
-  }
-
   setupLoadMoreButton() {
     const loadMoreBtn = document.getElementById('load-more-btn');
     if (loadMoreBtn) {
-      loadMoreBtn.addEventListener('click', () => {
+      const newBtn = loadMoreBtn.cloneNode(true);
+      loadMoreBtn.parentNode.replaceChild(newBtn, loadMoreBtn);
+      
+      newBtn.addEventListener('click', () => {
         this.loadMorePosts();
       });
     }
@@ -349,7 +340,6 @@ async fetchPosts(page, limit) {
       const scrollHeight = document.documentElement.scrollHeight;
       const clientHeight = document.documentElement.clientHeight;
 
-      // Trigger load more when user is 200px from bottom
       if (scrollTop + clientHeight >= scrollHeight - 200) {
         this.loadMorePosts();
       }
@@ -399,10 +389,8 @@ async fetchPosts(page, limit) {
   showError(message) {
     const container = document.getElementById('posts-container');
     if (container) {
-      // Clear container using DOM methods
       this.clearContainer(container);
       
-      // Create error message using DOM methods
       const alertDiv = document.createElement('div');
       alertDiv.className = 'alert alert-danger text-center';
       
@@ -417,14 +405,12 @@ async fetchPosts(page, limit) {
     }
   }
 
-  // Utility function to clear elements using DOM methods
   clearContainer(container) {
     while (container.firstChild) {
       container.removeChild(container.firstChild);
     }
   }
 
-  // Utility function to clear element content using DOM methods
   clearElement(element) {
     while (element.firstChild) {
       element.removeChild(element.firstChild);
@@ -432,21 +418,28 @@ async fetchPosts(page, limit) {
   }
 
   formatDate(dateString) {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffTime = Math.abs(now - date);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    if (!dateString) return 'Unknown date';
+    
+    try {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffTime = Math.abs(now - date);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    if (diffDays === 1) {
-      return 'Yesterday';
-    } else if (diffDays < 7) {
-      return `${diffDays} days ago`;
-    } else {
-      return date.toLocaleDateString(undefined, { 
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric' 
-      });
+      if (diffDays === 1) {
+        return 'Yesterday';
+      } else if (diffDays < 7) {
+        return `${diffDays} days ago`;
+      } else {
+        return date.toLocaleDateString(undefined, { 
+          year: 'numeric', 
+          month: 'short', 
+          day: 'numeric' 
+        });
+      }
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Unknown date';
     }
   }
 }
@@ -454,7 +447,6 @@ async fetchPosts(page, limit) {
 // Initialize feed manager
 const feedManager = new FeedManager();
 
-// Global functions
 function initializeFeedPage() {
   feedManager.initializeFeedPage();
 }
@@ -463,6 +455,5 @@ function loadFeedContent() {
   feedManager.loadInitialPosts();
 }
 
-// Make functions globally available
 window.initializeFeedPage = initializeFeedPage;
 window.loadFeedContent = loadFeedContent;

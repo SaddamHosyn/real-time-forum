@@ -20,6 +20,7 @@ export function isLoggedIn() {
   return !!window.appState.user && window.appState.isAuthenticated;
 }
 
+
 export function updateAuthUI() {
   const accountButtons = document.getElementById('account-buttons');
   const loginButtons = document.getElementById('registerlogin-buttons');
@@ -38,19 +39,30 @@ export function updateAuthUI() {
     el.classList.toggle('d-none', showWhenAuthed !== isAuthenticated);
   });
 
+  // FIX: Use classList instead of style.display
   const loginRequiredElements = document.querySelectorAll('.login-required, [data-login-required]');
   const logoutRequiredElements = document.querySelectorAll('.logout-required, [data-logout-required]');
   
-  loginRequiredElements.forEach(btn => {
-    btn.style.display = isAuthenticated ? 'block' : 'none';
+  loginRequiredElements.forEach(element => {
+    if (isAuthenticated) {
+      element.classList.remove('d-none');
+    } else {
+      element.classList.add('d-none');
+    }
   });
   
-  logoutRequiredElements.forEach(btn => {
-    btn.style.display = isAuthenticated ? 'none' : 'block';
+  logoutRequiredElements.forEach(element => {
+    if (isAuthenticated) {
+      element.classList.add('d-none');
+    } else {
+      element.classList.remove('d-none');
+    }
   });
-
- 
 }
+
+
+
+
 
 export async function checkUserSession() {
   try {
