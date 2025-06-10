@@ -123,3 +123,40 @@ type FeedData struct {
 	Total     int        `json:"total"`
 	HasMore   bool       `json:"has_more"`
 }
+  
+
+// Add these to your existing model.go file
+
+type ChatMessage struct {
+    ID         int       `json:"id"`
+    SenderID   string    `json:"sender_id"`
+    ReceiverID string    `json:"receiver_id"`
+    Message    string    `json:"message"`
+    CreatedAt  time.Time `json:"created_at"`
+    IsRead     bool      `json:"is_read"`
+    SenderName string    `json:"sender_name"`
+}
+
+type ChatUser struct {
+    ID               string    `json:"id"`
+    Username         string    `json:"username"`
+    IsOnline         bool      `json:"is_online"`
+    LastActivity     time.Time `json:"last_activity"`
+    LastMessage      string    `json:"last_message,omitempty"`
+    LastMessageTime  time.Time `json:"last_message_time"`
+    UnreadCount      int       `json:"unread_count"`
+}
+
+type TypingEvent struct {
+    UserID     string `json:"user_id"`
+    Username   string `json:"username"`
+    ReceiverID string `json:"receiver_id"`
+    IsTyping   bool   `json:"is_typing"`
+}
+
+type WebSocketMessage struct {
+    Type    string      `json:"type"`
+    Data    interface{} `json:"data"`
+    UserID  string      `json:"user_id"`
+    ChatID  string      `json:"chat_id,omitempty"`
+}

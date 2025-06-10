@@ -1,5 +1,4 @@
-// router.js
-
+// router.js - COMPLETE VERSION WITH ALL FUNCTIONS
 import { updateAuthUI, isLoggedIn } from './authutils.js';
 
 const routes = {
@@ -10,18 +9,18 @@ const routes = {
     init: initializeHomePage
   },
   'store': { 
-  template: 'store-template-page',
-  authRequired: false, 
-  script: '/assets/js/findastore.js', 
-  init: initializeStorePage 
-},
+    template: 'store-template-page',
+    authRequired: false, 
+    script: '/assets/js/findastore.js', 
+    init: initializeStorePage 
+  },
   'topicsbar': { 
     template: 'topicsbar-template', 
     authRequired: true,
     script: '/assets/js/topicsbar.js',
     init: initializeTopicsBarPage
   },
- 'my-account': { 
+  'my-account': { 
     template: 'account-page-template', 
     authRequired: true, 
     script: '/assets/js/account.js', 
@@ -30,13 +29,14 @@ const routes = {
   'signin': { 
     template: 'signin-template', 
     authRequired: false, 
-    script: '/assets/js/signinpage.js' 
+    script: '/assets/js/signinpage.js',
+    init: initializeSignInPage
   },
   'register': { 
     template: 'register-template', 
     authRequired: false, 
-    init: initializeRegisterPage, 
-    script: '/assets/js/registerfront.js' 
+    script: '/assets/js/registerfront.js',
+    init: initializeRegisterPage
   },
   'feed': { 
     template: 'feed-template', 
@@ -55,11 +55,10 @@ const loadedScripts = new Set();
 let isNavigating = false;
 
 document.addEventListener('DOMContentLoaded', () => {
-  // ✅ Initialize window.posts if it doesn't exist
   if (!window.posts) window.posts = [];
-  
   handleRoute(getCurrentRoute());
 
+  // ENHANCED event delegation handler
   document.body.addEventListener('click', (e) => {
     const navLink = e.target.closest('.nav-link[data-page]');
     const registerBtn = e.target.closest('#open-register-page');
@@ -68,36 +67,57 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeSigninBtn = e.target.closest('#close-signin');
     const accountLink = e.target.closest('#account-buttons a');
     const createPostLink = e.target.closest('a[href="#/create-post"]');
-
+    
+    // Handle navigation links
     if (navLink) {
       e.preventDefault();
-      navigateTo(navLink.dataset.page);
-    } else if (registerBtn) {
+      const page = navLink.dataset.page;
+      console.log('Nav link clicked:', page);
+      navigateTo(page);
+    } 
+    // Handle register button
+    else if (registerBtn) {
       e.preventDefault();
+      console.log('Register button clicked');
       navigateTo('register');
-    } else if (signInBtn) {
+    } 
+    // Handle sign in button
+    else if (signInBtn) {
       e.preventDefault();
+      console.log('Sign in button clicked');
       navigateTo('signin');
-    } else if (showRegisterLink) {
+    }
+    // Handle show register link (from signin page)
+    else if (showRegisterLink) {
       e.preventDefault();
+      console.log('Show register link clicked');
       navigateTo('register');
-    } else if (closeSigninBtn) {
+    }
+    // Handle close signin button
+    else if (closeSigninBtn) {
       e.preventDefault();
+      console.log('Close signin button clicked');
       navigateTo('home');
-    } else if (accountLink && accountLink.getAttribute('href') === '#/my-account') {
+    }
+    // Handle account link
+    else if (accountLink && accountLink.getAttribute('href') === '#/my-account') {
       e.preventDefault();
+      console.log('Account link clicked');
       navigateTo('my-account');
-    } else if (createPostLink) {
+    }
+    // Handle create post link
+    else if (createPostLink) {
       e.preventDefault();
       if (isLoggedIn()) {
         navigateTo('create-post');
       } else {
+        localStorage.setItem('redirectAfterLogin', 'create-post');
         alert('You must be logged in to create a post.');
+        navigateTo('signin');
       }
     }
   });
 
-  // Listen for hash changes
   window.addEventListener('hashchange', () => {
     handleRoute(getCurrentRoute());
   });
@@ -110,19 +130,6 @@ function getCurrentRoute() {
 }
 
 function handleRoute(route) {
-  // ✅ AUTH STABILIZATION CHECK - Give time for auth state to stabilize
-  if (window.appState && typeof window.appState.isAuthenticated === 'undefined') {
-    setTimeout(() => handleRoute(route), 200);
-    return;
-  }
-
-  // ✅ Additional check for auth state initialization
-  if (window.appState && window.appState.isAuthChecking) {
-    setTimeout(() => handleRoute(route), 100);
-    return;
-  }
-
-  // Prevent multiple navigations at once
   if (isNavigating) return;
   isNavigating = true;
 
@@ -162,7 +169,6 @@ function handleRoute(route) {
 function handleTopicRoute(topicSlug) {
   console.log(`Handling topic route: ${topicSlug}`);
   
-  // Check auth for topic posts (assuming it requires auth)
   if (!isLoggedIn()) {
     localStorage.setItem('redirectAfterLogin', `topic/${topicSlug}`);
     alert('Please sign in to view topic posts');
@@ -170,7 +176,6 @@ function handleTopicRoute(topicSlug) {
     return navigateTo('signin');
   }
 
-  // Load the topic posts template and initialize
   const template = document.getElementById('topic-posts-template');
   if (!template) {
     console.error('Topic posts template not found');
@@ -180,7 +185,6 @@ function handleTopicRoute(topicSlug) {
 
   injectTemplateContent(template);
   
-  // Initialize the topic posts page
   setTimeout(() => {
     if (typeof window.renderPostsForTopic === 'function') {
       window.renderPostsForTopic(topicSlug);
@@ -192,11 +196,6 @@ function handleTopicRoute(topicSlug) {
   }, 100);
 }
 
-function navigateTo(page) {
-  window.location.hash = `/${page}`;
-}
-
-// ✅ Modified to return a Promise for better control flow
 function loadPage(page, routeConfig = routes[page]) {
   return new Promise((resolve, reject) => {
     const template = document.getElementById(routeConfig.template);
@@ -214,35 +213,12 @@ function loadPage(page, routeConfig = routes[page]) {
 
     scriptPromise
       .then(() => {
-        // Add a small delay to ensure DOM is ready and scripts are fully loaded
         setTimeout(() => {
           try {
-            if (page === 'register' && typeof window.setupRegisterPage === 'function') {
-              window.setupRegisterPage();
-            } else if (routeConfig.init) {
+            if (routeConfig.init) {
               routeConfig.init();
             }
-            
             updateAuthUI();
-    
-            if (page === 'signin') {
-              const closeButton = document.getElementById('close-signin');
-              if (closeButton) {
-                closeButton.addEventListener('click', (e) => {
-                  e.preventDefault();
-                  navigateTo('home');
-                });
-              }
-              
-              const redirectPage = localStorage.getItem('redirectAfterLogin');
-              if (isLoggedIn() && redirectPage) {
-                localStorage.removeItem('redirectAfterLogin');
-                navigateTo(redirectPage);
-              } else if (isLoggedIn()) {
-                navigateTo('feed');
-              }
-            }
-            
             resolve();
           } catch (error) {
             console.error('Error initializing page:', error);
@@ -261,100 +237,52 @@ function loadPage(page, routeConfig = routes[page]) {
   });
 }
 
-// Template injection
+function navigateTo(page) {
+  console.log(`Navigating to: ${page}`);
+  window.location.hash = `/${page}`;
+}
+
 function injectTemplateContent(template) {
   const container = document.getElementById('app-content');
   if (!container) {
     console.error('Main content container not found');
     return;
   }
-
   container.innerHTML = '';
   const clone = document.importNode(template.content, true);
   container.appendChild(clone);
 }
 
-// Script loader helper
 function loadScript(src) {
-  console.log(`Loading script: ${src}`);
   return new Promise((resolve, reject) => {
     const script = document.createElement('script');
     script.src = src;
     script.defer = true;
-    script.onload = () => {
-      console.log(`Script loaded: ${src}`);
-      resolve();
-    };
-    script.onerror = (err) => {
-      console.error(`Failed to load script: ${src}`);
-      reject(err);
-    };
+    script.onload = () => resolve();
+    script.onerror = (err) => reject(err);
     document.body.appendChild(script);
   });
 }
 
-// Expose functions to window for use in other scripts
-window.navigateTo = navigateTo;
+// ===== ALL INITIALIZATION FUNCTIONS =====
 
-// Page initialization functions
 function initializeHomePage() {
   console.log('Home page initialization from router.js');
   if (typeof window.initializeHomePage === 'function') {
     window.initializeHomePage();
   } else {
-    console.warn('initializeHomePage function not found');
-  }
-}
-
-function initializeRegisterPage() {
-  console.log('Register page initialization');
-}
-
-function initializeSignInPage() {
-  console.log('Sign in page initialization called from router.js');
-  // The actual implementation is in signinpage.js
-}
-
-function initializeAccountPage() {
-  console.log('Account page initialization from router.js');
-  if (typeof window.initializeAccountPage === 'function') {
-    window.initializeAccountPage();
-  } else {
-    console.warn('initializeAccountPage function not found');
-  }
-}
-
-
-function initializeFeedPage() {
-  console.log('Feed page initialization');
-  // If user is logged in, initialize feed data
-  if (isLoggedIn()) {
-    console.log('User is logged in, loading feed data');
-    // Check if loadFeedContent exists before calling
-    if (typeof loadFeedContent === 'function') {
-      loadFeedContent();
-    } else {
-      console.warn('loadFeedContent function not found');
-    }
+    console.warn('initializeHomePage function not found in external script');
   }
 }
 
 function initializeStorePage() {
   console.log('Store page initialization from router.js');
-  // Call the actual rendering logic from findastore.js
-  if (typeof renderStoreList === 'function') {
+  if (typeof window.renderStoreList === 'function') {
+    window.renderStoreList();
+  } else if (typeof renderStoreList === 'function') {
     renderStoreList();
   } else {
     console.warn('renderStoreList function not found');
-  }
-}
-
-function initializeCreatePostPage() {
-  console.log('Create Post page initialization from router.js');
-  if (typeof window.initializeCreatePostPage === 'function') {
-    window.initializeCreatePostPage();
-  } else {
-    console.warn('initializeCreatePostPage function not found');
   }
 }
 
@@ -367,4 +295,60 @@ function initializeTopicsBarPage() {
   }
 }
 
+function initializeAccountPage() {
+  console.log('Account page initialization from router.js');
+  if (typeof window.initializeAccountPage === 'function') {
+    window.initializeAccountPage();
+  } else {
+    console.warn('initializeAccountPage function not found');
+  }
+}
+
+function initializeSignInPage() {
+  console.log('Sign in page initialization from router.js');
+  if (typeof window.initializeSignInPage === 'function') {
+    window.initializeSignInPage();
+  } else {
+    console.warn('initializeSignInPage function not found');
+  }
+}
+
+function initializeRegisterPage() {
+  console.log('Register page initialization from router.js');
+  if (typeof window.setupRegisterPage === 'function') {
+    window.setupRegisterPage();
+  } else if (typeof window.initializeRegisterPage === 'function') {
+    window.initializeRegisterPage();
+  } else {
+    console.warn('Register page initialization function not found');
+  }
+}
+
+function initializeFeedPage() {
+  console.log('Feed page initialization from router.js');
+  if (isLoggedIn()) {
+    console.log('User is logged in, loading feed data');
+    if (typeof window.loadFeedContent === 'function') {
+      window.loadFeedContent();
+    } else if (typeof loadFeedContent === 'function') {
+      loadFeedContent();
+    } else {
+      console.warn('loadFeedContent function not found');
+    }
+  } else {
+    console.warn('User not logged in for feed page');
+  }
+}
+
+function initializeCreatePostPage() {
+  console.log('Create Post page initialization from router.js');
+  if (typeof window.initializeCreatePostPage === 'function') {
+    window.initializeCreatePostPage();
+  } else {
+    console.warn('initializeCreatePostPage function not found');
+  }
+}
+
+// Expose functions globally
+window.navigateTo = navigateTo;
 window.updateUIForAuthState = updateAuthUI;

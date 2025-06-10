@@ -86,7 +86,7 @@
           <!-- logout success message -->
           <div id="logout-message" class="alert alert-success d-none mb-2"></div>
           <a href="#/my-account" class="btn btn-light">My Account</a>
-          <button type="button" class="btn btn-secondary" id="logout-btn" onclick="handleLogout()">Logout</button>
+          <button type="button" class="btn btn-secondary" id="logout-btn">Logout</button>
         </div>
 
           
@@ -147,31 +147,14 @@
   <!-- Chat Section - This is the new chat component -->
   
  <!-- Right side chat container -->
- <div id="chatbox-container">
+<!-- Add the login-required class and initially hide -->
+<div id="chatbox-container" class="login-required d-none">
   <div id="user-list">
       <div class="user-list-header">
           Online Users
       </div>
       <ul class="users">
-          <li class="user online" data-user-id="user1">
-              <div class="user-info">
-                  <span class="username">User 1</span>
-                  <span class="last-message-time">Just now</span>
-              </div>
-          </li>
-          <li class="user offline" data-user-id="user2">
-              <div class="user-info">
-                  <span class="username">User 2</span>
-                  <span class="last-message-time">2 hours ago</span>
-              </div>
-          </li>
-          <li class="user online" data-user-id="user3">
-              <div class="user-info">
-                  <span class="username">User 3</span>
-                  <span class="last-message-time">Yesterday</span>
-              </div>
-          </li>
-          <!-- More users will be added dynamically -->
+          <!-- Remove static users - these will be loaded dynamically -->
       </ul>
   </div>
   <div id="message-area">
@@ -179,22 +162,7 @@
           <span id="chat-with-user">Select a user to chat</span>
       </div>
       <div class="message-history">
-          <!-- Messages will be loaded here -->
-          <div class="message received">
-              <div class="message-content">
-                  <span class="message-user">User 1:</span>
-                  <p>Hello there!</p>
-                  <span class="message-date">10:30 AM</span>
-              </div>
-          </div>
-          <div class="message sent">
-              <div class="message-content">
-                  <span class="message-user">You:</span>
-                  <p>Hi! How are you?</p>
-                  <span class="message-date">10:31 AM</span>
-              </div>
-          </div>
-          <!-- More messages will be loaded dynamically -->
+          <!-- Remove static messages - these will be loaded dynamically -->
       </div>
       <div class="message-input-area">
           <input type="text" id="message-input" placeholder="Type a message...">
@@ -202,7 +170,6 @@
       </div>
   </div>
 </div>
-
 
 
 
@@ -1181,27 +1148,28 @@
 
 
 
+<script src="/assets/js/chat.js"></script>
+
+<script type="module" src="/assets/js/authutils.js" defer></script>
+<script type="module" src="/assets/js/auth.js" defer></script>
+<script type="module" src="/assets/js/loginlogout.js" defer></script>
+<script type="module" src="/assets/js/registerfront.js" defer></script>
+<script type="module" src="/assets/js/home.js" defer></script>
+<script type="module" src="/assets/js/findastore.js" defer></script>
+<script type="module" src="/assets/js/topicsbar.js" defer></script>
+<script type="module" src="/assets/js/account.js" defer></script>
+<script type="module" src="/assets/js/feed.js" defer></script>
+<script type="module" src="/assets/js/comment.js" defer></script>
+<script type="module" src="/assets/js/createpost.js" defer></script>
+<script type="module" src="/assets/js/error.js" defer></script>
+<script type="module" src="/assets/js/app.js" defer></script>
+<script type="module" src="/assets/js/router.js" defer></script>
+
+<script src="/assets/js/signinpage.js"></script>
 
 
 
-  <!-- If your HTML is inside real-time-forum directory -->
-  <script type="module" src="/assets/js/registerfront.js" defer></script>
-  <script type="module" src="/assets/js/loginlogout.js" defer></script>
-  <script type="module" src="/assets/js/signinpage.js" defer></script>
-  <script type="module" src="/assets/js/home.js" defer></script>
-  <script type="module" src="/assets/js/findastore.js" defer></script>
-  <script type="module" src="/assets/js/topicsbar.js" defer></script>
-  <script type="module" src="/assets/js/account.js" defer></script>
-  <script type="module" src="/assets/js/auth.js" defer></script>
-  <script type="module" src="/assets/js/feed.js" defer></script>
- 
- 
-  <script type="module" src="/assets/js/comment.js" defer></script>
- 
-  <script type="module" src="/assets/js/error.js" defer></script>
-  <script type="module" src="/assets/js/createpost.js" defer></script>
-  <script type="module" src="/assets/js/app.js" defer></script>
-  <script type="module" src="/assets/js/router.js" defer></script>
+
 
  
    

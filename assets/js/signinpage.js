@@ -1,5 +1,5 @@
 // signinpage.js - REMOVE THE LOGOUT FUNCTION FROM HERE
-
+/*
 function initializeSignInPage() {
   console.log('Initializing sign-in page');
   
@@ -241,3 +241,75 @@ if (!window.location.hash.includes('#/signin')) {
 if (window.location.hash.includes('#/signin')) {
   initializeSignInPage();
 }
+ 
+
+*/
+ 
+
+// signinpage.js - CLEAN INITIALIZATION ONLY
+
+
+function initializeSignInPage() {
+  console.log('Initializing sign-in page');
+  
+  setupCloseButton();
+  setupLoginForm();
+}
+
+function setupCloseButton() {
+  const closeButton = document.getElementById('close-signin');
+  if (!closeButton) {
+    setTimeout(setupCloseButton, 100);
+    return;
+  }
+
+  // Remove any existing listeners by cloning the button
+  const newCloseButton = closeButton.cloneNode(true);
+  closeButton.parentNode.replaceChild(newCloseButton, closeButton);
+  
+  // Add single event listener
+  newCloseButton.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (window.navigateTo) {
+      window.navigateTo('home');
+    } else {
+      window.location.hash = '#/home';
+    }
+  });
+}
+
+function setupLoginForm() {
+  const loginForm = document.getElementById('login-form');
+  if (!loginForm) {
+    setTimeout(setupLoginForm, 100);
+    return;
+  }
+
+  // Remove any existing listeners by cloning the form
+  const newForm = loginForm.cloneNode(true);
+  loginForm.parentNode.replaceChild(newForm, loginForm);
+
+  // Set up SINGLE submit handler
+  newForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    window.handleLogin(newForm, 'login-error-message');
+  });
+
+  // Setup register link
+  const showRegisterLink = newForm.querySelector('#show-register');
+  if (showRegisterLink) {
+    showRegisterLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (window.navigateTo) {
+        window.navigateTo('register');
+      } else {
+        window.location.hash = '#/register';
+      }
+    });
+  }
+}
+
+// Global exposure
+window.initializeSignInPage = initializeSignInPage;
