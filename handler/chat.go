@@ -16,23 +16,37 @@ import (
 )
 
 func WebSocketHandler(w http.ResponseWriter, r *http.Request) {
+    log.Printf("🔵 WebSocket connection attempt")
+    
     // Check authentication
     isLoggedIn, userID := auth.CheckUserLoggedIn(r)
     if !isLoggedIn {
+        log.Printf("❌ WebSocket: User not authenticated")
         http.Error(w, "Unauthorized", http.StatusUnauthorized)
         return
     }
+    
+    log.Printf("✅ WebSocket: User authenticated - ID: %s", userID)
 
     // Get username from database
     var username string
-    database.DB.QueryRow("SELECT username FROM users WHERE id = ?", userID).Scan(&username)
+    err := database.DB.QueryRow("SELECT username FROM users WHERE id = ?", userID).Scan(&username)
+    if err != nil {
+        log.Printf("❌ WebSocket: Error getting username: %v", err)
+        http.Error(w, "User not found", http.StatusInternalServerError)
+        return
+    }
+    
+    log.Printf("✅ WebSocket: Username found: %s", username)
 
     // Use the upgrader from websocket package
     conn, err := websocket.UpgradeConnection(w, r)
     if err != nil {
-        log.Printf("WebSocket upgrade error: %v", err)
+        log.Printf("❌ WebSocket upgrade error: %v", err)
         return
     }
+    
+    log.Printf("✅ WebSocket: Connection upgraded successfully")
 
     client := &websocket.Client{
         ID:       userID,
@@ -42,11 +56,17 @@ func WebSocketHandler(w http.ResponseWriter, r *http.Request) {
         Send:     make(chan []byte, 256),
     }
 
+    log.Printf("✅ WebSocket: Client created - ID: %s, Username: %s", client.ID, client.Username)
+    
+    // ✅ SIMPLE BLOCKING REGISTRATION (with buffered channel this won't block)
     client.Hub.Register <- client
+    log.Printf("✅ WebSocket: Client registration sent to hub")
 
-    // Use exported methods (capital letters)
+    // Start Read/Write pumps
     go client.WritePump()
     go client.ReadPump()
+    
+    log.Printf("✅ WebSocket: Read/Write pumps started for %s", username)
 }
 
 // Add this new handler for guest user list
@@ -189,10 +209,6 @@ func GetChatUsersHandler(w http.ResponseWriter, r *http.Request) {
     
     log.Printf("Successfully returned %d users to client", len(users))
 }
-
-
-
-
 
 func GetChatMessagesHandler(w http.ResponseWriter, r *http.Request) {
     isLoggedIn, currentUserID := auth.CheckUserLoggedIn(r)

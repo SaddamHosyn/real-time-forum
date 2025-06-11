@@ -9,17 +9,28 @@ import (
     "realtimeforum/model"
 )
 
+
+
+// websocket/websocket.go
 func handleChatMessage(client *Client, wsMessage model.WebSocketMessage) {
+    log.Printf("🔵 handleChatMessage called - Type: %s", wsMessage.Type)
+    log.Printf("🔵 Message data: %+v", wsMessage.Data)
+    log.Printf("🔵 Client ID: %s, Username: %s", client.ID, client.Username)
+    
     data := wsMessage.Data.(map[string]interface{})
     receiverID := data["receiver_id"].(string)
     message := data["message"].(string)
+    
+    log.Printf("🔵 Parsed - Sender: %s, Receiver: %s, Message: %s", client.ID, receiverID, message)
 
     // Save message to database
     chatMessage, err := saveChatMessage(client.ID, receiverID, message)
     if err != nil {
-        log.Printf("Error saving chat message: %v", err)
+        log.Printf("❌ Error saving chat message: %v", err)
         return
     }
+    
+    log.Printf("✅ Message saved successfully: %+v", chatMessage)
 
     // Update last message tracking
     updateLastMessage(client.ID, receiverID, chatMessage.ID)
@@ -31,11 +42,15 @@ func handleChatMessage(client *Client, wsMessage model.WebSocketMessage) {
     }
     
     responseData, _ := json.Marshal(response)
+    log.Printf("📤 Sending to receiver %s: %s", receiverID, string(responseData))
     ChatHub.SendToUser(receiverID, responseData)
     
     // Send confirmation back to sender
+    log.Printf("📤 Sending confirmation to sender %s", client.ID)
     ChatHub.SendToUser(client.ID, responseData)
 }
+
+
 
 func handleTypingEvent(client *Client, wsMessage model.WebSocketMessage) {
     data := wsMessage.Data.(map[string]interface{})
@@ -60,7 +75,7 @@ func handleTypingEvent(client *Client, wsMessage model.WebSocketMessage) {
 
 
 func saveChatMessage(senderID, receiverID, message string) (*model.ChatMessage, error) {
-    log.Printf("💾 Saving message from %s to %s: %s", senderID, receiverID, message)
+    log.Printf("💾 saveChatMessage - Sender: %s, Receiver: %s, Message: %s", senderID, receiverID, message)
     
     query := `
         INSERT INTO chat_messages (sender_id, receiver_id, message, created_at, is_read)
@@ -69,16 +84,27 @@ func saveChatMessage(senderID, receiverID, message string) (*model.ChatMessage, 
     
     result, err := database.DB.Exec(query, senderID, receiverID, message, time.Now())
     if err != nil {
-        log.Printf("❌ Error saving message: %v", err)
+        log.Printf("❌ Database error: %v", err)
         return nil, err
     }
 
-    messageID, _ := result.LastInsertId()
-    log.Printf("✅ Message saved with ID: %d", messageID)
+    messageID, err := result.LastInsertId()
+    if err != nil {
+        log.Printf("❌ Error getting last insert ID: %v", err)
+        return nil, err
+    }
+    
+    log.Printf("✅ Message inserted with ID: %d", messageID)
 
     // Get sender username
     var senderName string
-    database.DB.QueryRow("SELECT username FROM users WHERE id = ?", senderID).Scan(&senderName)
+    err = database.DB.QueryRow("SELECT username FROM users WHERE id = ?", senderID).Scan(&senderName)
+    if err != nil {
+        log.Printf("❌ Error getting sender username: %v", err)
+        senderName = "Unknown"
+    }
+    
+    log.Printf("✅ Sender username: %s", senderName)
 
     chatMessage := &model.ChatMessage{
         ID:         int(messageID),
@@ -93,9 +119,6 @@ func saveChatMessage(senderID, receiverID, message string) (*model.ChatMessage, 
     log.Printf("✅ Returning chat message: %+v", chatMessage)
     return chatMessage, nil
 }
-
-
-
 
 
 

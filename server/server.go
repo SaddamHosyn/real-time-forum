@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"realtimeforum/auth"
 	"realtimeforum/handler"
-	"realtimeforum/websocket"  // ← ADD THIS MISSING IMPORT
+	"realtimeforum/websocket"
 
-	_ "github.com/mattn/go-sqlite3" // or your database driver
+	_ "github.com/mattn/go-sqlite3"
 )
 
 // StartServer starts the HTTP server
@@ -28,11 +28,9 @@ func StartServer() {
 	http.HandleFunc("/api/register", handler.RegisterHandler)
 	http.HandleFunc("/api/check-session", auth.CheckSessionHandler)
 	http.HandleFunc("/api/user/posts", handler.GetUserPostsHandler)
-	
-	// Add this to your main.go or server routing file
+
 	http.HandleFunc("/api/posts/topic/", handler.GetPostsByTopicHandler)
 
-	// Add these to your main.go or wherever you register routes
 	http.HandleFunc("/api/comments/create", handler.CreateCommentHandler)
 	http.HandleFunc("/api/posts/", handler.GetCommentsByPostHandler) // This handles /api/posts/{id}/comments
 
@@ -49,7 +47,9 @@ func StartServer() {
 	http.HandleFunc("/api/chat/public-users", handler.GetPublicUsersHandler) // ← NEW ROUTE ADDED
 
 	// Initialize WebSocket hub
+	log.Println("🔵 Starting WebSocket Hub...")
 	go websocket.ChatHub.Run()
+	log.Println("✅ WebSocket Hub started")
 
 	// Start the server
 	log.Println("Server started on http://localhost:8080")
