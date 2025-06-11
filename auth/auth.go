@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 	"realtimeforum/database"
 	"realtimeforum/model"
 	"realtimeforum/utils"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -45,11 +45,11 @@ func LoginUser(usernameOrEmail, password string) (*LoginResponse, error) {
 		return nil, errors.New("invalid credentials")
 	}
 
-	// ENFORCE SINGLE SESSION: Delete ALL existing sessions for this user
-	_, err = database.DB.Exec("DELETE FROM sessions WHERE user_id = ?", user.ID)
+	// ✅ REMOVED: Don't delete existing sessions - allow multiple concurrent sessions
+	// ✅ Optional: Clean up only expired sessions
+	_, err = database.DB.Exec("DELETE FROM sessions WHERE user_id = ? AND session_expiry < ?", user.ID, time.Now())
 	if err != nil {
-		log.Printf("Failed to delete existing sessions: %v", err)
-		return nil, fmt.Errorf("failed to clear existing sessions: %w", err)
+		log.Printf("Failed to clean expired sessions: %v", err)
 	}
 
 	// Generate a new session token
@@ -85,9 +85,9 @@ func GetUserBySessionToken(sessionToken string) (*model.User, error) {
 		JOIN sessions s ON u.id = s.user_id
 		WHERE s.session_token = ? AND s.session_expiry > ?`,
 		sessionToken, time.Now()).
-		Scan(&user.ID, &user.FirstName, &user.LastName, &user.Username, &user.Email, 
-			 &user.PasswordHash, &user.Age, &user.Gender, &user.TermsAccepted, 
-			 &user.CreatedAt, &user.SessionExpiry)
+		Scan(&user.ID, &user.FirstName, &user.LastName, &user.Username, &user.Email,
+			&user.PasswordHash, &user.Age, &user.Gender, &user.TermsAccepted,
+			&user.CreatedAt, &user.SessionExpiry)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -104,7 +104,7 @@ func LogoutUser(sessionToken string) error {
 	if err != nil {
 		return err
 	}
-	
+
 	rowsAffected, _ := result.RowsAffected()
 	log.Printf("Logout: deleted %d sessions", rowsAffected)
 	return nil
