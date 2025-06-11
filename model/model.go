@@ -145,6 +145,7 @@ type ChatUser struct {
     LastMessage      string    `json:"last_message,omitempty"`
     LastMessageTime  time.Time `json:"last_message_time"`
     UnreadCount      int       `json:"unread_count"`
+	  HasMessages      bool      `json:"has_messages"` // Helper for sorting
 }
 
 type TypingEvent struct {

@@ -58,7 +58,10 @@ func handleTypingEvent(client *Client, wsMessage model.WebSocketMessage) {
     ChatHub.SendToUser(receiverID, responseData)
 }
 
+
 func saveChatMessage(senderID, receiverID, message string) (*model.ChatMessage, error) {
+    log.Printf("💾 Saving message from %s to %s: %s", senderID, receiverID, message)
+    
     query := `
         INSERT INTO chat_messages (sender_id, receiver_id, message, created_at, is_read)
         VALUES (?, ?, ?, ?, 0)
@@ -66,16 +69,18 @@ func saveChatMessage(senderID, receiverID, message string) (*model.ChatMessage, 
     
     result, err := database.DB.Exec(query, senderID, receiverID, message, time.Now())
     if err != nil {
+        log.Printf("❌ Error saving message: %v", err)
         return nil, err
     }
 
     messageID, _ := result.LastInsertId()
+    log.Printf("✅ Message saved with ID: %d", messageID)
 
     // Get sender username
     var senderName string
     database.DB.QueryRow("SELECT username FROM users WHERE id = ?", senderID).Scan(&senderName)
 
-    return &model.ChatMessage{
+    chatMessage := &model.ChatMessage{
         ID:         int(messageID),
         SenderID:   senderID,
         ReceiverID: receiverID,
@@ -83,8 +88,17 @@ func saveChatMessage(senderID, receiverID, message string) (*model.ChatMessage, 
         CreatedAt:  time.Now(),
         IsRead:     false,
         SenderName: senderName,
-    }, nil
+    }
+    
+    log.Printf("✅ Returning chat message: %+v", chatMessage)
+    return chatMessage, nil
 }
+
+
+
+
+
+
 
 func updateUserOnlineStatus(userID string, isOnline bool) {
     query := `

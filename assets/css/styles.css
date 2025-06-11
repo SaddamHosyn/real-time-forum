@@ -1651,6 +1651,172 @@ h2 {
 
 
 
+
+
+
+
+/* Add these to your existing styles.css */
+
+/* No users message styling */
+.no-users-message {
+    padding: 20px 10px;
+    text-align: center;
+    color: #6c757d;
+    font-size: 14px;
+    border-bottom: 1px solid #eee;
+}
+
+.auth-required-message {
+    padding: 20px 10px;
+    text-align: center;
+    color: #6c757d;
+    font-size: 14px;
+    border-bottom: 1px solid #eee;
+}
+
+.auth-required-message div:first-child {
+    margin-bottom: 5px;
+}
+
+.auth-required-message div:last-child {
+    font-size: 12px;
+    color: #999;
+}
+
+.chat-auth-prompt {
+    padding: 40px 20px;
+    text-align: center;
+    color: #6c757d;
+}
+
+.chat-auth-prompt h4 {
+    margin-bottom: 15px;
+    color: #495057;
+    font-size: 18px;
+}
+
+.chat-auth-prompt p {
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.chat-auth-prompt small {
+    color: #999;
+    font-size: 12px;
+    display: block;
+}
+
+
+/* Enhanced user list styling */
+.online-indicator {
+    color: #28a745;
+    margin-right: 5px;
+    font-size: 12px;
+}
+
+.user.online .username {
+    font-weight: 600;
+    color: #28a745;
+}
+
+.user.offline .username {
+    color: #6c757d;
+}
+
+.last-message {
+    font-style: italic;
+    color: #666;
+}
+
+/* Message formatting improvements */
+.message-user {
+    font-weight: 600;
+    margin-bottom: 2px;
+    display: block;
+}
+
+.message.sent .message-user {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.message.received .message-user {
+    color: #007bff;
+}
+
+.message-date {
+    font-size: 11px;
+    opacity: 0.8;
+    margin-top: 4px;
+    display: block;
+}
+
+
+
+
+
+
+   
+
+/* ✅ NEW: Temporary message overlay styling */
+.temporary-message-overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #333;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 5px;
+    z-index: 10000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    font-size: 14px;
+    font-weight: 500;
+    max-width: 90%;
+    text-align: center;
+    animation: fadeInOut 3s ease-in-out;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+    15% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    85% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+}
+
+/* ✅ Enhanced disabled states */
+#message-input:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+#send-button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+#send-button:disabled:hover {
+    background-color: #6c757d;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* ===== Chat Base Styles ===== */
 
 

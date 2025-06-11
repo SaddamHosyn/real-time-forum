@@ -46,6 +46,7 @@ func StartServer() {
 	http.HandleFunc("/ws", handler.WebSocketHandler)
 	http.HandleFunc("/api/chat/users", handler.GetChatUsersHandler)
 	http.HandleFunc("/api/chat/messages/", handler.GetChatMessagesHandler)
+	http.HandleFunc("/api/chat/public-users", handler.GetPublicUsersHandler) // ← NEW ROUTE ADDED
 
 	// Initialize WebSocket hub
 	go websocket.ChatHub.Run()

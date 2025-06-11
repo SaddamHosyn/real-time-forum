@@ -5,8 +5,10 @@ import (
     "encoding/json"
     "log"
     "net/http"
+    "sort"        // ←  (needed for sort.Slice)
     "strconv"
     "strings"
+    "time"        
     "realtimeforum/auth"
     "realtimeforum/database"
     "realtimeforum/model"
@@ -47,20 +49,32 @@ func WebSocketHandler(w http.ResponseWriter, r *http.Request) {
     go client.ReadPump()
 }
 
+// Add this new handler for guest user list
+func GetPublicUsersHandler(w http.ResponseWriter, r *http.Request) {
+    // Return empty list or basic info for unauthenticated users
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode([]model.ChatUser{})
+}
+
+// Updated GetChatUsersHandler to handle unauthenticated users gracefully
 func GetChatUsersHandler(w http.ResponseWriter, r *http.Request) {
     isLoggedIn, currentUserID := auth.CheckUserLoggedIn(r)
     if !isLoggedIn {
-        http.Error(w, "Unauthorized", http.StatusUnauthorized)
+        w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode([]model.ChatUser{})
         return
     }
 
+    // ✅ FIXED QUERY: Handle string dates properly with proper COALESCE
     query := `
-        SELECT DISTINCT u.id, u.username, 
-               COALESCE(uo.is_online, 0) as is_online,
-               COALESCE(uo.last_activity, u.created_at) as last_activity,
-               COALESCE(cm.message, '') as last_message,
-               COALESCE(cm.created_at, u.created_at) as last_message_time,
-               COALESCE(unread.count, 0) as unread_count
+        SELECT DISTINCT 
+            u.id, 
+            u.username, 
+            COALESCE(uo.is_online, 0) as is_online,
+            COALESCE(uo.last_activity, u.created_at) as last_activity_str,
+            COALESCE(cm.message, '') as last_message,
+            COALESCE(cm.created_at, u.created_at) as last_message_time_str,
+            COALESCE(unread.count, 0) as unread_count
         FROM users u
         LEFT JOIN user_online uo ON u.id = uo.user_id
         LEFT JOIN (
@@ -89,32 +103,96 @@ func GetChatUsersHandler(w http.ResponseWriter, r *http.Request) {
         ) unread ON u.id = unread.receiver_id
         WHERE u.id != ?
         ORDER BY 
-            CASE WHEN cm.created_at IS NOT NULL THEN cm.created_at ELSE u.created_at END DESC,
-            u.username ASC
+            CASE 
+                WHEN cm.created_at IS NOT NULL THEN cm.created_at 
+                ELSE u.username 
+            END DESC
     `
 
     rows, err := database.DB.Query(query, currentUserID, currentUserID, currentUserID, currentUserID, currentUserID, currentUserID, currentUserID)
     if err != nil {
         log.Printf("Error getting chat users: %v", err)
-        http.Error(w, "Database error", http.StatusInternalServerError)
+        w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode([]model.ChatUser{})
         return
     }
     defer rows.Close()
 
-    var users []model.ChatUser
+    users := make([]model.ChatUser, 0)
+    
     for rows.Next() {
         var user model.ChatUser
-        err := rows.Scan(&user.ID, &user.Username, &user.IsOnline, &user.LastActivity, 
-                        &user.LastMessage, &user.LastMessageTime, &user.UnreadCount)
+        var lastActivityStr, lastMessageTimeStr string
+        
+        // ✅ FIXED: Scan strings first, then parse to time.Time
+        err := rows.Scan(
+            &user.ID, 
+            &user.Username, 
+            &user.IsOnline, 
+            &lastActivityStr,
+            &user.LastMessage, 
+            &lastMessageTimeStr, 
+            &user.UnreadCount,
+        )
         if err != nil {
+            log.Printf("Error scanning user row: %v", err)
             continue
         }
+
+        // ✅ Parse string dates to time.Time with error handling
+        if lastActivityStr != "" {
+            if parsedTime, err := time.Parse("2006-01-02 15:04:05", lastActivityStr); err == nil {
+                user.LastActivity = parsedTime
+            } else if parsedTime, err := time.Parse(time.RFC3339, lastActivityStr); err == nil {
+                user.LastActivity = parsedTime
+            } else {
+                user.LastActivity = time.Now() // fallback
+            }
+        } else {
+            user.LastActivity = time.Now()
+        }
+
+        if lastMessageTimeStr != "" {
+            if parsedTime, err := time.Parse("2006-01-02 15:04:05", lastMessageTimeStr); err == nil {
+                user.LastMessageTime = parsedTime
+            } else if parsedTime, err := time.Parse(time.RFC3339, lastMessageTimeStr); err == nil {
+                user.LastMessageTime = parsedTime
+            } else {
+                user.LastMessageTime = time.Now() // fallback
+            }
+        } else {
+            user.LastMessageTime = time.Now()
+        }
+
         users = append(users, user)
     }
 
+    // ✅ Sort users: by last message time (DESC), then alphabetically
+    sort.Slice(users, func(i, j int) bool {
+        // If both have messages, sort by message time (most recent first)
+        if users[i].LastMessage != "" && users[j].LastMessage != "" {
+            return users[i].LastMessageTime.After(users[j].LastMessageTime)
+        }
+        // If only one has messages, prioritize the one with messages
+        if users[i].LastMessage != "" && users[j].LastMessage == "" {
+            return true
+        }
+        if users[i].LastMessage == "" && users[j].LastMessage != "" {
+            return false
+        }
+        // If neither has messages, sort alphabetically
+        return users[i].Username < users[j].Username
+    })
+
     w.Header().Set("Content-Type", "application/json")
     json.NewEncoder(w).Encode(users)
+    
+    log.Printf("Successfully returned %d users to client", len(users))
 }
+
+
+
+
 
 func GetChatMessagesHandler(w http.ResponseWriter, r *http.Request) {
     isLoggedIn, currentUserID := auth.CheckUserLoggedIn(r)
@@ -156,17 +234,26 @@ func GetChatMessagesHandler(w http.ResponseWriter, r *http.Request) {
     rows, err := database.DB.Query(query, currentUserID, otherUserID, otherUserID, currentUserID, limit, offset)
     if err != nil {
         log.Printf("Error getting chat messages: %v", err)
-        http.Error(w, "Database error", http.StatusInternalServerError)
+        w.Header().Set("Content-Type", "application/json")
+        // ✅ Return empty array instead of error
+        json.NewEncoder(w).Encode(map[string]interface{}{
+            "messages": []model.ChatMessage{},
+            "page":     page,
+            "has_more": false,
+        })
         return
     }
     defer rows.Close()
 
-    var messages []model.ChatMessage
+    // ✅ Initialize with empty slice, not nil
+    messages := make([]model.ChatMessage, 0)
+    
     for rows.Next() {
         var msg model.ChatMessage
         err := rows.Scan(&msg.ID, &msg.SenderID, &msg.ReceiverID, &msg.Message, 
                         &msg.CreatedAt, &msg.IsRead, &msg.SenderName)
         if err != nil {
+            log.Printf("Error scanning message: %v", err)
             continue
         }
         messages = append(messages, msg)
@@ -182,11 +269,14 @@ func GetChatMessagesHandler(w http.ResponseWriter, r *http.Request) {
     markMessagesAsRead(currentUserID, otherUserID)
 
     w.Header().Set("Content-Type", "application/json")
+    // ✅ Always return array, even if empty
     json.NewEncoder(w).Encode(map[string]interface{}{
         "messages": messages,
         "page":     page,
         "has_more": len(messages) == limit,
     })
+    
+    log.Printf("Returned %d messages for chat between %s and %s", len(messages), currentUserID, otherUserID)
 }
 
 func markMessagesAsRead(receiverID, senderID string) {

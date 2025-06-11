@@ -1,36 +1,33 @@
-// authutils.js - ENHANCED WITH CHAT DEBUG
+// authutils.js - ENHANCED CHAT SYNC
 if (!window.appState) {
   window.appState = { user: null, isAuthenticated: false };
 }
 
 export function saveUserSession(user) {
-  console.log('💾 Saving user session:', user);
+  console.log('💾 Saving user session and syncing chat:', user);
   localStorage.setItem('user', JSON.stringify(user));
   window.appState.user = user;
   window.appState.isAuthenticated = true;
   
-  // Initialize chat for newly authenticated users
+  // Sync chat immediately when user logs in
   setTimeout(() => {
-    console.log('🔄 Attempting to initialize chat...');
-    if (window.initializeChat) {
-      console.log('✅ initializeChat function found, calling...');
-      window.initializeChat();
-    } else {
-      console.error('❌ initializeChat function not found!');
+    console.log('🔄 Syncing chat after login...');
+    if (window.updateChatForAuthStatus) {
+      window.updateChatForAuthStatus();
     }
-  }, 200); // Increased delay
+  }, 200);
 }
 
 export function clearUserSession() {
-  console.log('🗑️ Clearing user session');
+  console.log('🗑️ Clearing user session and syncing chat');
   localStorage.removeItem('user');
   window.appState.user = null;
   window.appState.isAuthenticated = false;
   
-  // Destroy chat on logout
-  if (window.destroyChat) {
-    console.log('🔥 Destroying chat...');
-    window.destroyChat();
+  // Sync chat immediately when user logs out
+  if (window.updateChatForAuthStatus) {
+    console.log('🔄 Syncing chat after logout...');
+    window.updateChatForAuthStatus();
   }
 }
 
@@ -39,44 +36,18 @@ export function isLoggedIn() {
 }
 
 export function updateAuthUI() {
-  console.log('🎨 Updating auth UI, isAuthenticated:', window.appState.isAuthenticated);
+  console.log('🎨 Updating auth UI and syncing chat, isAuthenticated:', window.appState.isAuthenticated);
   
   const accountButtons = document.getElementById('account-buttons');
   const loginButtons = document.getElementById('registerlogin-buttons');
-  const chatContainer = document.getElementById('chatbox-container');
   const isAuthenticated = window.appState.isAuthenticated;
 
   if (window.appState?.user && isAuthenticated) {
     accountButtons?.classList.remove('d-none');
     loginButtons?.classList.add('d-none');
-    
-    // Show chatbox for authenticated users
-    if (chatContainer) {
-      console.log('💬 Showing chatbox for authenticated user');
-      chatContainer.classList.remove('d-none');
-    }
-    
-    // Initialize chat for authenticated users
-    setTimeout(() => {
-      if (window.initializeChat && !window.chatManager) {
-        console.log('🚀 Initializing chat from updateAuthUI');
-        window.initializeChat();
-      }
-    }, 100);
   } else {
     accountButtons?.classList.add('d-none');
     loginButtons?.classList.remove('d-none');
-    
-    // Hide chatbox for unauthenticated users
-    if (chatContainer) {
-      console.log('🙈 Hiding chatbox for unauthenticated user');
-      chatContainer.classList.add('d-none');
-    }
-    
-    // Destroy chat for unauthenticated users
-    if (window.destroyChat) {
-      window.destroyChat();
-    }
   }
 
   document.querySelectorAll('[data-auth]').forEach(el => {
@@ -102,6 +73,14 @@ export function updateAuthUI() {
       element.classList.remove('d-none');
     }
   });
+
+  // ✅ CRITICAL: Sync chat with auth state changes
+  setTimeout(() => {
+    if (window.updateChatForAuthStatus) {
+      console.log('🔄 Syncing chat from updateAuthUI...');
+      window.updateChatForAuthStatus();
+    }
+  }, 100);
 }
 
 export async function checkUserSession() {

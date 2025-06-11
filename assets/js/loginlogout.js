@@ -126,6 +126,7 @@ function setupLogoutHandlers() {
 }
 
 // ✅ MAIN LOGOUT FUNCTION
+// ✅ ENHANCED LOGOUT FUNCTION - Better UX
 async function handleLogout(e) {
   if (e) {
     e.preventDefault();
@@ -182,7 +183,34 @@ async function handleLogout(e) {
     
   } catch (error) {
     console.error('❌ Logout error:', error);
-    alert('Logout failed: ' + error.message);
+    
+    // ✅ ENHANCED ERROR HANDLING
+    if (error.message.includes('Failed to fetch') || error.name === 'TypeError') {
+      // Server is down - perform local logout anyway
+      console.log('🔌 Server unavailable - performing local logout');
+      
+      // Clear local session data
+      clearUserSession();
+      
+      // Update UI immediately
+      updateAuthUI();
+      
+      // Show appropriate message
+      showLogoutMessage('Logged out locally (server unavailable)');
+      
+      // Navigate to home
+      setTimeout(() => {
+        if (window.navigateTo) {
+          window.navigateTo('home');
+        } else {
+          window.location.hash = '#/home';
+        }
+      }, 1000);
+      
+    } else {
+      // Other errors - show alert and keep user logged in
+      alert('Logout failed: ' + error.message);
+    }
   } finally {
     // Restore button state
     if (logoutBtn) {
