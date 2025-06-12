@@ -1,4 +1,4 @@
-// router.js - COMPLETE VERSION WITH ALL FUNCTIONS
+// router.js - COMPLETE VERSION WITH ALL FUNCTIONS + ERROR HANDLING
 import { updateAuthUI, isLoggedIn } from './authutils.js';
 
 const routes = {
@@ -48,11 +48,65 @@ const routes = {
     authRequired: true, 
     script: '/assets/js/createpost.js', 
     init: initializeCreatePostPage 
+  },
+  'error': { 
+    template: 'error-template', 
+    authRequired: false,
+    init: initializeErrorPage
   }
 };
 
 const loadedScripts = new Set();
 let isNavigating = false;
+
+// Add error handling function
+function showErrorPage(errorCode = 404, customMessage = null) {
+  console.log(`Showing error page: ${errorCode}`);
+  
+  const errorData = {
+    400: {
+      title: "Bad Request",
+      message: customMessage || "The server could not understand your request.",
+      icon: "⚠️"
+    },
+    401: {
+      title: "Unauthorized", 
+      message: customMessage || "You need to sign in to access this page.",
+      icon: "🔒"
+    },
+    403: {
+      title: "Forbidden",
+      message: customMessage || "You don't have permission to access this page.",
+      icon: "🚫"
+    },
+    404: {
+      title: "Page Not Found",
+      message: customMessage || "The page you are looking for does not exist.",
+      icon: "🔍"
+    },
+    405: {
+      title: "Method Not Allowed",
+      message: customMessage || "The method you used is not allowed for this request.",
+      icon: "❌"
+    },
+    500: {
+      title: "Server Error",
+      message: customMessage || "Something went wrong on our end. Please try again later.",
+      icon: "💥"
+    }
+  };
+
+  const error = errorData[errorCode] || errorData[404];
+  
+  // Store error data for the error page to use
+  window.currentError = {
+    code: errorCode,
+    ...error
+  };
+  
+  // Navigate to error page
+  window.location.hash = '#/error';
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!window.posts) window.posts = [];
@@ -146,23 +200,33 @@ function handleRoute(route) {
   }
 
   const [page] = route.split('/').filter(Boolean);
-  const routeConfig = routes[page] || routes['home'];
-
-  if (routeConfig.authRequired && !isLoggedIn()) {
-    localStorage.setItem('redirectAfterLogin', page);
-    const action = page === 'create-post' ? 'create a post' : 'access this page';
-    alert(`Please sign in to ${action}`);
+  const routeConfig = routes[page];
+  
+  // Check if route exists
+  if (!routeConfig && page !== 'error') {
+    console.warn(`Route not found: ${page}`);
     isNavigating = false;
-    return navigateTo('signin');
+    return showErrorPage(404, `The page "${page}" could not be found.`);
   }
 
-  loadPage(page || 'home', routeConfig)
+  const finalConfig = routeConfig || routes['home'];
+
+  // Check authentication
+  if (finalConfig.authRequired && !isLoggedIn()) {
+    localStorage.setItem('redirectAfterLogin', page);
+    const action = page === 'create-post' ? 'create a post' : 'access this page';
+    isNavigating = false;
+    return showErrorPage(401, `Please sign in to ${action}.`);
+  }
+
+  loadPage(page || 'home', finalConfig)
     .then(() => {
       isNavigating = false;
     })
     .catch(err => {
       console.error('Error loading page:', err);
       isNavigating = false;
+      showErrorPage(500, 'Failed to load the page. Please try again.');
     });
 }
 
@@ -349,6 +413,35 @@ function initializeCreatePostPage() {
   }
 }
 
+// Add initialization function for error page
+function initializeErrorPage() {
+  console.log('Error page initialization from router.js');
+  
+  // Set up back button functionality
+  const backBtn = document.querySelector('.error-back-btn');
+  if (backBtn) {
+    backBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      // Go back to previous page or home
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        navigateTo('home');
+      }
+    });
+  }
+
+  // Set up retry button if it exists
+  const retryBtn = document.querySelector('.error-retry-btn');
+  if (retryBtn) {
+    retryBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.location.reload();
+    });
+  }
+}
+
 // Expose functions globally
 window.navigateTo = navigateTo;
 window.updateUIForAuthState = updateAuthUI;
+window.showErrorPage = showErrorPage;
