@@ -38,14 +38,22 @@ class ChatManager {
         this.updateForAuthStatus();
     }
 
+    // ✅ UPDATED: Combined fix for better timing and user list refresh
     updateForAuthStatus() {
         console.log('🔄 Updating chat for auth status:', window.appState?.isAuthenticated);
         
         if (window.appState?.isAuthenticated) {
             console.log('✅ User authenticated, enabling full chat...');
             this.enableChatFunctionality();
+            
+            // ✅ COMBINED FIX: Connect WebSocket first, then load users with delay
             this.connectWebSocket();
-            this.loadChatUsers();
+            
+            // ✅ COMBINED FIX: Load users with delay to ensure WebSocket connects
+            setTimeout(() => {
+                this.loadChatUsers();
+            }, 1200);
+            
         } else {
             console.log('❌ User not authenticated, showing limited chat...');
             this.disableChatFunctionality();
@@ -98,79 +106,91 @@ class ChatManager {
         this.updateChatHeader('Login to start chatting');
     }
 
-
-
-connectWebSocket() {
-    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-        console.log('🔌 WebSocket already connected');
-        return;
-    }
-    
-    if (this.connectionAttempts >= this.maxConnectionAttempts) {
-        console.error('❌ Max WebSocket connection attempts reached');
-        this.showConnectionError();
-        return;
-    }
-    
-    this.connectionAttempts++;
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/ws`;
-    
-    console.log(`🔌 Connecting to WebSocket (attempt ${this.connectionAttempts}):`, wsUrl);
-    console.log('🔍 Current user for WebSocket:', window.appState?.user);
-    
-    try {
-        this.ws = new WebSocket(wsUrl);
+    // ✅ UPDATED: Enhanced WebSocket connection with multiple refresh strategy
+    connectWebSocket() {
+        if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+            console.log('🔌 WebSocket already connected');
+            return;
+        }
         
-        this.ws.onopen = () => {
-            console.log('✅ WebSocket connected successfully');
-            console.log('👤 User should now be marked online:', window.appState?.user?.username);
-            this.connectionAttempts = 0; // Reset on successful connection
-        };
-        
-        this.ws.onmessage = (event) => {
-            try {
-                const message = JSON.parse(event.data);
-                console.log('📨 WebSocket message received:', message);
-                this.handleWebSocketMessage(message);
-            } catch (error) {
-                console.error('❌ Error parsing WebSocket message:', error);
-            }
-        };
-        
-        this.ws.onclose = (event) => {
-            console.log('❌ WebSocket disconnected:', event.code, event.reason);
-            console.log('👤 User should now be marked offline:', window.appState?.user?.username);
-            this.ws = null;
-            
-            // Only reconnect if user is still authenticated and we haven't exceeded max attempts
-            if (window.appState?.isAuthenticated && this.connectionAttempts < this.maxConnectionAttempts) {
-                console.log('🔄 Attempting to reconnect in 3 seconds...');
-                setTimeout(() => this.connectWebSocket(), 3000);
-            }
-        };
-        
-        this.ws.onerror = (error) => {
-            console.error('❌ WebSocket error:', error);
+        if (this.connectionAttempts >= this.maxConnectionAttempts) {
+            console.error('❌ Max WebSocket connection attempts reached');
             this.showConnectionError();
-        };
+            return;
+        }
         
-    } catch (error) {
-        console.error('❌ Error creating WebSocket:', error);
-        this.showConnectionError();
+        this.connectionAttempts++;
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${window.location.host}/ws`;
+        
+        console.log(`🔌 Connecting to WebSocket (attempt ${this.connectionAttempts}):`, wsUrl);
+        console.log('🔍 Current user for WebSocket:', window.appState?.user);
+        
+        try {
+            this.ws = new WebSocket(wsUrl);
+            
+            // ✅ ENHANCED: Updated onopen handler with multiple refresh strategy
+            this.ws.onopen = () => {
+                console.log('✅ WebSocket connected successfully');
+                console.log('👤 User should now be marked online:', window.appState?.user?.username);
+                this.connectionAttempts = 0; // Reset on successful connection
+                
+                // ✅ ENHANCED: Multiple refresh strategy for better sync
+                setTimeout(() => {
+                    if (window.appState?.isAuthenticated) {
+                        console.log('🔄 First refresh after WebSocket connection');
+                        this.loadChatUsers();
+                    }
+                }, 500);
+                
+                // ✅ NEW: Second refresh to catch any missed status updates
+                setTimeout(() => {
+                    if (window.appState?.isAuthenticated) {
+                        console.log('🔄 Second refresh to ensure all online statuses are synced');
+                        this.loadChatUsers();
+                    }
+                }, 1500);
+            };
+            
+            this.ws.onmessage = (event) => {
+                try {
+                    const message = JSON.parse(event.data);
+                    console.log('📨 WebSocket message received:', message);
+                    this.handleWebSocketMessage(message);
+                } catch (error) {
+                    console.error('❌ Error parsing WebSocket message:', error);
+                }
+            };
+            
+            this.ws.onclose = (event) => {
+                console.log('❌ WebSocket disconnected:', event.code, event.reason);
+                console.log('👤 User should now be marked offline:', window.appState?.user?.username);
+                this.ws = null;
+                
+                // ✅ COMBINED FIX: Refresh user list when disconnected
+                if (window.appState?.isAuthenticated) {
+                    setTimeout(() => {
+                        this.loadChatUsers();
+                    }, 500);
+                }
+                
+                // Only reconnect if user is still authenticated and we haven't exceeded max attempts
+                if (window.appState?.isAuthenticated && this.connectionAttempts < this.maxConnectionAttempts) {
+                    console.log('🔄 Attempting to reconnect in 3 seconds...');
+                    setTimeout(() => this.connectWebSocket(), 3000);
+                }
+            };
+            
+            this.ws.onerror = (error) => {
+                console.error('❌ WebSocket error:', error);
+                this.showConnectionError();
+            };
+            
+        } catch (error) {
+            console.error('❌ Error creating WebSocket:', error);
+            this.showConnectionError();
+        }
     }
-}
-
-
-
-
-
-
-
-
-
-
-
 
     showConnectionError() {
         this.showTemporaryMessage('Chat connection failed. Please refresh the page.');
@@ -273,54 +293,60 @@ connectWebSocket() {
     handleWebSocketMessage(message) {
         console.log('📨 Handling WebSocket message type:', message.type);
         
-        switch (message.type) {
-            case 'new_message':
-                this.handleNewMessage(message.data);
-                break;
-            case 'typing':
-                this.handleTypingIndicator(message.data);
-                break;
-            case 'user_status':
-                this.handleUserStatusChange(message.data);
-                break;
-            default:
-                console.log('❓ Unknown message type:', message.type);
+        // In handleWebSocketMessage method
+    switch (message.type) {
+        case 'new_message':
+            this.handleNewMessage(message.data);
+           break;
+        case 'typing':
+            this.handleTypingIndicator(message.data);
+          break;
+        case 'user_status':
+            this.handleUserStatusChange(message.data);
+          break;
+        case 'force_refresh':
+         console.log('🔄 Force refreshing user list');
+            this.loadChatUsers();
+            break;
+        default:
+        console.log('❓ Unknown message type:', message.type);
+    }
+
+}
+
+    handleNewMessage(messageData) {
+        console.log('💬 Handling new message:', messageData);
+        console.log('🔍 Current chat user:', this.currentChatUser);
+        console.log('🔍 Message sender:', messageData.sender_id);
+        console.log('🔍 Message receiver:', messageData.receiver_id);
+        console.log('🔍 Current user ID:', window.appState?.user?.id);
+        
+        // Update message history
+        const chatKey = this.getChatKey(messageData.sender_id, messageData.receiver_id);
+        if (!this.messageHistory.has(chatKey)) {
+            this.messageHistory.set(chatKey, []);
+        }
+        this.messageHistory.get(chatKey).push(messageData);
+
+        // If this message is for the current chat, display it
+        if (this.currentChatUser && 
+            (messageData.sender_id === this.currentChatUser.id || 
+             messageData.receiver_id === this.currentChatUser.id)) {
+            console.log('✅ Displaying message in current chat');
+            this.displayMessage(messageData);
+            this.scrollToBottom();
+        } else {
+            console.log('❌ Message not for current chat or no chat open');
+        }
+
+        // Update user list with new message
+        this.updateUserListItem(messageData.sender_id, messageData.message, messageData.created_at);
+        
+        // Show notification if not current chat
+        if (!this.currentChatUser || messageData.sender_id !== this.currentChatUser.id) {
+            this.showNotification(messageData);
         }
     }
-
-handleNewMessage(messageData) {
-    console.log('💬 Handling new message:', messageData);
-    console.log('🔍 Current chat user:', this.currentChatUser);
-    console.log('🔍 Message sender:', messageData.sender_id);
-    console.log('🔍 Message receiver:', messageData.receiver_id);
-    console.log('🔍 Current user ID:', window.appState?.user?.id);
-    
-    // Update message history
-    const chatKey = this.getChatKey(messageData.sender_id, messageData.receiver_id);
-    if (!this.messageHistory.has(chatKey)) {
-        this.messageHistory.set(chatKey, []);
-    }
-    this.messageHistory.get(chatKey).push(messageData);
-
-    // If this message is for the current chat, display it
-    if (this.currentChatUser && 
-        (messageData.sender_id === this.currentChatUser.id || 
-         messageData.receiver_id === this.currentChatUser.id)) {
-        console.log('✅ Displaying message in current chat');
-        this.displayMessage(messageData);
-        this.scrollToBottom();
-    } else {
-        console.log('❌ Message not for current chat or no chat open');
-    }
-
-    // Update user list with new message
-    this.updateUserListItem(messageData.sender_id, messageData.message, messageData.created_at);
-    
-    // Show notification if not current chat
-    if (!this.currentChatUser || messageData.sender_id !== this.currentChatUser.id) {
-        this.showNotification(messageData);
-    }
-}
 
     handleTypingIndicator(data) {
         if (this.currentChatUser && data.user_id === this.currentChatUser.id) {
@@ -328,9 +354,21 @@ handleNewMessage(messageData) {
         }
     }
 
+    // ✅ ENHANCED: Better status change handling with forced UI update
     handleUserStatusChange(data) {
-        console.log('👤 User status change:', data);
+        console.log('👤 User status change received:', data);
+        console.log('🔄 Updating online status and refreshing user list');
+        
+        // ✅ IMMEDIATE: Update individual user status right away
         this.updateUserOnlineStatus(data.user_id, data.is_online);
+        
+        // ✅ ENHANCED: Force refresh user list with shorter delay
+        if (window.appState?.isAuthenticated) {
+            setTimeout(() => {
+                console.log('🔄 Force refreshing user list due to status change');
+                this.loadChatUsers();
+            }, 200); // Shorter delay for faster updates
+        }
     }
 
     async loadChatUsers() {
@@ -637,37 +675,28 @@ handleNewMessage(messageData) {
         }
     }
 
+    displayMessages(messages, prepend = false) {
+        if (!this.messagesContainer) return;
 
+        // ✅ Handle null/undefined messages
+        if (!messages || !Array.isArray(messages)) {
+            console.log('⚠️ Messages is null/invalid, skipping display');
+            return;
+        }
 
-displayMessages(messages, prepend = false) {
-    if (!this.messagesContainer) return;
+        const fragment = document.createDocumentFragment();
+        
+        messages.forEach(message => {
+            const messageElement = this.createMessageElement(message);
+            fragment.appendChild(messageElement);
+        });
 
-    // ✅ Handle null/undefined messages
-    if (!messages || !Array.isArray(messages)) {
-        console.log('⚠️ Messages is null/invalid, skipping display');
-        return;
+        if (prepend) {
+            this.messagesContainer.insertBefore(fragment, this.messagesContainer.firstChild);
+        } else {
+            this.messagesContainer.appendChild(fragment);
+        }
     }
-
-    const fragment = document.createDocumentFragment();
-    
-    messages.forEach(message => {
-        const messageElement = this.createMessageElement(message);
-        fragment.appendChild(messageElement);
-    });
-
-    if (prepend) {
-        this.messagesContainer.insertBefore(fragment, this.messagesContainer.firstChild);
-    } else {
-        this.messagesContainer.appendChild(fragment);
-    }
-}
-
-
-
-
-
-
-
 
     displayMessage(message) {
         if (!this.messagesContainer) return;
@@ -725,18 +754,22 @@ displayMessages(messages, prepend = false) {
         return messageDiv;
     }
 
+    // ✅ NEW: IMPROVED Debounced typing handler
     handleTyping() {
         if (!this.currentChatUser || !this.ws) return;
 
+        // ✅ DEBOUNCE: Only send typing=true once, then debounce the stop event
         if (!this.isTyping) {
             this.isTyping = true;
             this.sendTypingEvent(true);
         }
 
-        clearTimeout(this.typingTimer);
-        this.typingTimer = setTimeout(() => {
+        // ✅ DEBOUNCE: Stop typing after 1 second of no input
+        this.debouncedStopTyping = this.debouncedStopTyping || this.debounce(() => {
             this.stopTyping();
-        }, 2000);
+        }, 1000);
+
+        this.debouncedStopTyping();
     }
 
     stopTyping() {
@@ -857,6 +890,7 @@ displayMessages(messages, prepend = false) {
         return date.toLocaleDateString();
     }
 
+    // ✅ EXISTING: Throttle function (already implemented)
     throttle(func, limit) {
         let inThrottle;
         return function() {
@@ -867,6 +901,17 @@ displayMessages(messages, prepend = false) {
                 inThrottle = true;
                 setTimeout(() => inThrottle = false, limit);
             }
+        }
+    }
+
+    // ✅ NEW: Add debounce method after the throttle method
+    debounce(func, delay) {
+        let timer;
+        return function() {
+            const context = this;
+            const args = arguments;
+            clearTimeout(timer);
+            timer = setTimeout(() => func.apply(context, args), delay);
         }
     }
 
@@ -892,10 +937,39 @@ displayMessages(messages, prepend = false) {
         }
     }
 
+    // ✅ ENHANCED: More robust online status updating
     updateUserOnlineStatus(userId, isOnline) {
+        console.log(`🟢 Updating user ${userId} online status to: ${isOnline}`);
+        
         const userElement = document.querySelector(`[data-user-id="${userId}"]`);
         if (userElement) {
+            // Update user class
             userElement.className = `user ${isOnline ? 'online' : 'offline'}`;
+            
+            // ✅ ENHANCED: Better indicator management
+            const userDetails = userElement.querySelector('.user-details');
+            if (userDetails) {
+                // Remove all existing indicators first
+                const existingIndicators = userDetails.querySelectorAll('.online-indicator');
+                existingIndicators.forEach(indicator => indicator.remove());
+                
+                // Add new indicator if online
+                if (isOnline) {
+                    const onlineIndicator = document.createElement('span');
+                    onlineIndicator.className = 'online-indicator';
+                    onlineIndicator.textContent = '●';
+                    onlineIndicator.style.color = '#28a745'; // Force green color
+                    onlineIndicator.style.marginRight = '5px';
+                    userDetails.insertBefore(onlineIndicator, userDetails.firstChild);
+                    console.log(`✅ Green indicator added for user ${userId}`);
+                } else {
+                    console.log(`❌ Green indicator removed for user ${userId}`);
+                }
+            }
+            
+            console.log(`✅ User ${userId} status updated in UI - Online: ${isOnline}`);
+        } else {
+            console.log(`⚠️ User element not found for ${userId} - will be updated on next refresh`);
         }
     }
 

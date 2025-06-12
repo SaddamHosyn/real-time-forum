@@ -41,6 +41,8 @@ func StartServer() {
 	http.HandleFunc("/api/logout", handler.LogoutHandler)
 
 	// Chat routes
+	http.HandleFunc("/api/debug/online-status", handler.DebugOnlineStatusHandler)
+
 	http.HandleFunc("/ws", handler.WebSocketHandler)
 	http.HandleFunc("/api/chat/users", handler.GetChatUsersHandler)
 	http.HandleFunc("/api/chat/messages/", handler.GetChatMessagesHandler)

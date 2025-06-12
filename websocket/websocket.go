@@ -122,14 +122,41 @@ func saveChatMessage(senderID, receiverID, message string) (*model.ChatMessage, 
 
 
 
-
 func updateUserOnlineStatus(userID string, isOnline bool) {
+    log.Printf("🔎 ATTEMPTING to update status for user %s to online=%t", userID, isOnline)
+    
     query := `
         INSERT OR REPLACE INTO user_online (user_id, is_online, last_activity)
         VALUES (?, ?, ?)
     `
-    database.DB.Exec(query, userID, isOnline, time.Now())
+    result, err := database.DB.Exec(query, userID, isOnline, time.Now())
+    if err != nil {
+        log.Printf("❌ ERROR updating online status: %v", err)
+        return
+    }
+    
+    rowsAffected, _ := result.RowsAffected()
+    log.Printf("✅ Online status UPDATED for user %s: online=%t, rows=%d", 
+               userID, isOnline, rowsAffected)
+    
+    // Verify the update immediately
+    var currentStatus int
+    err = database.DB.QueryRow("SELECT is_online FROM user_online WHERE user_id = ?", 
+                              userID).Scan(&currentStatus)
+    if err != nil {
+        log.Printf("❌ ERROR verifying status: %v", err)
+    } else {
+        log.Printf("✅ VERIFIED database status: User %s is online=%d", userID, currentStatus)
+    }
 }
+
+
+
+
+
+
+
+
 
 func updateLastMessage(user1ID, user2ID string, messageID int) {
     // Ensure consistent ordering

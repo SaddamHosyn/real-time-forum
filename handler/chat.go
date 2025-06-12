@@ -299,3 +299,44 @@ func markMessagesAsRead(receiverID, senderID string) {
     query := `UPDATE chat_messages SET is_read = 1 WHERE receiver_id = ? AND sender_id = ? AND is_read = 0`
     database.DB.Exec(query, receiverID, senderID)
 }
+
+// ✅ NEW: Debug handler to check online status
+func DebugOnlineStatusHandler(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Content-Type", "application/json")
+    
+    // Get all users with online status
+    query := `
+        SELECT u.id, u.username, COALESCE(uo.is_online, 0) as is_online, 
+               COALESCE(uo.last_activity, '') as last_activity
+        FROM users u 
+        LEFT JOIN user_online uo ON u.id = uo.user_id
+        ORDER BY u.username
+    `
+    
+    rows, err := database.DB.Query(query)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+    defer rows.Close()
+    
+    var users []map[string]interface{}
+    for rows.Next() {
+        var id, username, lastActivity string
+        var isOnline bool
+        
+        err := rows.Scan(&id, &username, &isOnline, &lastActivity)
+        if err != nil {
+            continue
+        }
+        
+        users = append(users, map[string]interface{}{
+            "id":            id,
+            "username":      username,
+            "is_online":     isOnline,
+            "last_activity": lastActivity,
+        })
+    }
+    
+    json.NewEncoder(w).Encode(users)
+}
