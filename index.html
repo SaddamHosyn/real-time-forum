@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
     <title>Forum - Home</title>
+     <!-- Favicon -->
+  <link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon" />
  
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
@@ -472,35 +474,104 @@
     <!-- main Page slider Templates -->
 
     <template id="home-template">
-      <section class="slider-section">
+        <!-- 💡 Decorative Top-Left Image -->
 
-          <div id="mainCarousel" class="carousel">
-              <div class="carousel-inner rounded">
-                  <div class="carousel-item active">
-                      <img src="assets/images/mar.webp" class="d-block w-100" alt="Featured Content 1" />
-                  </div>
-                  <div class="carousel-item">
-                      <img src="assets/images/pqr.webp" class="d-block w-100" alt="Featured Content 2" />
-                  </div>
-                  <div class="carousel-item">
-                      <img src="assets/images/mike.webp" class="d-block w-100" alt="Featured Content 3" />
-                  </div>
-                  <div class="carousel-item">
-                      <img src="assets/images/mno.webp" class="d-block w-100" alt="Featured Content 4" />
-                  </div>
-                  <div class="carousel-item">
-                      <img src="assets/images/vbc.avif" class="d-block w-100" alt="Featured Content 5" />
-                  </div>
-                  <div class="carousel-item">
-                      <img src="assets/images/def.webp" class="d-block w-100" alt="Featured Content 6" />
-                  </div>
-              </div>
-  
-              <button class="carousel-control-prev" id="prevSlide">&#10094;</button>
-              <button class="carousel-control-next" id="nextSlide">&#10095;</button>
-          </div>
-      </section>
+
+<section class="main-announcement">
+  <!-- 🔔 Announcement Section -->
+  <div class="announcement">
+    <h2>👋 Welcome to Budget Buzz!</h2>
+    <p>We're your go-to forum for sharing cost-effective living tips and budget-friendly hacks.</p>
+    <ul>
+      <li>📍 Post your <strong>city</strong> and <strong>budget</strong> to find relevant discussions.</li>
+      <li>🆕 New feature: <strong>Group Travel Budgeting</strong> – collaborate and save together!</li>
+    </ul>
+  </div>
+
+  <!-- 📢 Community Prompts / Ads Section -->
+  <div class="prompts">
+    <div class="prompt-box prompt-blue">
+      <img src="/icons/lightbulb.svg" alt="Lightbulb Icon" class="icon"> Looking for budget ideas? <a href="#" onclick="event.preventDefault(); navigateToTips()">Check our Top Tips section</a>.
+
+    </div>
+    <div class="prompt-box prompt-pink">
+      🧮 Try our <a href="#" onclick="event.preventDefault(); navigateToCalculator()">Budgeting Calculator</a>
+ and see where your money goes!
+    </div>
+  </div>
+
+  <!-- 🎯 Quick Access Buttons -->
+<div class="quick-links">
+  <a href="#" class="quick-link green">
+    <img src="assets/images/rocketchat-brands.svg" alt="Chat Icon" class="icon"> Start New Topic
+  </a>
+  <a href="#" class="quick-link blue">
+    <img src="assets/images/money-bill-trend-up-solid.svg" alt="Trending Icon" class="icon"> Top Budget Threads
+  </a>
+  <a href="#" class="quick-link indigo">
+    <img src="assets/images/house-solid.svg" alt="Home Icon" class="icon"> Search by Category: Food | Travel | Study | Housing
+  </a>
+</div>
+
+</section>
+    
   </template>
+
+
+<template id="tips-template">
+  <section class="top-tips">
+    <h1>💡 Top Budget Tips from Budget Buzz</h1>
+    <ul>
+      <li><strong>🍽️ Cook in bulk:</strong> Save time and money by meal-prepping a few days at a time.</li>
+      <li><strong>🛒 Compare store prices:</strong> Check deals at local stores like Sparhallen, S-Market Jomala, or Kantarellen before buying.</li>
+      <li><strong>🚲 Skip the bus:</strong> If it's walkable or bikeable, save your bus fare and get some fresh air!</li>
+      <li><strong>🎁 Look for second-hand:</strong> Clas Ohlson and local online groups often have high-quality used goods.</li>
+      <li><strong>🖥️ Budget tech purchases:</strong> Compare tech prices at Multitronic Åland for sales or open-box deals.</li>
+      <li><strong>📦 Share subscriptions:</strong> Team up with friends for shared streaming or software subscriptions.</li>
+      <li><strong>🏠 Roommate boards:</strong> Save rent by checking local forums or housing boards for room-shares.</li>
+    </ul>
+  </section>
+</template>
+
+
+
+
+
+<template id="calculator-template">
+  <section class="budget-calculator">
+    <h1>🧮 Budgeting Calculator</h1>
+    <form id="budget-form">
+      <label>Monthly Income:</label>
+      <input type="number" id="income" min="0" required><br>
+
+      <label>Rent:</label>
+      <input type="number" id="rent" min="0"><br>
+
+      <label>Groceries:</label>
+      <input type="number" id="groceries" min="0"><br>
+
+      <label>Transport:</label>
+      <input type="number" id="transport" min="0"><br>
+
+      <label>Other Expenses:</label>
+      <input type="number" id="other" min="0"><br>
+
+      <button type="submit">Calculate</button>
+    </form>
+    <div id="calc-result"></div>
+  </section>
+</template>
+
+
+
+
+
+
+
+
+
+
+
 
     <!-- main Page slider Templates -->
 

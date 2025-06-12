@@ -1,99 +1,10 @@
-(function() {
-  let carouselInterval = null;
-  let currentCarouselIndex = 0;
+(function () {
   let currentCleanup = null;
-
-  function initializeCarousel() {
-    const carousel = document.getElementById('mainCarousel');
-    if (!carousel) return;
-
-    const items = carousel.querySelectorAll('.carousel-item');
-    if (items.length === 0) return;
-
-    const prevBtn = carousel.querySelector('#prevSlide');
-    const nextBtn = carousel.querySelector('#nextSlide');
-
-    function resetSlides() {
-      items.forEach((item, index) => {
-        item.classList.remove('active', 'left', 'right');
-        if (index === 0) {
-          item.classList.add('active');
-        } else {
-          item.classList.add('right');
-        }
-      });
-      currentCarouselIndex = 0;
-    }
-
-    function goToSlide(index) {
-      items.forEach((item, i) => {
-        item.classList.remove('active', 'left', 'right');
-        if (i === index) {
-          item.classList.add('active');
-        } else if (i > index) {
-          item.classList.add('right');
-        } else {
-          item.classList.add('left');
-        }
-      });
-      currentCarouselIndex = index;
-    }
-
-    function nextSlide() {
-      const nextIndex = (currentCarouselIndex + 1) % items.length;
-      goToSlide(nextIndex);
-    }
-
-    function prevSlide() {
-      const prevIndex = (currentCarouselIndex - 1 + items.length) % items.length;
-      goToSlide(prevIndex);
-    }
-
-    function startAutoSlide() {
-      stopAutoSlide();
-      carouselInterval = setInterval(nextSlide, 3000);
-    }
-
-    function stopAutoSlide() {
-      if (carouselInterval) {
-        clearInterval(carouselInterval);
-        carouselInterval = null;
-      }
-    }
-
-    resetSlides();
-    startAutoSlide();
-
-    if (prevBtn) {
-      prevBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        stopAutoSlide();
-        prevSlide();
-        startAutoSlide();
-      });
-    }
-
-    if (nextBtn) {
-      nextBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        stopAutoSlide();
-        nextSlide();
-        startAutoSlide();
-      });
-    }
-
-    carousel.addEventListener('mouseenter', stopAutoSlide);
-    carousel.addEventListener('mouseleave', startAutoSlide);
-
-    return function cleanup() {
-      stopAutoSlide();
-    };
-  }
 
   function setupHamburgerMenu() {
     const hamburgerBtn = document.querySelector('#navbarToggle');
     const navbarCollapse = document.querySelector('.navbar-collapse');
-    
+
     if (hamburgerBtn && navbarCollapse) {
       hamburgerBtn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -101,18 +12,20 @@
         const expanded = hamburgerBtn.getAttribute('aria-expanded') === 'true' || false;
         hamburgerBtn.setAttribute('aria-expanded', !expanded);
       });
-      
+
       document.addEventListener('click', (e) => {
-        if (navbarCollapse.classList.contains('show') && 
-            !navbarCollapse.contains(e.target) && 
-            !hamburgerBtn.contains(e.target)) {
+        if (
+          navbarCollapse.classList.contains('show') &&
+          !navbarCollapse.contains(e.target) &&
+          !hamburgerBtn.contains(e.target)
+        ) {
           navbarCollapse.classList.remove('show');
           hamburgerBtn.setAttribute('aria-expanded', 'false');
         }
       });
-      
+
       const navLinks = navbarCollapse.querySelectorAll('.nav-link');
-      navLinks.forEach(link => {
+      navLinks.forEach((link) => {
         link.addEventListener('click', () => {
           if (navbarCollapse.classList.contains('show')) {
             navbarCollapse.classList.remove('show');
@@ -125,25 +38,21 @@
 
   function loadPage(pageId) {
     console.log(`Loading page: ${pageId}`);
-    
+
     if (currentCleanup) {
       currentCleanup();
       currentCleanup = null;
     }
-    
+
     const appContent = document.getElementById('app-content');
     if (!appContent) return;
-    
+
     appContent.style.display = 'block';
     const template = document.getElementById(`${pageId}-template`);
     if (!template) return;
-    
+
     appContent.innerHTML = '';
     appContent.appendChild(template.content.cloneNode(true));
-    
-    if (pageId === 'home') {
-      currentCleanup = initializeCarousel();
-    }
   }
 
   function setupNavigation() {
@@ -159,11 +68,65 @@
     });
   }
 
+  // ✅ Load Top Tips Section
+  window.navigateToTips = function () {
+    const appContent = document.getElementById('app-content');
+    const template = document.getElementById('tips-template');
+    if (!template || !appContent) return;
+
+    appContent.innerHTML = '';
+    appContent.appendChild(template.content.cloneNode(true));
+  };
+
+  // ✅ Load Budgeting Calculator Section (updated with validation)
+  window.navigateToCalculator = function () {
+    const appContent = document.getElementById('app-content');
+    const template = document.getElementById('calculator-template');
+    if (!template || !appContent) return;
+
+    appContent.innerHTML = '';
+    appContent.appendChild(template.content.cloneNode(true));
+
+    const form = document.getElementById('budget-form');
+    const resultDiv = document.getElementById('calc-result');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const fields = ['income', 'rent', 'groceries', 'transport', 'other'];
+      let isValid = true;
+
+      for (const id of fields) {
+        const val = parseFloat(document.getElementById(id).value);
+        if (val < 0) {
+          isValid = false;
+          alert("Please enter only positive values.");
+          break;
+        }
+      }
+
+      if (!isValid) return;
+
+      const income = parseFloat(document.getElementById('income').value) || 0;
+      const rent = parseFloat(document.getElementById('rent').value) || 0;
+      const groceries = parseFloat(document.getElementById('groceries').value) || 0;
+      const transport = parseFloat(document.getElementById('transport').value) || 0;
+      const other = parseFloat(document.getElementById('other').value) || 0;
+
+      const totalExpenses = rent + groceries + transport + other;
+      const balance = income - totalExpenses;
+
+      resultDiv.innerHTML = `
+        <p><strong>Total Expenses:</strong> €${totalExpenses.toFixed(2)}</p>
+        <p><strong>Remaining Balance:</strong> €${balance.toFixed(2)}</p>
+      `;
+    });
+  };
+
   // ✅ Main initialization function
-  window.initializeHomePage = function() {
+  window.initializeHomePage = function () {
     console.log('Home page initialized');
 
-    // ✅ Show logout message if present
     if (window.logoutSuccessMessage) {
       const msgBox = document.getElementById('logout-message');
       if (msgBox) {
@@ -181,11 +144,10 @@
     loadPage('home');
   };
 
-  // For standalone use (without router)
+  // Standalone init if router not used
   document.addEventListener('DOMContentLoaded', () => {
     if (!window.routerEnabled) {
       initializeHomePage();
     }
   });
-
 })();
