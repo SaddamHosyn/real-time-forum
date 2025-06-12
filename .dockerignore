@@ -1,0 +1,8 @@
+# Ignore these files/folders when copying to the container
+.git
+*.md
+*.db
+Dockerfile
+.dockerignore
+assets/images/*.psd
+node_modules
