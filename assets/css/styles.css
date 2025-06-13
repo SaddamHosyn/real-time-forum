@@ -9,7 +9,7 @@ body {
    flex-direction: column;
    min-height: 100vh;
    background-color: rgb(56, 84, 92);
-   background-image: url('../images/bvc.avif');
+   background-image: url('../images/hlk2.webp');
    background-repeat: no-repeat;       /* Prevents tiling */
    background-size: cover;             /* Covers entire page element */
    background-position: center; /* Centers the image */

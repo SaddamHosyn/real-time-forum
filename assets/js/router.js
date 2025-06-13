@@ -48,68 +48,103 @@ const routes = {
     authRequired: true, 
     script: '/assets/js/createpost.js', 
     init: initializeCreatePostPage 
-  },
-  'error': { 
-    template: 'error-template', 
-    authRequired: false,
-    init: initializeErrorPage
   }
+  // REMOVED: 'error' route - let error.js handle all error rendering
 };
 
 const loadedScripts = new Set();
 let isNavigating = false;
 
-// Add error handling function
+// Add hash route validation function
+// Fix this function in your router.js
+function validateHashRoute() {
+  const hash = window.location.hash.slice(1) || '/';
+  const cleanHash = hash.startsWith('/') ? hash.slice(1) : hash;
+  
+  const segments = cleanHash.split('/').filter(Boolean); // removes empty parts
+  const baseRoute = segments[0];
+
+  const validRoutes = Object.keys(routes);
+  const dynamicRoutes = ['topic']; // only allow topic/slug
+
+  // If base route doesn't exist → invalid
+  if (!validRoutes.includes(baseRoute) && !dynamicRoutes.includes(baseRoute)) {
+    console.warn(`Route "${baseRoute}" is not recognized`);
+    return false;
+  }
+
+  // Static routes like 'home' shouldn't have extra path parts
+  if (validRoutes.includes(baseRoute) && !dynamicRoutes.includes(baseRoute)) {
+    if (segments.length > 1) {
+      console.warn(`Static route "${baseRoute}" shouldn't have extra path: ${segments.join('/')}`);
+      return false;
+    }
+  }
+
+  // Dynamic route must match pattern e.g. topic/some-slug
+  if (dynamicRoutes.includes(baseRoute)) {
+    if (segments.length !== 2 || !segments[1]) {
+      console.warn(`Dynamic route "${baseRoute}" is malformed: ${segments.join('/')}`);
+      return false;
+    }
+  }
+
+  return true;
+}
+
+// Add fallback route handler
+function handleFallbackRoute() {
+  const hash = window.location.hash;
+  
+  if (!hash || hash === '#' || hash === '#/') {
+    // No hash or empty hash - go to home
+    navigateTo('home');
+    return;
+  }
+  
+  // Invalid hash format - show error
+  if (!hash.startsWith('#/')) {
+    showErrorPage(404, 'Invalid page format.');
+    return;
+  }
+  
+  // Let normal routing handle it
+  handleRoute(getCurrentRoute());
+}
+
+// UPDATED: Use existing error.js system instead of routing
 function showErrorPage(errorCode = 404, customMessage = null) {
   console.log(`Showing error page: ${errorCode}`);
   
-  const errorData = {
-    400: {
-      title: "Bad Request",
-      message: customMessage || "The server could not understand your request.",
-      icon: "⚠️"
-    },
-    401: {
-      title: "Unauthorized", 
-      message: customMessage || "You need to sign in to access this page.",
-      icon: "🔒"
-    },
-    403: {
-      title: "Forbidden",
-      message: customMessage || "You don't have permission to access this page.",
-      icon: "🚫"
-    },
-    404: {
-      title: "Page Not Found",
-      message: customMessage || "The page you are looking for does not exist.",
-      icon: "🔍"
-    },
-    405: {
-      title: "Method Not Allowed",
-      message: customMessage || "The method you used is not allowed for this request.",
-      icon: "❌"
-    },
-    500: {
-      title: "Server Error",
-      message: customMessage || "Something went wrong on our end. Please try again later.",
-      icon: "💥"
-    }
-  };
-
-  const error = errorData[errorCode] || errorData[404];
-  
-  // Store error data for the error page to use
-  window.currentError = {
-    code: errorCode,
-    ...error
-  };
-  
-  // Navigate to error page
-  window.location.hash = '#/error';
+  // Use your existing renderErrorPage function instead of routing
+  if (window.renderErrorPage) {
+    window.renderErrorPage(errorCode, customMessage);
+  } else {
+    console.error('renderErrorPage function not available');
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   if (!window.posts) window.posts = [];
+  
+  // CHECK FOR ERROR PARAMETERS FIRST - before any routing
+  const urlParams = new URLSearchParams(window.location.search);
+  const errorParam = urlParams.get('error');
+  
+  if (errorParam && !isNaN(errorParam)) {
+    console.log(`Error parameter detected: ${errorParam}`);
+    // Wait for error.js to load, then trigger error page
+    setTimeout(() => {
+      if (window.renderErrorPage) {
+        window.renderErrorPage(Number(errorParam));
+      } else {
+        console.error('renderErrorPage function not available');
+      }
+    }, 100);
+    return; // Don't proceed with normal routing
+  }
+  
+  // Normal routing if no error parameter
   handleRoute(getCurrentRoute());
 
   // ENHANCED event delegation handler
@@ -172,8 +207,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // ENHANCED hash change listener with validation
   window.addEventListener('hashchange', () => {
-    handleRoute(getCurrentRoute());
+    const currentRoute = getCurrentRoute();
+    
+    // Validate the route before handling
+    if (!validateHashRoute()) {
+      console.warn(`Invalid hash route: ${window.location.hash}`);
+      showErrorPage(404, `The page "${currentRoute}" was not found.`);
+      return;
+    }
+    
+    handleRoute(currentRoute);
   });
 });
 
@@ -202,21 +247,36 @@ function handleRoute(route) {
   const [page] = route.split('/').filter(Boolean);
   const routeConfig = routes[page];
   
-  // Check if route exists
-  if (!routeConfig && page !== 'error') {
+  // ENHANCED: Check if route exists and handle unknown routes
+  if (!routeConfig) {
     console.warn(`Route not found: ${page}`);
     isNavigating = false;
-    return showErrorPage(404, `The page "${page}" could not be found.`);
+    // Use the existing showErrorPage function
+    return showErrorPage(404, `The page "${page}" was not found.`);
   }
 
   const finalConfig = routeConfig || routes['home'];
 
-  // Check authentication
+  // BETTER APPROACH: Redirect to sign-in instead of showing 401 error
   if (finalConfig.authRequired && !isLoggedIn()) {
     localStorage.setItem('redirectAfterLogin', page);
-    const action = page === 'create-post' ? 'create a post' : 'access this page';
+    // DON'T show error - redirect to sign-in instead
+    console.log(`Authentication required for ${page}, redirecting to sign-in`);
+    
+    // Show appropriate message based on the page
+    const pageMessages = {
+      'feed': 'Please sign in to view the feed.',
+      'create-post': 'Please sign in to create a post.',
+      'topicsbar': 'Please sign in to view topics.',
+      'my-account': 'Please sign in to access your account.'
+    };
+    
+    const message = pageMessages[page] || 'Please sign in to access this page.';
+    alert(message);
+    
     isNavigating = false;
-    return showErrorPage(401, `Please sign in to ${action}.`);
+    navigateTo('signin');
+    return;
   }
 
   loadPage(page || 'home', finalConfig)
@@ -301,8 +361,17 @@ function loadPage(page, routeConfig = routes[page]) {
   });
 }
 
+// ENHANCED navigateTo function with route validation
 function navigateTo(page) {
   console.log(`Navigating to: ${page}`);
+  
+  // Check if route exists before navigating (removed 'error' check)
+  if (!routes[page] && !page.startsWith('topic/')) {
+    console.warn(`Attempting to navigate to non-existent route: ${page}`);
+    showErrorPage(404, `The page "${page}" does not exist.`);
+    return;
+  }
+  
   window.location.hash = `/${page}`;
 }
 
@@ -413,35 +482,10 @@ function initializeCreatePostPage() {
   }
 }
 
-// Add initialization function for error page
-function initializeErrorPage() {
-  console.log('Error page initialization from router.js');
-  
-  // Set up back button functionality
-  const backBtn = document.querySelector('.error-back-btn');
-  if (backBtn) {
-    backBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      // Go back to previous page or home
-      if (window.history.length > 1) {
-        window.history.back();
-      } else {
-        navigateTo('home');
-      }
-    });
-  }
-
-  // Set up retry button if it exists
-  const retryBtn = document.querySelector('.error-retry-btn');
-  if (retryBtn) {
-    retryBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      window.location.reload();
-    });
-  }
-}
+// REMOVED: initializeErrorPage function - no longer needed
 
 // Expose functions globally
 window.navigateTo = navigateTo;
 window.updateUIForAuthState = updateAuthUI;
 window.showErrorPage = showErrorPage;
+window.handleFallbackRoute = handleFallbackRoute;

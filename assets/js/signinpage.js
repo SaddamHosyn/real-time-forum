@@ -248,6 +248,7 @@ if (window.location.hash.includes('#/signin')) {
 
 // signinpage.js - CLEAN INITIALIZATION ONLY
 
+// signinpage.js - CLEAN INITIALIZATION ONLY
 
 function initializeSignInPage() {
   console.log('Initializing sign-in page');
@@ -294,7 +295,7 @@ function setupLoginForm() {
   newForm.addEventListener('submit', function(e) {
     e.preventDefault();
     e.stopPropagation();
-    window.handleLogin(newForm, 'login-error-message');
+    handleLogin(newForm, 'login-error-message');
   });
 
   // Setup register link
@@ -311,5 +312,86 @@ function setupLoginForm() {
   }
 }
 
+// ADD THIS LOGIN HANDLER FUNCTION
+async function handleLogin(form, errorElementId) {
+  const formData = new FormData(form);
+  const identity = formData.get('identity');
+  const password = formData.get('password');
+
+  console.log('Attempting login for:', identity);
+
+  const errorElement = document.getElementById(errorElementId);
+  if (errorElement) {
+    errorElement.textContent = '';
+    errorElement.style.display = 'none';
+  }
+
+  const submitButton = form.querySelector('button[type="submit"], input[type="submit"]');
+  const originalButtonText = submitButton ? submitButton.textContent : 'Sign In';
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.textContent = 'Signing in...';
+  }
+
+  try {
+    const response = await fetch('/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ identity, password }),
+      credentials: 'include',
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      // Success - handle login
+      localStorage.setItem('user', JSON.stringify(result.user));
+      
+      if (window.appState) {
+        window.appState.user = result.user;
+        window.appState.isAuthenticated = true;
+      }
+      
+      if (window.updateAuthUI) {
+        window.updateAuthUI();
+      }
+      
+      const redirectPage = localStorage.getItem('redirectAfterLogin') || 'feed';
+      localStorage.removeItem('redirectAfterLogin');
+      
+      if (window.navigateTo) {
+        window.navigateTo(redirectPage);
+      } else {
+        window.location.hash = `#/${redirectPage}`;
+      }
+    } else {
+      // Login failed - show message on form, NOT error page
+      if (errorElement) {
+        errorElement.textContent = result.message || 'Invalid username or password';
+        errorElement.style.display = 'block';
+      } else {
+        alert(result.message || 'Invalid username or password');
+      }
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    // Network error - show message on form
+    if (errorElement) {
+      errorElement.textContent = 'Connection failed. Please try again.';
+      errorElement.style.display = 'block';
+    } else {
+      alert('Connection failed. Please try again.');
+    }
+  } finally {
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = originalButtonText;
+    }
+  }
+}
+
 // Global exposure
 window.initializeSignInPage = initializeSignInPage;
+window.handleLogin = handleLogin;

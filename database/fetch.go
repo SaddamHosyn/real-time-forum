@@ -3,13 +3,23 @@ package database
 import (
     "database/sql"
     "errors"
+    "fmt"
     "realtimeforum/model"
 )
 
 // DB is the global database connection
 var DB *sql.DB
 
-// GetUserByIdentity fetches the user from the DB by either username or email
+// Custom error types for better error handling
+var (
+    ErrUserNotFound     = errors.New("user not found")
+    ErrPostNotFound     = errors.New("post not found")
+    ErrUnauthorized     = errors.New("unauthorized access")
+    ErrForbidden        = errors.New("forbidden access")
+    ErrDatabaseError    = errors.New("database error")
+)
+
+// Enhanced GetUserByIdentity with proper error types
 func GetUserByIdentity(usernameOrEmail string) (*model.User, error) {
     var user model.User
 
@@ -22,15 +32,22 @@ func GetUserByIdentity(usernameOrEmail string) (*model.User, error) {
 
     if err != nil {
         if err == sql.ErrNoRows {
-            return nil, errors.New("user not found")
+            return nil, ErrUserNotFound
         }
-        return nil, err
+        return nil, fmt.Errorf("%w: %v", ErrDatabaseError, err)
     }
 
     return &user, nil
 }
 
-func GetUserPosts(userID string) ([]model.Post, error) {
+// Enhanced GetUserPosts with authorization check
+func GetUserPosts(userID, requestingUserID string) ([]model.Post, error) {
+    // Check if requesting user has permission (example: only own posts or admin)
+    if userID != requestingUserID {
+        // You could add admin check here
+        return nil, ErrForbidden
+    }
+
     var posts []model.Post
     
     rows, err := DB.Query(`
@@ -41,14 +58,14 @@ func GetUserPosts(userID string) ([]model.Post, error) {
         ORDER BY p.created_at DESC
         LIMIT 10`, userID)
     if err != nil {
-        return nil, err
+        return nil, fmt.Errorf("%w: %v", ErrDatabaseError, err)
     }
     defer rows.Close()
 
     for rows.Next() {
         var post model.Post
         if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.CreatedAt, &post.Author); err != nil {
-            return nil, err
+            return nil, fmt.Errorf("%w: %v", ErrDatabaseError, err)
         }
         post.UserID = userID
         posts = append(posts, post)
@@ -68,14 +85,14 @@ func GetAllPosts() ([]model.Post, error) {
         ORDER BY p.created_at DESC
         LIMIT 50`)
     if err != nil {
-        return nil, err
+        return nil, fmt.Errorf("%w: %v", ErrDatabaseError, err)
     }
     defer rows.Close()
 
     for rows.Next() {
         var post model.Post
         if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.UserID, &post.CreatedAt, &post.Author); err != nil {
-            return nil, err
+            return nil, fmt.Errorf("%w: %v", ErrDatabaseError, err)
         }
         posts = append(posts, post)
     }
@@ -95,7 +112,7 @@ func GetUserComments(userID string) ([]model.Comment, error) {
         WHERE c.user_id = ? 
         ORDER BY c.created_at DESC`, userID) // ✅ REMOVED LIMIT to see all comments
     if err != nil {
-        return nil, err
+        return nil, fmt.Errorf("%w: %v", ErrDatabaseError, err)
     }
     defer rows.Close()
 
@@ -103,7 +120,7 @@ func GetUserComments(userID string) ([]model.Comment, error) {
         var comment model.Comment
         var postTitle string
         if err := rows.Scan(&comment.ID, &comment.Content, &comment.CreatedAt, &comment.PostID, &postTitle, &comment.Author); err != nil {
-            return nil, err
+            return nil, fmt.Errorf("%w: %v", ErrDatabaseError, err)
         }
         comment.UserID = userID
         comment.PostTitle = postTitle
@@ -119,9 +136,11 @@ func UpdateUser(userID, firstName, lastName, email string) error {
         SET first_name = ?, last_name = ?, email = ?
         WHERE id = ?`,
         firstName, lastName, email, userID)
-    return err
+    if err != nil {
+        return fmt.Errorf("%w: %v", ErrDatabaseError, err)
+    }
+    return nil
 }
-
 
 // Add this function to your existing fetch.go file
 func GetCommentsByPostID(postID int) ([]model.Comment, error) {
@@ -135,7 +154,7 @@ func GetCommentsByPostID(postID int) ([]model.Comment, error) {
 
 	rows, err := DB.Query(query, postID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w: %v", ErrDatabaseError, err)
 	}
 	defer rows.Close()
 
@@ -144,15 +163,13 @@ func GetCommentsByPostID(postID int) ([]model.Comment, error) {
 		var comment model.Comment
 		err := rows.Scan(&comment.ID, &comment.Content, &comment.Author, &comment.UserID, &comment.PostID, &comment.CreatedAt)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: %v", ErrDatabaseError, err)
 		}
 		comments = append(comments, comment)
 	}
 
 	return comments, nil
 }
-
-
 
 // Add this function to fetch.go to get topics for a post
 func GetTopicsForPost(postID int) ([]string, error) {
@@ -165,7 +182,7 @@ func GetTopicsForPost(postID int) ([]string, error) {
 
     rows, err := DB.Query(query, postID)
     if err != nil {
-        return nil, err
+        return nil, fmt.Errorf("%w: %v", ErrDatabaseError, err)
     }
     defer rows.Close()
 
@@ -174,46 +191,12 @@ func GetTopicsForPost(postID int) ([]string, error) {
         var topicName string
         err := rows.Scan(&topicName)
         if err != nil {
-            return nil, err
+            return nil, fmt.Errorf("%w: %v", ErrDatabaseError, err)
         }
         topics = append(topics, topicName)
     }
 
     return topics, nil
-}
-
-
-
-
-
-
-
-
-// ADD THESE TO YOUR EXISTING database/fetch.go FILE
-
-// FeedPost represents a post in the feed with additional metadata
-type FeedPost struct {
-	ID            int           `json:"id"`
-	Title         string        `json:"title"`
-	Content       string        `json:"content"`
-	Author        string        `json:"author"`
-	UserID        string        `json:"user_id"`
-	CreatedAt     string        `json:"created_at"`
-	UpdatedAt     string        `json:"updated_at"`
-	Topics        []string      `json:"topics"`
-	CommentsCount int           `json:"comments_count"`
-	ViewsCount    int           `json:"views_count"`
-	RecentComments []FeedComment `json:"comments"`
-}
-
-// FeedComment represents a comment in the feed
-type FeedComment struct {
-	ID        int    `json:"id"`
-	Content   string `json:"content"`
-	Author    string `json:"author"`
-	UserID    string `json:"user_id"`
-	PostID    int    `json:"post_id"`
-	CreatedAt string `json:"created_at"`
 }
 
 // GetFeedPosts retrieves paginated posts for the feed
@@ -228,7 +211,7 @@ func GetFeedPosts(limit, offset int) ([]model.FeedPost, error) {
 
 	rows, err := DB.Query(query, limit, offset)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w: %v", ErrDatabaseError, err)
 	}
 	defer rows.Close()
 
@@ -238,7 +221,7 @@ func GetFeedPosts(limit, offset int) ([]model.FeedPost, error) {
 		err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.UserID, 
 			&post.CreatedAt, &post.UpdatedAt, &post.Author)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: %v", ErrDatabaseError, err)
 		}
 
 		// Get topics for this post
@@ -278,14 +261,20 @@ func GetFeedPosts(limit, offset int) ([]model.FeedPost, error) {
 func GetTotalPostsCount() (int, error) {
 	var count int
 	err := DB.QueryRow("SELECT COUNT(*) FROM posts").Scan(&count)
-	return count, err
+	if err != nil {
+		return 0, fmt.Errorf("%w: %v", ErrDatabaseError, err)
+	}
+	return count, nil
 }
 
 // GetPostCommentsCount returns the number of comments for a specific post
 func GetPostCommentsCount(postID int) (int, error) {
 	var count int
 	err := DB.QueryRow("SELECT COUNT(*) FROM comments WHERE post_id = ?", postID).Scan(&count)
-	return count, err
+	if err != nil {
+		return 0, fmt.Errorf("%w: %v", ErrDatabaseError, err)
+	}
+	return count, nil
 }
 
 // GetPostCommentsPaginated retrieves paginated comments for a specific post
@@ -301,7 +290,7 @@ func GetPostCommentsPaginated(postID, limit, offset int) ([]model.FeedComment, e
 
 	rows, err := DB.Query(query, postID, limit, offset)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w: %v", ErrDatabaseError, err)
 	}
 	defer rows.Close()
 
@@ -311,7 +300,7 @@ func GetPostCommentsPaginated(postID, limit, offset int) ([]model.FeedComment, e
 		err := rows.Scan(&comment.ID, &comment.Content, &comment.UserID, 
 			&comment.PostID, &comment.CreatedAt, &comment.Author)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("%w: %v", ErrDatabaseError, err)
 		}
 		comments = append(comments, comment)
 	}

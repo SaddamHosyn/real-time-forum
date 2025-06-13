@@ -3,25 +3,37 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+	"realtimeforum/auth"
 	"realtimeforum/database"
 )
 
 // GetUserPostsHandler handles GET /api/user/posts
 func GetUserPostsHandler(w http.ResponseWriter, r *http.Request) {
+	// 400: Method validation
 	if r.Method != http.MethodGet {
-		http.Error(w, "Only GET method is allowed", http.StatusMethodNotAllowed)
+		WriteAPIError(w, http.StatusMethodNotAllowed, "Only GET method is allowed")
 		return
 	}
 
-	userID, err := getUserIDFromSession(r)
-	if err != nil {
-		http.Error(w, "Unauthorized: "+err.Error(), http.StatusUnauthorized)
+	// 401: Check if user is authenticated
+	isLoggedIn, requestingUserID := auth.CheckUserLoggedIn(r)
+	if !isLoggedIn {
+		WriteAPIError(w, http.StatusUnauthorized, "You must be logged in to access this resource")
 		return
 	}
 
-	posts, err := database.GetUserPosts(userID)
+	// 400: Validate request parameters
+	userID := r.URL.Query().Get("user_id")
+	if userID == "" {
+		// If no user_id provided, use the requesting user's ID
+		userID = requestingUserID
+	}
+
+	// Get posts with authorization check
+	posts, err := database.GetUserPosts(userID, requestingUserID)
 	if err != nil {
-		http.Error(w, "Failed to fetch user posts: "+err.Error(), http.StatusInternalServerError)
+		// This will automatically map to 403, 404, or 500 based on error type
+		HandleError(w, err)
 		return
 	}
 
@@ -35,32 +47,35 @@ func GetUserPostsHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// Success response
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(posts)
 }
 
 // GetUserCommentsHandler handles GET /api/user/comments
-// GetUserCommentsHandler handles GET /api/user/comments
 func GetUserCommentsHandler(w http.ResponseWriter, r *http.Request) {
-    if r.Method != http.MethodGet {
-        http.Error(w, "Only GET method is allowed", http.StatusMethodNotAllowed)
-        return
-    }
+	// 400: Method validation
+	if r.Method != http.MethodGet {
+		WriteAPIError(w, http.StatusMethodNotAllowed, "Only GET method is allowed")
+		return
+	}
 
-    userID, err := getUserIDFromSession(r)
-    if err != nil {
-        http.Error(w, "Unauthorized: "+err.Error(), http.StatusUnauthorized)
-        return
-    }
+	// 401: Check if user is authenticated
+	isLoggedIn, userID := auth.CheckUserLoggedIn(r)
+	if !isLoggedIn {
+		WriteAPIError(w, http.StatusUnauthorized, "You must be logged in to access this resource")
+		return
+	}
 
-    comments, err := database.GetUserComments(userID)
-    if err != nil {
-        http.Error(w, "Failed to fetch user comments: "+err.Error(), http.StatusInternalServerError)
-        return
-    }
+	// Get user comments
+	comments, err := database.GetUserComments(userID)
+	if err != nil {
+		// This will automatically map to 403, 404, or 500 based on error type
+		HandleError(w, err)
+		return
+	}
 
-    // REMOVE the problematic loop that overwrites Author field
-
-    w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(comments)
+	// Success response
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(comments)
 }

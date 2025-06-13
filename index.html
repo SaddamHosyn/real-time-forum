@@ -201,7 +201,7 @@
 
 <!-- Store Page Template -->
 <!-- Store Page Template (for router) -->
-<template id="store-template-page">
+<template id="store-template-page-test">
   <div class="container my-4">
     <h2 class="mb-4">Available Stores</h2>
     <div id="storesList" class="row"></div>
@@ -491,7 +491,7 @@
   <!-- 📢 Community Prompts / Ads Section -->
   <div class="prompts">
     <div class="prompt-box prompt-blue">
-      <img src="/icons/lightbulb.svg" alt="Lightbulb Icon" class="icon"> Looking for budget ideas? <a href="#" onclick="event.preventDefault(); navigateToTips()">Check our Top Tips section</a>.
+      <img src="assets/images/bulb.svg" alt="Lightbulb Icon" class="icon"> Looking for budget ideas? <a href="#" onclick="event.preventDefault(); navigateToTips()">Check our Top Tips section</a>.
 
     </div>
     <div class="prompt-box prompt-pink">
@@ -1148,7 +1148,7 @@
         </div>
     </div>
 </template>
-     <!-- Registration Modal page Template -->
+     <!-- Registration page Template -->
     
 
 
@@ -1159,42 +1159,76 @@
 
 
 
+ <!-- Errors page Template -->
+   <!-- Errors page Template -->
 
+<!-- 400 Bad Request Template -->
+<template id="error-400-template">
+  <div class="error-page">
+    <div class="error-icon" id="error-icon">⚠️</div>
+    <h1 class="error-code" id="error-code">400</h1>
+    <h2 class="error-title" id="error-title">Bad Request</h2>
+    <p class="error-message" id="error-message">The server could not understand your request.</p>
+    <div class="error-actions">
+      <a href="#/home" class="error-home-btn nav-link" data-page="home"><i class="fas fa-home"></i> Home</a>
+    </div>
+  </div>
+</template>
 
+<!-- 401 Unauthorized Template -->
+<template id="error-401-template">
+  <div class="error-page">
+    <div class="error-icon" id="error-icon">🔒</div>
+    <h1 class="error-code" id="error-code">401</h1>
+    <h2 class="error-title" id="error-title">Unauthorized</h2>
+    <p class="error-message" id="error-message">You need to sign in to access this page.</p>
+    <div class="error-actions">
+      <a href="#/home" class="error-home-btn nav-link" data-page="home"><i class="fas fa-home"></i> Home</a>
+    </div>
+  </div>
+</template>
 
+<!-- 403 Forbidden Template -->
+<template id="error-403-template">
+  <div class="error-page">
+    <div class="error-icon" id="error-icon">🚫</div>
+    <h1 class="error-code" id="error-code">403</h1>
+    <h2 class="error-title" id="error-title">Forbidden</h2>
+    <p class="error-message" id="error-message">You don't have permission to access this page.</p>
+    <div class="error-actions">
+      <a href="#/home" class="error-home-btn nav-link" data-page="home"><i class="fas fa-home"></i> Home</a>
+    </div>
+  </div>
+</template>
 
-
-<!-- Enhanced Error Template -->
-<template id="error-template">
+<!-- 404 Not Found Template -->
+<template id="error-404-template">
   <div class="error-page">
     <div class="error-icon" id="error-icon">🔍</div>
     <h1 class="error-code" id="error-code">404</h1>
     <h2 class="error-title" id="error-title">Page Not Found</h2>
     <p class="error-message" id="error-message">The page you are looking for does not exist.</p>
-    
     <div class="error-actions">
-      <a href="#" class="error-back-btn">
-        <i class="fas fa-arrow-left"></i> Go Back
-      </a>
-      <a href="#/home" class="error-home-btn nav-link" data-page="home">
-        <i class="fas fa-home"></i> Home
-      </a>
-      <button class="error-retry-btn" style="display: none;">
-        <i class="fas fa-redo"></i> Try Again
-      </button>
-    </div>
-    
-    <div class="error-help">
-      <p>Need help? Try these options:</p>
-      <ul>
-        <li><a href="#/home" class="nav-link" data-page="home">Return to Homepage</a></li>
-        <li><a href="#/topicsbar" class="nav-link" data-page="topicsbar">Browse Topics</a></li>
-        <li><a href="#/feed" class="nav-link" data-page="feed">View Feed</a></li>
-      </ul>
+      <a href="#/home" class="error-home-btn nav-link" data-page="home"><i class="fas fa-home"></i> Home</a>
     </div>
   </div>
 </template>
 
+<!-- 500 Server Error Template -->
+<template id="error-500-template">
+  <div class="error-page">
+    <div class="error-icon" id="error-icon">💥</div>
+    <h1 class="error-code" id="error-code">500</h1>
+    <h2 class="error-title" id="error-title">Server Error</h2>
+    <p class="error-message" id="error-message">Something went wrong on our end. Please try again later.</p>
+    <div class="error-actions">
+      <a href="#/home" class="error-home-btn nav-link" data-page="home"><i class="fas fa-home"></i> Home</a>
+    </div>
+  </div>
+</template>
+   
+
+ <!-- Errors page Template -->
 
 
 
