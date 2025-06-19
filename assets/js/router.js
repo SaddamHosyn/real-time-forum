@@ -9,7 +9,7 @@ const routes = {
     init: initializeHomePage
   },
   'store': { 
-    template: 'store-template-page',
+    template: 'store-template',
     authRequired: false, 
     script: '/assets/js/findastore.js', 
     init: initializeStorePage 

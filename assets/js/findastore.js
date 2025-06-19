@@ -1,7 +1,7 @@
 function renderStoreList() {
   console.log("Rendering store list");
 
-  const storeTemplate = document.getElementById('store-template');
+  const storeTemplate = document.getElementById('store-card-template');
   const storesList = document.getElementById('storesList');
 
   console.log("Store template found:", !!storeTemplate);
