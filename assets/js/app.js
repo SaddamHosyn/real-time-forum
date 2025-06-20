@@ -7,15 +7,20 @@ window.appState = {
   isAuthenticated: false
 };
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   initializeApp();
   setupEventListeners();
-   setupHamburgerMenu();
-  
-  // Simple approach: just check session without complex waiting
-  setTimeout(() => {
-    checkUserSession();
-  }, 100);
+  setupHamburgerMenu();
+
+  // ✅ CRITICAL FIX: Wait for session check to complete BEFORE routing
+  console.log('🔄 Checking session before routing...');
+  await checkUserSession();
+  console.log('✅ Session check complete, auth status:', window.appState.isAuthenticated);
+
+  // ✅ Now it's safe to initialize the router
+  if (window.initializeRouterAfterAuth) {
+    window.initializeRouterAfterAuth();
+  }
 });
 
 function initializeApp() {
@@ -31,7 +36,6 @@ function setupEventListeners() {
     }
   });
 }
- 
 
 function setupHamburgerMenu() {
   const hamburgerBtn = document.querySelector('#navbarToggle');

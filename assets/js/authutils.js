@@ -87,19 +87,23 @@ export async function checkUserSession() {
   console.log('🔍 Checking user session...');
   try {
     const response = await fetch('/api/check-session', {
-      credentials: 'same-origin',
+      credentials: 'include', // Changed from 'same-origin' to 'include'
     });
 
     if (response.ok) {
       const data = await response.json();
       console.log('📡 Session check response:', data);
-      if (data.authenticated) {
-        saveUserSession(data.user);
+      if (data.authenticated && data.user) {
+        // Restore user session immediately
+        localStorage.setItem('user', JSON.stringify(data.user));
+        window.appState.user = data.user;
+        window.appState.isAuthenticated = true;
+        console.log('✅ Session restored for user:', data.user.username);
       } else {
         clearUserSession();
       }
     } else {
-      console.log('❌ Session check failed');
+      console.log('❌ Session check failed with status:', response.status);
       clearUserSession();
     }
   } catch (error) {
@@ -108,6 +112,7 @@ export async function checkUserSession() {
   }
 
   updateAuthUI();
+  return window.appState.isAuthenticated; // Return the auth status
 }
 
 // Expose functions globally
