@@ -1,40 +1,10 @@
 (function () {
   let currentCleanup = null;
 
-  function setupHamburgerMenu() {
-    const hamburgerBtn = document.querySelector('#navbarToggle');
-    const navbarCollapse = document.querySelector('.navbar-collapse');
 
-    if (hamburgerBtn && navbarCollapse) {
-      hamburgerBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        navbarCollapse.classList.toggle('show');
-        const expanded = hamburgerBtn.getAttribute('aria-expanded') === 'true' || false;
-        hamburgerBtn.setAttribute('aria-expanded', !expanded);
-      });
 
-      document.addEventListener('click', (e) => {
-        if (
-          navbarCollapse.classList.contains('show') &&
-          !navbarCollapse.contains(e.target) &&
-          !hamburgerBtn.contains(e.target)
-        ) {
-          navbarCollapse.classList.remove('show');
-          hamburgerBtn.setAttribute('aria-expanded', 'false');
-        }
-      });
 
-      const navLinks = navbarCollapse.querySelectorAll('.nav-link');
-      navLinks.forEach((link) => {
-        link.addEventListener('click', () => {
-          if (navbarCollapse.classList.contains('show')) {
-            navbarCollapse.classList.remove('show');
-            hamburgerBtn.setAttribute('aria-expanded', 'false');
-          }
-        });
-      });
-    }
-  }
+
 
   function loadPage(pageId) {
     console.log(`Loading page: ${pageId}`);
@@ -140,7 +110,7 @@
     }
 
     setupNavigation();
-    setupHamburgerMenu();
+
     loadPage('home');
   };
 

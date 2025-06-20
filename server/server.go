@@ -4,11 +4,11 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"strings"
 	"realtimeforum/auth"
 	"realtimeforum/handler"
-	"realtimeforum/websocket"
 	"realtimeforum/middleware"
+	"realtimeforum/websocket"
+	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -21,35 +21,33 @@ func StartServer() {
 	// Define API routes (these take priority)
 	http.HandleFunc("/api/login", handler.LoginHandler)
 
-
 	http.HandleFunc("/api/create-post", middleware.RequireAuth(handler.CreatePostHandler))
 
-
-	http.HandleFunc("/api/submit-post", handler.SubmitPostHandler)
+	http.HandleFunc("/api/submit-post", middleware.RequireAuth(handler.SubmitPostHandler))
 	http.HandleFunc("/api/register", handler.RegisterHandler)
 	http.HandleFunc("/api/check-session", auth.CheckSessionHandler)
 
-
 	http.HandleFunc("/api/user/posts", middleware.RequireAuth(handler.GetUserPostsHandler))
 
-
-
 	http.HandleFunc("/api/posts/topic/", handler.GetPostsByTopicHandler)
-	http.HandleFunc("/api/comments/create", handler.CreateCommentHandler)
-	http.HandleFunc("/api/posts/", handler.GetCommentsByPostHandler)
 
+	http.HandleFunc("/api/comments/create", middleware.RequireAuth(handler.CreateCommentHandler))
+
+	http.HandleFunc("/api/posts/", handler.GetCommentsByPostHandler)
 
 	http.HandleFunc("/api/feed/posts", middleware.RequireAuth(handler.GetFeedHandler))
 
+	http.HandleFunc("/api/user/comments", middleware.RequireAuth(handler.GetUserCommentsHandler))
 
-	http.HandleFunc("/api/user/comments", handler.GetUserCommentsHandler)
-	http.HandleFunc("/api/logout", handler.LogoutHandler)
+	http.HandleFunc("/api/logout", middleware.RequireAuth(handler.LogoutHandler))
 
 	// Chat routes
 	http.HandleFunc("/api/debug/online-status", handler.DebugOnlineStatusHandler)
-	http.HandleFunc("/ws", handler.WebSocketHandler)
-	http.HandleFunc("/api/chat/users", handler.GetChatUsersHandler)
-	http.HandleFunc("/api/chat/messages/", handler.GetChatMessagesHandler)
+	http.HandleFunc("/ws", middleware.RequireAuth(handler.WebSocketHandler))
+
+	http.HandleFunc("/api/chat/users", middleware.RequireAuth(handler.GetChatUsersHandler))
+
+	http.HandleFunc("/api/chat/messages/", middleware.RequireAuth(handler.GetChatMessagesHandler))
 	http.HandleFunc("/api/chat/public-users", handler.GetPublicUsersHandler)
 
 	// SPA Catch-all handler (MUST be last)
@@ -72,7 +70,7 @@ func StartServer() {
 			http.Redirect(w, r, "/?error=400", http.StatusFound)
 			return
 		}
-		
+
 		// For all other routes, serve index.html (let JavaScript handle routing)
 		http.ServeFile(w, r, "./index.html")
 	})
