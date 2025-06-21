@@ -121,7 +121,7 @@
       window.logoutSuccessMessage = null;
     }
 
-    setupNavigation();
+
 
     loadPage('home');
   };
