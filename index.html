@@ -470,8 +470,8 @@
 
 
 
-    <!-- main Page slider Templates -->
-    <!-- main Page slider Templates -->
+    <!-- main Page Templates -->
+    <!-- main Page Templates -->
 
     <template id="home-template">
         <!-- 💡 Decorative Top-Left Image -->
@@ -500,18 +500,29 @@
     </div>
   </div>
 
-  <!-- 🎯 Quick Access Buttons -->
-<div class="quick-links">
-  <a href="#" class="quick-link green">
-    <img src="assets/images/rocketchat-brands.svg" alt="Chat Icon" class="icon"> Start New Topic
-  </a>
-  <a href="#" class="quick-link blue">
-    <img src="assets/images/money-bill-trend-up-solid.svg" alt="Trending Icon" class="icon"> Top Budget Threads
-  </a>
-  <a href="#" class="quick-link indigo">
-    <img src="assets/images/house-solid.svg" alt="Home Icon" class="icon"> Search by Category: Food | Travel | Study | Housing
-  </a>
+<!-- 🧾 Budget Digest Highlights -->
+<div class="budget-digest">
+  <h2 class="digest-heading">🧾 Budget Digest Highlights</h2>
+  <div class="digest-grid">
+    <div class="digest-item">
+      <img src="assets/images/rocketchat-brands.svg" alt="Chat Icon" class="icon">
+      <h4>Community Voices</h4>
+      <p>See what people are saying about saving while studying abroad.</p>
+    </div>
+    <div class="digest-item">
+      <img src="assets/images/money-bill-trend-up-solid.svg" alt="Trending Icon" class="icon">
+      <h4>Weekly Buzz</h4>
+      <p>This week's hot topics: €5 meal challenge, rent under €300, and more.</p>
+    </div>
+    <div class="digest-item">
+      <img src="assets/images/house-solid.svg" alt="Home Icon" class="icon">
+      <h4>Category Highlights</h4>
+      <p>From student housing to weekend getaways—top-rated budget tips in each area.</p>
+    </div>
+  </div>
 </div>
+
+
 
 </section>
     
@@ -520,6 +531,7 @@
 
 <template id="tips-template">
   <section class="top-tips">
+    <button class="close-button" onclick="navigateToHome()">×</button>
     <h1>💡 Top Budget Tips from Budget Buzz</h1>
     <ul>
       <li><strong>🍽️ Cook in bulk:</strong> Save time and money by meal-prepping a few days at a time.</li>
@@ -537,8 +549,10 @@
 
 
 
+
 <template id="calculator-template">
   <section class="budget-calculator">
+    <button class="close-button" onclick="navigateToHome()">×</button>
     <h1>🧮 Budgeting Calculator</h1>
     <form id="budget-form">
       <label>Monthly Income:</label>
@@ -561,6 +575,7 @@
     <div id="calc-result"></div>
   </section>
 </template>
+
 
 
 

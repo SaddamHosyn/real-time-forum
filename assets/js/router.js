@@ -219,15 +219,29 @@ window.initializeRouterAfterAuth = function () {
     } else if (accountLink && accountLink.getAttribute('href') === '#/my-account') {
       e.preventDefault();
       navigateTo('my-account');
-    } else if (createPostLink) {
+       } else if (createPostLink) {
       e.preventDefault();
-      if (isLoggedIn()) navigateTo('create-post');
-      else {
-        localStorage.setItem('redirectAfterLogin', 'create-post');
-        alert('You must be logged in to create a post.');
-        navigateTo('signin');
+
+      if (isLoggedIn()) {
+        navigateTo('create-post');
+      } else {
+        loadPage('create-post').then(() => {
+          const appContent = document.getElementById('app-content');
+          if (appContent) appContent.classList.add('blurred');
+
+          localStorage.setItem('redirectAfterLogin', 'create-post');
+
+          setTimeout(() => {
+            alert('You must be logged in to create a post.');
+
+            if (appContent) appContent.classList.remove('blurred');
+
+            navigateTo('signin');
+          }, 50);
+        });
       }
     }
+
   });
 
   window.addEventListener('hashchange', () => {

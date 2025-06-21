@@ -173,7 +173,7 @@ body {
   }
 
   .navbar-toggler {
-    background-color: rgba(0, 255, 72, 0.1);  /* Styling for hamburger icon */
+    background-color: #a9914c;  /* Styling for hamburger icon */
   }
 
   
@@ -766,21 +766,7 @@ h2 {
   }
 }
 
-/* Modal Overlay */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
-  z-index: 9999;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow-y: auto;
-  padding: 20px;
-}
+
 
 /* Validation Errors */
 .validation-errors {
@@ -876,30 +862,14 @@ h2 {
   background-color: #fce7f3;
 }
 
-.quick-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
 
-.quick-link {
-  padding: 0.75rem 1.25rem;
-  color: white;
-  border-radius: 8px;
-  text-decoration: none;
-}
 
-.quick-link.green {
-  background-color: #34d399;
-}
 
-.quick-link.blue {
-  background-color: #3b82f6;
-}
 
-.quick-link.indigo {
-  background-color: #6366f1;
-}
+
+
+
+
 
  
 
@@ -1005,17 +975,110 @@ h2 {
 
 
 
-  
-.top-left-image {
-  position: fixed;
-  top: 130px;
-  left: 80px;
-  max-width: 10%;
-  height: auto;
-  z-index: 1000;
-  opacity: 0;
-  pointer-events: none;
+
+
+.budget-digest {
+  background: linear-gradient(135deg, #39704b, #f2f9ff);
+  padding: 2.5rem 1.5rem;
+  border-radius: 1.5rem;
+  margin-top: 2rem;
+  text-align: center;
 }
+
+.digest-heading {
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  color: #54316a;
+  font-weight: 600;
+}
+
+.digest-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.digest-item {
+  max-width: 280px;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+/* Add themed colors per item using nth-child */
+.digest-item:nth-child(1) {
+  background: #a47851;
+}
+.digest-item:nth-child(2) {
+  background: #8bbad4;
+}
+.digest-item:nth-child(3) {
+  background: #7982b6;
+}
+
+.digest-item:hover {
+  transform: translateY(-5px);
+}
+
+.digest-item .icon {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 1rem;
+}
+
+.digest-item:hover .icon {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+
+.digest-item h4 {
+  font-size: 1.2rem;
+  color: #111;
+  margin-bottom: 0.5rem;
+}
+
+.digest-item p {
+  font-size: 0.95rem;
+  color: #444;
+  line-height: 1.4;
+}
+
+
+
+
+
+
+
+
+
+.close-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: #555;
+  cursor: pointer;
+  font-weight: bold;
+  z-index: 10;
+}
+
+.top-tips, .budget-calculator {
+  position: relative;
+}
+
+
+
+
+
+
+
+
+
 
 
 

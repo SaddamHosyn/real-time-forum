@@ -93,6 +93,18 @@
     });
   };
 
+
+
+  // ✅ Close button: Go to home
+  window.navigateToHome = function () {
+    loadPage('home');
+  };
+
+
+
+
+
+
   // ✅ Main initialization function
   window.initializeHomePage = function () {
     console.log('Home page initialized');
