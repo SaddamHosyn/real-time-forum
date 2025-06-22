@@ -1916,8 +1916,6 @@ h2 {
 /* ===== Regsitration page Styles ===== */
 
 
-/* Register Modal Styles */
-/* Register Page Styles */
 .register-page-container {
   position: relative;
   width: 100%;
@@ -2050,82 +2048,34 @@ h2 {
   border-color: #545b62;
 }
 
-
-
-
-
-/* Responsive adjustments */
-@media (max-width: 576px) {
-  #register-modal.custom-modal {
-    margin: 15px;
-    width: calc(100% - 30px);
+/* ✅ FIXED: Respect authentication state on mobile */
+@media (max-width: 991.98px) {
+  /* Only style when account buttons are actually visible (logged in) */
+  #account-buttons:not(.d-none) {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.75rem !important;
   }
   
- 
-  
- 
-  
- 
-}
-
-/* For the dialog element */
-.custom-modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 90%; /* Responsive width */
-  max-width: 600px; 
-  max-height: 90vh;
- 
-  margin: 0;
-  padding: 0;
-  border: none;
-  border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  z-index: 9999;
-  display: none; /* Hidden by default */
-  
-}
-/* Backdrop styling */
-.custom-modal::backdrop {
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(3px);
-}
-
-
-.custom-modal.active {
-  display: block;
-}
-
-@media (max-width: 768px) {
-  .custom-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    transform: none; /* Reset centering */
-    width: 100%;
-    height: 100vh;
-    overflow-y: auto; /* Enable scroll */
-    margin: 0;
-    border-radius: 0; /* Optional: remove rounded corners on mobile */
+  #account-buttons:not(.d-none) a.btn,
+  #account-buttons:not(.d-none) button.btn {
+    display: block !important;
+    width: auto !important;
+    margin: 0 !important;
+    padding: 0.5rem 1rem !important;
+    white-space: nowrap !important;
   }
-  .custom-modal-content {
-    margin: 0;
-    width: 100%;
-    max-width: none;
-    border-radius: 0;
-    height: auto;
+  
+  /* Ensure hidden state is respected on mobile */
+  #account-buttons.d-none {
+    display: none !important;
   }
 }
 
 
 
 
-
-.modal-open {
-  overflow: auto;
-}
 
 
 
@@ -2158,9 +2108,17 @@ h2 {
   text-align: left;      /* Aligns text to the left */
   margin-left: 1rem;     /* Pushes it slightly from the left side */
   margin-right: 1rem;    /* Prevents it from hugging the right edge */
-  color: rgb(28, 28, 129);
+  color: black;          /* ✅ Changed to black for the paragraph text */
+}
+
+.auth-redirect a {
+  color: rgb(37, 113, 189); /* ✅ Blue color only for the link */
+  text-decoration: underline;
+  cursor: pointer;
 
 }
+
+
 /* auth custom styles */
 
 /* password stengthbar custom styles */
@@ -2281,24 +2239,11 @@ h2 {
 
 
 
-/* ===== sign in modal page Styles ===== */
-/* ===== sign in modal page Styles ===== */
+/* ===== sign in page Styles ===== */
+/* ===== sign in page Styles ===== */
 
 
 
-
-
-.signin-modal {
-
-  z-index: 9999; /* Make sure it's on top */
-
-}
-
-.signin-modal.hidden {
-  display: none;
-}
-
-/* ===== sign in modal page Styles ===== */
 
 
 
