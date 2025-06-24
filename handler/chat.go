@@ -1,3 +1,6 @@
+
+
+
 // handler/chat.go
 package handler
 
@@ -5,20 +8,82 @@ import (
     "encoding/json"
     "log"
     "net/http"
-    "sort"        // ←  (needed for sort.Slice)
+    "sort"
     "strconv"
     "strings"
-    "time"        
+    "sync"
+    "time"
     "realtimeforum/auth"
     "realtimeforum/database"
     "realtimeforum/model"
     "realtimeforum/websocket"
 )
 
+// ✅ NEW: Throttling mechanism for API requests
+type RequestThrottler struct {
+    requests map[string]time.Time
+    mutex    sync.RWMutex
+    limit    time.Duration
+}
+
+var (
+    // ✅ Global throttler instances
+    messageThrottler = &RequestThrottler{
+        requests: make(map[string]time.Time),
+        limit:    500 * time.Millisecond, // 500ms between message requests
+    }
+    userListThrottler = &RequestThrottler{
+        requests: make(map[string]time.Time),
+        limit:    200 * time.Millisecond, // 200ms between user list requests
+    }
+)
+
+// ✅ Throttle check method
+func (rt *RequestThrottler) isAllowed(userID string) bool {
+    rt.mutex.Lock()
+    defer rt.mutex.Unlock()
+    
+    now := time.Now()
+    if lastRequest, exists := rt.requests[userID]; exists {
+        if now.Sub(lastRequest) < rt.limit {
+            log.Printf("🚫 Request throttled for user %s", userID)
+            return false
+        }
+    }
+    
+    rt.requests[userID] = now
+    return true
+}
+
+// ✅ Cleanup old entries periodically
+func (rt *RequestThrottler) cleanup() {
+    rt.mutex.Lock()
+    defer rt.mutex.Unlock()
+    
+    now := time.Now()
+    for userID, lastRequest := range rt.requests {
+        if now.Sub(lastRequest) > rt.limit*10 { // Keep for 10x the limit
+            delete(rt.requests, userID)
+        }
+    }
+}
+
+// ✅ Start cleanup goroutine
+func init() {
+    go func() {
+        ticker := time.NewTicker(30 * time.Second)
+        defer ticker.Stop()
+        
+        for range ticker.C {
+            messageThrottler.cleanup()
+            userListThrottler.cleanup()
+        }
+    }()
+}
+
 func WebSocketHandler(w http.ResponseWriter, r *http.Request) {
     log.Printf("🔵 WebSocket connection attempt")
     
-    // Check authentication
     isLoggedIn, userID := auth.CheckUserLoggedIn(r)
     if !isLoggedIn {
         log.Printf("❌ WebSocket: User not authenticated")
@@ -28,7 +93,6 @@ func WebSocketHandler(w http.ResponseWriter, r *http.Request) {
     
     log.Printf("✅ WebSocket: User authenticated - ID: %s", userID)
 
-    // Get username from database
     var username string
     err := database.DB.QueryRow("SELECT username FROM users WHERE id = ?", userID).Scan(&username)
     if err != nil {
@@ -39,7 +103,6 @@ func WebSocketHandler(w http.ResponseWriter, r *http.Request) {
     
     log.Printf("✅ WebSocket: Username found: %s", username)
 
-    // Use the upgrader from websocket package
     conn, err := websocket.UpgradeConnection(w, r)
     if err != nil {
         log.Printf("❌ WebSocket upgrade error: %v", err)
@@ -58,25 +121,21 @@ func WebSocketHandler(w http.ResponseWriter, r *http.Request) {
 
     log.Printf("✅ WebSocket: Client created - ID: %s, Username: %s", client.ID, client.Username)
     
-    // ✅ SIMPLE BLOCKING REGISTRATION (with buffered channel this won't block)
     client.Hub.Register <- client
     log.Printf("✅ WebSocket: Client registration sent to hub")
 
-    // Start Read/Write pumps
     go client.WritePump()
     go client.ReadPump()
     
     log.Printf("✅ WebSocket: Read/Write pumps started for %s", username)
 }
 
-// Add this new handler for guest user list
 func GetPublicUsersHandler(w http.ResponseWriter, r *http.Request) {
-    // Return empty list or basic info for unauthenticated users
     w.Header().Set("Content-Type", "application/json")
     json.NewEncoder(w).Encode([]model.ChatUser{})
 }
 
-// Updated GetChatUsersHandler to handle unauthenticated users gracefully
+// ✅ ENHANCED: GetChatUsersHandler with throttling
 func GetChatUsersHandler(w http.ResponseWriter, r *http.Request) {
     isLoggedIn, currentUserID := auth.CheckUserLoggedIn(r)
     if !isLoggedIn {
@@ -85,7 +144,15 @@ func GetChatUsersHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // ✅ FIXED QUERY: Handle string dates properly with proper COALESCE
+    // ✅ Apply throttling
+    if !userListThrottler.isAllowed(currentUserID) {
+        w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode([]model.ChatUser{})
+        return
+    }
+
+    log.Printf("📊 Loading chat users for user: %s", currentUserID)
+
     query := `
         SELECT DISTINCT 
             u.id, 
@@ -144,7 +211,6 @@ func GetChatUsersHandler(w http.ResponseWriter, r *http.Request) {
         var user model.ChatUser
         var lastActivityStr, lastMessageTimeStr string
         
-        // ✅ FIXED: Scan strings first, then parse to time.Time
         err := rows.Scan(
             &user.ID, 
             &user.Username, 
@@ -159,14 +225,13 @@ func GetChatUsersHandler(w http.ResponseWriter, r *http.Request) {
             continue
         }
 
-        // ✅ Parse string dates to time.Time with error handling
         if lastActivityStr != "" {
             if parsedTime, err := time.Parse("2006-01-02 15:04:05", lastActivityStr); err == nil {
                 user.LastActivity = parsedTime
             } else if parsedTime, err := time.Parse(time.RFC3339, lastActivityStr); err == nil {
                 user.LastActivity = parsedTime
             } else {
-                user.LastActivity = time.Now() // fallback
+                user.LastActivity = time.Now()
             }
         } else {
             user.LastActivity = time.Now()
@@ -178,7 +243,7 @@ func GetChatUsersHandler(w http.ResponseWriter, r *http.Request) {
             } else if parsedTime, err := time.Parse(time.RFC3339, lastMessageTimeStr); err == nil {
                 user.LastMessageTime = parsedTime
             } else {
-                user.LastMessageTime = time.Now() // fallback
+                user.LastMessageTime = time.Now()
             }
         } else {
             user.LastMessageTime = time.Now()
@@ -187,29 +252,26 @@ func GetChatUsersHandler(w http.ResponseWriter, r *http.Request) {
         users = append(users, user)
     }
 
-    // ✅ Sort users: by last message time (DESC), then alphabetically
     sort.Slice(users, func(i, j int) bool {
-        // If both have messages, sort by message time (most recent first)
         if users[i].LastMessage != "" && users[j].LastMessage != "" {
             return users[i].LastMessageTime.After(users[j].LastMessageTime)
         }
-        // If only one has messages, prioritize the one with messages
         if users[i].LastMessage != "" && users[j].LastMessage == "" {
             return true
         }
         if users[i].LastMessage == "" && users[j].LastMessage != "" {
             return false
         }
-        // If neither has messages, sort alphabetically
         return users[i].Username < users[j].Username
     })
 
     w.Header().Set("Content-Type", "application/json")
     json.NewEncoder(w).Encode(users)
     
-    log.Printf("Successfully returned %d users to client", len(users))
+    log.Printf("Successfully returned %d users to client %s", len(users), currentUserID)
 }
 
+// ✅ ENHANCED: GetChatMessagesHandler with throttling and pagination fixes
 func GetChatMessagesHandler(w http.ResponseWriter, r *http.Request) {
     isLoggedIn, currentUserID := auth.CheckUserLoggedIn(r)
     if !isLoggedIn {
@@ -217,7 +279,18 @@ func GetChatMessagesHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // Extract user ID from URL path
+    // ✅ Apply throttling
+    if !messageThrottler.isAllowed(currentUserID) {
+        log.Printf("🚫 Message request throttled for user %s", currentUserID)
+        w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(map[string]interface{}{
+            "messages": []model.ChatMessage{},
+            "page":     1,
+            "has_more": false,
+        })
+        return
+    }
+
     pathParts := strings.Split(r.URL.Path, "/")
     if len(pathParts) < 5 {
         http.Error(w, "Invalid URL", http.StatusBadRequest)
@@ -226,7 +299,6 @@ func GetChatMessagesHandler(w http.ResponseWriter, r *http.Request) {
     
     otherUserID := pathParts[4]
     
-    // Get pagination parameters
     page := 1
     if p := r.URL.Query().Get("page"); p != "" {
         if parsed, err := strconv.Atoi(p); err == nil && parsed > 0 {
@@ -234,8 +306,12 @@ func GetChatMessagesHandler(w http.ResponseWriter, r *http.Request) {
         }
     }
     
+    // ✅ ENHANCED: Better pagination with consistent limit
     limit := 10
     offset := (page - 1) * limit
+
+    log.Printf("📥 Loading messages - User: %s, Other: %s, Page: %d, Limit: %d, Offset: %d", 
+        currentUserID, otherUserID, page, limit, offset)
 
     query := `
         SELECT cm.id, cm.sender_id, cm.receiver_id, cm.message, cm.created_at, cm.is_read, u.username
@@ -251,7 +327,6 @@ func GetChatMessagesHandler(w http.ResponseWriter, r *http.Request) {
     if err != nil {
         log.Printf("Error getting chat messages: %v", err)
         w.Header().Set("Content-Type", "application/json")
-        // ✅ Return empty array instead of error
         json.NewEncoder(w).Encode(map[string]interface{}{
             "messages": []model.ChatMessage{},
             "page":     page,
@@ -261,7 +336,6 @@ func GetChatMessagesHandler(w http.ResponseWriter, r *http.Request) {
     }
     defer rows.Close()
 
-    // ✅ Initialize with empty slice, not nil
     messages := make([]model.ChatMessage, 0)
     
     for rows.Next() {
@@ -281,30 +355,39 @@ func GetChatMessagesHandler(w http.ResponseWriter, r *http.Request) {
         messages[i], messages[opp] = messages[opp], messages[i]
     }
 
+    // ✅ ENHANCED: Better has_more calculation
+    hasMore := len(messages) == limit
+
     // Mark messages as read
     markMessagesAsRead(currentUserID, otherUserID)
 
     w.Header().Set("Content-Type", "application/json")
-    // ✅ Always return array, even if empty
     json.NewEncoder(w).Encode(map[string]interface{}{
         "messages": messages,
         "page":     page,
-        "has_more": len(messages) == limit,
+        "has_more": hasMore,
     })
     
-    log.Printf("Returned %d messages for chat between %s and %s", len(messages), currentUserID, otherUserID)
+    log.Printf("✅ Returned %d messages for chat between %s and %s (page %d, has_more: %t)", 
+        len(messages), currentUserID, otherUserID, page, hasMore)
 }
 
 func markMessagesAsRead(receiverID, senderID string) {
     query := `UPDATE chat_messages SET is_read = 1 WHERE receiver_id = ? AND sender_id = ? AND is_read = 0`
-    database.DB.Exec(query, receiverID, senderID)
+    result, err := database.DB.Exec(query, receiverID, senderID)
+    if err != nil {
+        log.Printf("Error marking messages as read: %v", err)
+        return
+    }
+    
+    if rowsAffected, err := result.RowsAffected(); err == nil {
+        log.Printf("✅ Marked %d messages as read", rowsAffected)
+    }
 }
 
-// ✅ NEW: Debug handler to check online status
 func DebugOnlineStatusHandler(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "application/json")
     
-    // Get all users with online status
     query := `
         SELECT u.id, u.username, COALESCE(uo.is_online, 0) as is_online, 
                COALESCE(uo.last_activity, '') as last_activity
