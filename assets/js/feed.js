@@ -76,7 +76,7 @@ class FeedManager {
   }
 
   renderPosts(posts, clearContainer = false) {
-    const container = document.getElementById('posts-container');
+    const container = document.getElementById('forum-posts-wrapper');
     if (!container) {
       console.error('Posts container not found');
       return;
@@ -97,7 +97,7 @@ class FeedManager {
   }
 
   createPostElement(post) {
-    const template = document.getElementById('post-item-template');
+    const template = document.getElementById('forum-post-template');
     if (!template) {
       console.error('Post item template not found');
       return null;
@@ -105,28 +105,34 @@ class FeedManager {
 
     const clone = document.importNode(template.content, true);
 
+    // Set the post ID on the article element
+    const articleElement = clone.querySelector('.forum-post-card');
+    if (articleElement) {
+      articleElement.setAttribute('data-post-id', post.id);
+    }
+
     // Fill post data with null checks
-    const authorName = clone.querySelector('.author-name');
+    const authorName = clone.querySelector('.post-creator-name');
     if (authorName) authorName.textContent = post.author || 'Unknown Author';
 
-    const postDate = clone.querySelector('.post-date');
+    const postDate = clone.querySelector('.post-timestamp');
     if (postDate) postDate.textContent = this.formatDate(post.created_at);
 
-    const postTitle = clone.querySelector('.post-title');
+    const postTitle = clone.querySelector('.post-heading');
     if (postTitle) postTitle.textContent = post.title || 'Untitled';
 
-    const postBody = clone.querySelector('.post-body');
+    const postBody = clone.querySelector('.post-description');
     if (postBody) {
       const content = post.content || '';
       postBody.textContent = content.length > 200 ? content.substring(0, 200) + '...' : content;
     }
 
     // Update comment count only
-    const commentCount = clone.querySelector('.comment-count .count');
+    const commentCount = clone.querySelector('.discussion-count .total');
     if (commentCount) commentCount.textContent = post.comments_count || 0;
 
     // Add topics
-    const topicsContainer = clone.querySelector('.post-topics');
+    const topicsContainer = clone.querySelector('.post-categories');
     if (topicsContainer && post.topics && Array.isArray(post.topics)) {
       post.topics.forEach(topic => {
         const badge = this.createTopicBadge(topic);
@@ -146,159 +152,164 @@ class FeedManager {
   }
 
   createTopicBadge(topicText) {
-    const template = document.getElementById('topic-badge-template');
+    const template = document.getElementById('category-label-template');
     if (!template) {
       console.error('Topic badge template not found');
       return null;
     }
 
     const clone = document.importNode(template.content, true);
-    const badge = clone.querySelector('.topic-badge');
+    const badge = clone.querySelector('.category-tag');
     if (badge) {
       badge.textContent = topicText;
     }
     return clone;
   }
 
- setupCommentsSection(postElement, post) {
-  const commentsSection = postElement.querySelector('.comments-section');
-  if (!commentsSection) return;
+  setupCommentsSection(postElement, post) {
+    const commentsSection = postElement.querySelector('.discussion-area');
+    if (!commentsSection) return;
 
-  const commentsList = commentsSection.querySelector('.comments-list');
-  this.clearElement(commentsList);
+    const commentsList = commentsSection.querySelector('.discussion-thread');
+    this.clearElement(commentsList);
 
-  // Debug logging
-  console.log('Post object:', post);
-  console.log('Post comments:', post.comments);
+    const maxVisible = 3;
+    const comments = post.comments || [];
+    
+    console.log(`Setting up comments for post ${post.id}:`, comments.length, 'total comments');
 
-  // Render existing comments
-  if (Array.isArray(post.comments) && post.comments.length > 0) {
-    post.comments.forEach((comment, index) => {
-      console.log(`Comment ${index}:`, comment); // Debug each comment
+    // Show first 3 comments
+    const visibleComments = comments.slice(0, maxVisible);
+    const hiddenComments = comments.slice(maxVisible);
+
+    // Add visible comments
+    visibleComments.forEach(comment => {
       const commentElement = this.createCommentElement(comment);
       if (commentElement) {
         commentsList.appendChild(commentElement);
       }
     });
-  }
 
-  // Add comment form
-  this.addCommentForm(commentsSection, post.id, postElement);
-}
+    // Add "Read more" button if there are hidden comments
+    if (hiddenComments.length > 0) {
+      const readMoreBtn = document.createElement('button');
+      readMoreBtn.className = 'btn btn-outline-secondary btn-sm mt-2 expand-discussion-btn';
+      readMoreBtn.textContent = `Read ${hiddenComments.length} more comment${hiddenComments.length > 1 ? 's' : ''}`;
 
-
-addCommentForm(commentsSection, postId, postElement) {
-  const template = document.getElementById('comments-forms-template');
-  if (!template) {
-    console.error('Comment form template not found');
-    return;
-  }
-
-  const clone = document.importNode(template.content, true);
-  
-  // Append the clone first
-  commentsSection.appendChild(clone);
-  
-  // Now query for the elements from the actual DOM after they've been appended
-  const submitBtn = commentsSection.querySelector('.submit-comment');
-  const commentInput = commentsSection.querySelector('.comment-input');
-
-  // Add null checks and event listeners
-  if (submitBtn && commentInput) {
-    submitBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      this.handlePostComment(postId, commentInput, postElement);
-    });
-
-    commentInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
+      readMoreBtn.addEventListener('click', (e) => {
         e.preventDefault();
+        e.stopPropagation();
+        
+        // Add the hidden comments
+        hiddenComments.forEach(comment => {
+          const commentElement = this.createCommentElement(comment);
+          if (commentElement) {
+            commentsList.appendChild(commentElement);
+          }
+        });
+        
+        // Remove the "Read more" button
+        readMoreBtn.remove();
+      });
+
+      commentsList.appendChild(readMoreBtn);
+    }
+
+    // Add comment form
+    this.addCommentForm(commentsSection, post.id, postElement);
+  }
+
+  addCommentForm(commentsSection, postId, postElement) {
+    const template = document.getElementById('reply-form-template');
+    if (!template) {
+      console.error('Comment form template not found');
+      return;
+    }
+
+    const clone = document.importNode(template.content, true);
+    
+    // Append the clone first
+    commentsSection.appendChild(clone);
+    
+    // Now query for the elements from the actual DOM after they've been appended
+    const submitBtn = commentsSection.querySelector('.publish-reply');
+    const commentInput = commentsSection.querySelector('.reply-textarea');
+
+    // Add null checks and event listeners
+    if (submitBtn && commentInput) {
+      submitBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         this.handlePostComment(postId, commentInput, postElement);
-      }
-    });
+      });
 
-    // Focus the textarea when form is added
-    setTimeout(() => {
-      commentInput.focus();
-    }, 100);
-  } else {
-    console.error('Comment form elements not found:', { submitBtn, commentInput });
-  }
-}
+      commentInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          this.handlePostComment(postId, commentInput, postElement);
+        }
+      });
 
-
-
-
-createCommentElement(comment) {
-  console.log('=== Creating comment element ===');
-  console.log('Comment object:', comment);
-  
-  const template = document.getElementById('comments-items-template');
-  if (!template) {
-    console.error('Comment item template not found');
-    return null;
+      // Focus the textarea when form is added
+      setTimeout(() => {
+        commentInput.focus();
+      }, 100);
+    } else {
+      console.error('Comment form elements not found:', { submitBtn, commentInput });
+    }
   }
 
-  const clone = document.importNode(template.content, true);
-  
-  // First, let's see all elements in the clone
-  console.log('All elements in clone:');
-  const allElements = clone.querySelectorAll('*');
-  allElements.forEach((el, index) => {
-    console.log(`Element ${index}:`, el.tagName, el.className);
-  });
-
-  // Specifically look for the comment text element
-  const commentText = clone.querySelector('.comment-text');
-  console.log('Comment text element found:', !!commentText);
-  
-  if (commentText) {
-    const content = comment.content || '';
-    console.log('Setting content:', content);
+  createCommentElement(comment) {
+    console.log('=== Creating comment element ===');
+    console.log('Comment object:', comment);
     
-    // Clear any existing content first
-    commentText.innerHTML = '';
-    commentText.textContent = content;
-    
-    // Verify it was set
-    console.log('After setting - textContent:', commentText.textContent);
-    console.log('After setting - innerHTML:', commentText.innerHTML);
-    
-    // Make sure it's visible
-    commentText.style.display = 'block';
-    commentText.style.color = 'black';
-    commentText.style.fontSize = '14px';
-  } else {
-    console.error('Could not find .comment-text element');
-    
-    // Let's try to find it by tag name
-    const pTags = clone.querySelectorAll('p');
-    console.log('Found p tags:', pTags.length);
-    pTags.forEach((p, index) => {
-      console.log(`P tag ${index}:`, p.className, p.textContent);
-    });
-  }
+    const template = document.getElementById('reply-item-template');
+    if (!template) {
+      console.error('Comment item template not found');
+      return null;
+    }
 
-  // Set author
-  const commentAuthor = clone.querySelector('.comment-author');
-  if (commentAuthor) {
-    commentAuthor.textContent = comment.author || 'Anonymous';
-  }
+    const clone = document.importNode(template.content, true);
+    
+    // Set comment text - CRITICAL: Make sure this works
+    const commentText = clone.querySelector('.reply-message');
+    if (commentText) {
+      const content = comment.content || '';
+      console.log('Setting content:', content);
+      
+      // Clear any existing content and set new content
+      commentText.innerHTML = '';
+      commentText.textContent = content;
+      
+      // Force visibility
+      commentText.style.display = 'block';
+      commentText.style.visibility = 'visible';
+      
+      console.log('Content set successfully:', commentText.textContent);
+    } else {
+      console.error('Could not find .reply-message element');
+      return null;
+    }
 
-  // Set date  
-  const commentDate = clone.querySelector('.comment-date');
-  if (commentDate) {
-    commentDate.textContent = this.formatDate(comment.created_at);
-  }
+    // Set author
+    const commentAuthor = clone.querySelector('.reply-author');
+    if (commentAuthor) {
+      commentAuthor.textContent = comment.author || 'Anonymous';
+    }
 
-  return clone;
-}
+    // Set date  
+    const commentDate = clone.querySelector('.reply-timestamp');
+    if (commentDate) {
+      commentDate.textContent = this.formatDate(comment.created_at);
+    }
+
+    return clone;
+  }
 
   setupPostEventListeners(postElement, post) {
     // Toggle comments
-    const toggleCommentsBtn = postElement.querySelector('.toggle-comments');
-    const commentsSection = postElement.querySelector('.comments-section');
+    const toggleCommentsBtn = postElement.querySelector('.show-discussion');
+    const commentsSection = postElement.querySelector('.discussion-area');
 
     if (toggleCommentsBtn && commentsSection) {
       toggleCommentsBtn.addEventListener('click', () => {
@@ -315,60 +326,86 @@ createCommentElement(comment) {
     }
   }
 
-async handlePostComment(postId, commentInput, postElement) {
-  const content = commentInput.value.trim();
-  if (!content) return;
-
-  try {
-    const response = await fetch('/api/comments/create', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ post_id: postId, content })
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to post comment');
-    }
-
-    const result = await response.json();
-
-    if (result.success) {
-      const newComment = {
-        id: result.comment_id,
-        content: content,  // Make sure this matches what createCommentElement expects
-        author: window.appState?.user?.username || 'Current User',
-        created_at: new Date().toISOString()
-      };
-
-      console.log('New comment object:', newComment); // Debug log
-
-      const commentsList = postElement.querySelector('.comments-list');
-      if (commentsList) {
-        const commentElement = this.createCommentElement(newComment);
-        if (commentElement) {
-          commentsList.appendChild(commentElement);
-        }
-      }
-
-      const commentCountElement = postElement.querySelector('.comment-count .count');
-      if (commentCountElement) {
-        const currentCount = parseInt(commentCountElement.textContent) || 0;
-        commentCountElement.textContent = currentCount + 1;
-      }
-
-      commentInput.value = '';
-    }
-
-  } catch (error) {
-    console.error('Error posting comment:', error);
-    alert('Failed to post comment. Please try again.');
+  // Add this helper method to find the actual DOM element
+  findPostElementInDOM(postId) {
+    return document.querySelector(`.forum-post-card[data-post-id="${postId}"]`);
   }
-}
 
+  async handlePostComment(postId, commentInput, postElement) {
+    const content = commentInput.value.trim();
+    if (!content) return;
+
+    console.log('=== POSTING COMMENT ===');
+    console.log('Post ID:', postId);
+    console.log('Content:', content);
+
+    try {
+      const response = await fetch('/api/comments/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ post_id: postId, content })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to post comment');
+      }
+
+      const result = await response.json();
+      console.log('API Result:', result);
+
+      if (result.success) {
+        const newComment = {
+          id: result.comment_id,
+          content: content,
+          author: window.appState?.user?.username || 'Current User',
+          created_at: new Date().toISOString()
+        };
+
+        console.log('New comment object:', newComment);
+
+        // FIXED: Find the actual DOM element, not the document fragment
+        const actualPostElement = this.findPostElementInDOM(postId);
+        
+        if (actualPostElement) {
+          const commentsList = actualPostElement.querySelector('.discussion-thread');
+          console.log('Comments list found:', !!commentsList);
+          
+          if (commentsList) {
+            console.log('Current comments in list:', commentsList.children.length);
+            
+            const commentElement = this.createCommentElement(newComment);
+            console.log('Comment element created:', !!commentElement);
+            
+            if (commentElement) {
+              commentsList.appendChild(commentElement);
+              console.log('Comment appended. New count:', commentsList.children.length);
+            }
+          }
+
+          // Update comment count
+          const commentCountElement = actualPostElement.querySelector('.discussion-count .total');
+          if (commentCountElement) {
+            const currentCount = parseInt(commentCountElement.textContent) || 0;
+            commentCountElement.textContent = currentCount + 1;
+            console.log('Comment count updated to:', currentCount + 1);
+          }
+        } else {
+          console.error('Could not find actual post element in DOM for post ID:', postId);
+        }
+
+        commentInput.value = '';
+        console.log('=== COMMENT POSTING COMPLETE ===');
+      }
+
+    } catch (error) {
+      console.error('Error posting comment:', error);
+      alert('Failed to post comment. Please try again.');
+    }
+  }
 
   setupLoadMoreButton() {
-    const loadMoreBtn = document.getElementById('load-more-btn');
+    const loadMoreBtn = document.getElementById('expand-feed-btn');
     if (loadMoreBtn) {
       const newBtn = loadMoreBtn.cloneNode(true);
       loadMoreBtn.parentNode.replaceChild(newBtn, loadMoreBtn);
@@ -394,7 +431,7 @@ async handlePostComment(postId, commentInput, postElement) {
   }
 
   updateLoadMoreVisibility() {
-    const loadMoreSection = document.getElementById('load-more-section');
+    const loadMoreSection = document.getElementById('pagination-controls');
     if (loadMoreSection) {
       if (this.hasMorePosts && this.posts.length > 0) {
         loadMoreSection.classList.remove('d-none');
@@ -405,15 +442,15 @@ async handlePostComment(postId, commentInput, postElement) {
   }
 
   showLoading(show) {
-    const loadingElement = document.getElementById('feed-loading');
+    const loadingElement = document.getElementById('initial-loading');
     if (loadingElement) {
       loadingElement.style.display = show ? 'block' : 'none';
     }
   }
 
   showLoadMoreLoading(show) {
-    const loadMoreLoading = document.getElementById('load-more-loading');
-    const loadMoreBtn = document.getElementById('load-more-btn');
+    const loadMoreLoading = document.getElementById('pagination-loading');
+    const loadMoreBtn = document.getElementById('expand-feed-btn');
 
     if (loadMoreLoading && loadMoreBtn) {
       loadMoreLoading.classList.toggle('d-none', !show);
@@ -422,8 +459,8 @@ async handlePostComment(postId, commentInput, postElement) {
   }
 
   showEndOfPosts() {
-    const endElement = document.getElementById('end-of-posts');
-    const loadMoreSection = document.getElementById('load-more-section');
+    const endElement = document.getElementById('feed-end-message');
+    const loadMoreSection = document.getElementById('pagination-controls');
 
     if (endElement) {
       endElement.classList.remove('d-none');
@@ -434,7 +471,7 @@ async handlePostComment(postId, commentInput, postElement) {
   }
 
   showError(message) {
-    const container = document.getElementById('posts-container');
+    const container = document.getElementById('forum-posts-wrapper');
     if (container) {
       this.clearContainer(container);
 

@@ -29,10 +29,19 @@ function initializeApp() {
 
 function setupEventListeners() {
   document.body.addEventListener('click', e => {
-    if (e.target.matches('.nav-link')) {
+    // Use closest() to find the nav-link element with data-page
+    const navLink = e.target.closest('.nav-link[data-page]');
+    
+    if (navLink) {
       e.preventDefault();
-      const page = e.target.dataset.page;
-      window.navigateTo ? window.navigateTo(page) : window.location.hash = `#/${page}`;
+      const page = navLink.dataset.page;
+      
+      // Add safety check
+      if (page) {
+        window.navigateTo ? window.navigateTo(page) : window.location.hash = `#/${page}`;
+      } else {
+        console.error('Nav link found but no data-page attribute:', navLink);
+      }
     }
   });
 }

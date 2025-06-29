@@ -898,19 +898,19 @@
     <!-- when user login, then feed should be there -->
 
   <!-- Feed Template -->
-<template id="feed-template">
-  <div class="container-fluid feed-container">
+<template id="forum-feed-template">
+  <div class="container-fluid forum-feed-wrapper">
     <div class="row justify-content-center">
       <div class="col-lg-8 col-md-10 col-12">
-        <div class="feed-header">
-          <h2 class="feed-title">Forum Feed</h2>
-          <p class="feed-subtitle">Stay updated with the latest posts and discussions</p>
+        <div class="feed-banner">
+          <h2 class="forum-feed-title">Forum Feed</h2>
+          <p class="forum-feed-description">Stay updated with the latest posts and discussions</p>
         </div>
         
         <!-- Posts Container -->
-        <div id="posts-container" class="posts-container">
+        <div id="forum-posts-wrapper" class="forum-posts-wrapper">
           <!-- Loading spinner -->
-          <div id="feed-loading" class="text-center loading-spinner">
+          <div id="initial-loading" class="text-center content-loading-spinner">
             <div class="spinner-border text-primary" role="status">
               <span class="visually-hidden">Loading...</span>
             </div>
@@ -919,11 +919,11 @@
         </div>
         
         <!-- Load More Section -->
-        <div id="load-more-section" class="load-more-section text-center d-none">
-          <button id="load-more-btn" class="btn btn-primary btn-lg">
+        <div id="pagination-controls" class="pagination-controls text-center d-none">
+          <button id="expand-feed-btn" class="btn btn-primary btn-lg">
             <i class="fas fa-plus-circle me-2"></i>Load More Posts
           </button>
-          <div id="load-more-loading" class="d-none mt-3">
+          <div id="pagination-loading" class="d-none mt-3">
             <div class="spinner-border spinner-border-sm" role="status">
               <span class="visually-hidden">Loading...</span>
             </div>
@@ -932,7 +932,7 @@
         </div>
         
         <!-- End of Posts Message -->
-        <div id="end-of-posts" class="text-center mt-4 d-none">
+        <div id="feed-end-message" class="text-center mt-4 d-none">
           <p class="text-muted">You've reached the end of the feed</p>
         </div>
       </div>
@@ -941,55 +941,55 @@
 </template>
 
 <!-- Post Item Template -->
-<template id="post-item-template">
-  <article class="post-card card mb-4">
+<template id="forum-post-template">
+  <article class="forum-post-card card mb-4" data-post-id="">
     <div class="card-body">
       <!-- Post Header -->
-      <div class="post-header mb-3">
-        <div class="author-info d-flex align-items-center">
-          <div class="avatar-placeholder">
+      <div class="post-meta mb-3">
+        <div class="creator-info d-flex align-items-center">
+          <div class="user-avatar-placeholder">
             <i class="fas fa-user-circle fa-2x text-primary"></i>
           </div>
           <div class="ms-3">
-            <h6 class="author-name mb-0"></h6>
-            <small class="post-date text-muted"></small>
+            <h6 class="post-creator-name mb-0"></h6>
+            <small class="post-timestamp text-muted"></small>
           </div>
         </div>
       </div>
       
       <!-- Post Content -->
-      <div class="post-content">
-        <h5 class="post-title mb-3"></h5>
-        <div class="post-body mb-3"></div>
-        <div class="post-topics d-flex flex-wrap gap-1 mb-3"></div>
+      <div class="post-main-content">
+        <h5 class="post-heading mb-3"></h5>
+        <div class="post-description mb-3"></div>
+        <div class="post-categories d-flex flex-wrap gap-1 mb-3"></div>
       </div>
       
       <!-- Post Stats -->
-      <div class="post-stats d-flex justify-content-between align-items-center mb-3">
-        <div class="stats-left d-flex gap-3">
-          <span class="comment-count">
+      <div class="post-metrics d-flex justify-content-between align-items-center mb-3">
+        <div class="metrics-left d-flex gap-3">
+          <span class="discussion-count">
             <i class="fas fa-comments text-primary"></i>
-            <span class="count">0</span> comments
+            <span class="total">0</span> comments
           </span>
         </div>
       </div>
       
       <!-- Post Actions -->
-      <div class="post-actions-bar d-flex gap-2 mb-3">
-        <button class="btn btn-outline-primary btn-sm toggle-comments">
+      <div class="post-interaction-bar d-flex gap-2 mb-3">
+        <button class="btn btn-outline-primary btn-sm show-discussion">
           <i class="fas fa-comments me-1"></i>Comments
         </button>
       </div>
       
       <!-- Comments Section - Simplified -->
-      <div class="comments-section d-none">
+      <div class="discussion-area d-none">
         <!-- Comments List Only -->
-        <div class="comments-list">
+        <div class="discussion-thread">
           <!-- Comments will be inserted here -->
         </div>
         
         <!-- Load More Comments -->
-        <div class="load-more-comments text-center d-none">
+        <div class="expand-discussion-section text-center d-none">
           <button class="btn btn-outline-primary btn-sm">Load More Comments</button>
         </div>
       </div>
@@ -998,39 +998,37 @@
 </template>
 
 <!-- Comment Item Template - Simplified -->
-<template id="comments-items-template">
-  <div class="comment-item mb-2">
-    <div class="comment-content">
-      <div class="comment-bubble p-2 bg-light rounded">
-        <div class="comment-header d-flex justify-content-between align-items-start mb-1">
-          <strong class="comment-author">Author Name</strong>
-          <small class="comment-date text-muted">Date</small>
+<template id="reply-item-template">
+  <div class="reply-wrapper mb-2">
+    <div class="reply-content">
+      <div class="reply-bubble p-2 bg-light rounded">
+        <div class="reply-meta d-flex justify-content-between align-items-start mb-1">
+          <strong class="reply-author">Author Name</strong>
+          <small class="reply-timestamp text-muted">Date</small>
         </div>
-        <p class="comment-text mb-0" id="comment-text-debug">Comment content goes here</p>
+        <p class="reply-message mb-0" id="reply-message-debug">Comment content goes here</p>
       </div>
     </div>
   </div>
 </template>
 
-
-
 <!-- Comment Form Template -->
-<template id="comments-forms-template">
-  <div class="add-comment-form mt-3">
+<template id="reply-form-template">
+  <div class="new-reply-form mt-3">
     <div class="input-group">
-      <textarea class="form-control comment-input" placeholder="Write a comment..." rows="2"></textarea>
-      <button class="btn btn-primary submit-comment" type="button">
+      <textarea class="form-control reply-textarea" placeholder="Write a comment..." rows="2"></textarea>
+      <button class="btn btn-primary publish-reply" type="button">
         <i class="fas fa-paper-plane me-2"></i>Post
       </button>
     </div>
   </div>
 </template>
 
-
 <!-- Topic Badge Template -->
-<template id="topic-badge-template">
-  <span class="badge bg-primary topic-badge"></span>
+<template id="category-label-template">
+  <span class="badge bg-primary category-tag"></span>
 </template>
+
 
   <!-- feed Template -->
 

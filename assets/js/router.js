@@ -8,7 +8,7 @@ const routes = {
   'my-account': { template: 'account-page-template', authRequired: true, script: '/assets/js/account.js', init: initializeAccountPage },
   'signin': { template: 'signin-template', authRequired: false, script: '/assets/js/signinpage.js', init: initializeSignInPage },
   'register': { template: 'register-template', authRequired: false, script: '/assets/js/registerfront.js', init: initializeRegisterPage },
-  'feed': { template: 'feed-template', authRequired: true, init: initializeFeedPage },
+  'feed': { template: 'forum-feed-template', authRequired: true, init: initializeFeedPage },
   'create-post': { template: 'template-create-post', authRequired: true, script: '/assets/js/createpost.js', init: initializeCreatePostPage }
 };
 
@@ -122,7 +122,16 @@ function loadPage(page, routeConfig = routes[page]) {
 }
 
 function navigateTo(page) {
-  if (!routes[page] && !page.startsWith('topic/')) return showErrorPage(404, `The page "${page}" does not exist.`);
+  // Add null/undefined check
+  if (!page || typeof page !== 'string') {
+    console.error('navigateTo called with invalid page:', page);
+    return showErrorPage(404, 'Invalid page specified.');
+  }
+  
+  if (!routes[page] && !page.startsWith('topic/')) {
+    return showErrorPage(404, `The page "${page}" does not exist.`);
+  }
+  
   window.location.hash = `/${page}`;
 }
 

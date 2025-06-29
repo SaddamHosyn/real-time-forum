@@ -2859,14 +2859,15 @@ h2 {
 /* Feed Page Styles */
 
 /* Feed Styles *//* Feed Styles */
-.feed-container {
+
+.forum-feed-wrapper {
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   min-height: 100vh;
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
 
-.feed-header {
+.feed-banner {
   text-align: center;
   margin-bottom: 2rem;
   padding: 2rem;
@@ -2875,19 +2876,19 @@ h2 {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-.feed-title {
+.forum-feed-title {
   color: #2c3e50;
   font-weight: 700;
   margin-bottom: 0.5rem;
 }
 
-.feed-subtitle {
+.forum-feed-description {
   color: #7f8c8d;
   margin-bottom: 0;
 }
 
 /* Post Card Styles */
-.post-card {
+.forum-post-card {
   border: none;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
@@ -2895,45 +2896,45 @@ h2 {
   background: white;
 }
 
-.post-card:hover {
+.forum-post-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
 }
 
-.post-header {
+.post-meta {
   border-bottom: 1px solid #ecf0f1;
   padding-bottom: 1rem;
 }
 
-.avatar-placeholder i {
+.user-avatar-placeholder i {
   font-size: 2rem;
   color: #3498db;
 }
 
-.author-name {
+.post-creator-name {
   font-weight: 600;
   color: #2c3e50;
   margin-bottom: 0;
 }
 
-.post-date {
+.post-timestamp {
   color: #7f8c8d;
   font-size: 0.85rem;
 }
 
-.post-title {
+.post-heading {
   color: #2c3e50;
   font-weight: 600;
   line-height: 1.4;
 }
 
-.post-body {
+.post-description {
   color: #34495e;
   line-height: 1.6;
   font-size: 0.95rem;
 }
 
-.topic-badge {
+.category-tag {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   font-size: 0.75rem;
@@ -2943,35 +2944,35 @@ h2 {
 }
 
 /* Post Stats */
-.post-stats {
+.post-metrics {
   border-top: 1px solid #ecf0f1;
   border-bottom: 1px solid #ecf0f1;
   padding: 0.75rem 0;
   font-size: 0.9rem;
 }
 
-.post-stats i {
+.post-metrics i {
   margin-right: 0.5rem;
 }
 
 /* Post Actions */
-.post-actions-bar {
+.post-interaction-bar {
   padding-top: 0.75rem;
 }
 
-.post-actions-bar .btn {
+.post-interaction-bar .btn {
   border-radius: 25px;
   padding: 0.5rem 1rem;
   font-weight: 500;
   transition: all 0.3s ease;
 }
 
-.post-actions-bar .btn:hover {
+.post-interaction-bar .btn:hover {
   transform: translateY(-1px);
 }
 
 /* Comments Section - Simplified */
-.comments-section {
+.discussion-area {
   background: #f8f9fa;
   border-radius: 8px;
   padding: 1rem;
@@ -2980,41 +2981,41 @@ h2 {
 }
 
 /* Comment Items - Simplified */
-.comment-item {
+.reply-wrapper {
   margin-bottom: 0.75rem;
 }
 
-.comment-item:last-child {
+.reply-wrapper:last-child {
   margin-bottom: 0;
 }
 
-.comment-content {
+.reply-content {
   width: 100%;
 }
 
-.comment-bubble {
+.reply-bubble {
   border-radius: 8px;
   background: white !important;
   border: 1px solid #dee2e6;
   padding: 0.75rem !important;
 }
 
-.comment-header {
+.reply-meta {
   margin-bottom: 0.5rem !important;
 }
 
-.comment-author {
+.reply-author {
   color: #2c3e50;
   font-size: 0.85rem;
   font-weight: 600;
 }
 
-.comment-date {
+.reply-timestamp {
   font-size: 0.75rem;
   color: #6c757d;
 }
 
-.comment-text {
+.reply-message {
   color: #495057 !important;
   font-size: 0.9rem !important;
   line-height: 1.4 !important;
@@ -3027,22 +3028,20 @@ h2 {
 }
 
 /* Ensure comment bubble content is visible */
-.comment-bubble p {
+.reply-bubble p {
   margin-bottom: 0 !important;
   color: #495057 !important;
 }
 
 /* Debug styles to see if elements exist */
-.comment-text:empty::before {
+.reply-message:empty::before {
   content: "[EMPTY COMMENT]";
   color: red !important;
   font-style: italic !important;
 }
 
-
-
 /* Comment Form Styles */
-.add-comment-form {
+.new-reply-form {
   margin-top: 1rem;
   padding: 1rem;
   background: white;
@@ -3050,12 +3049,12 @@ h2 {
   border: 1px solid #dee2e6;
 }
 
-.add-comment-form .input-group {
+.new-reply-form .input-group {
   display: flex;
   align-items: stretch;
 }
 
-.add-comment-form .comment-input {
+.new-reply-form .reply-textarea {
   flex: 1;
   resize: vertical;
   min-height: 50px;
@@ -3066,13 +3065,13 @@ h2 {
   line-height: 1.4;
 }
 
-.add-comment-form .comment-input:focus {
+.new-reply-form .reply-textarea:focus {
   outline: none;
   border-color: #80bdff;
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
-.add-comment-form .submit-comment {
+.new-reply-form .publish-reply {
   padding: 0.75rem 1rem;
   background: #007bff;
   color: white;
@@ -3085,41 +3084,30 @@ h2 {
   transition: all 0.2s ease;
 }
 
-.add-comment-form .submit-comment:hover {
+.new-reply-form .publish-reply:hover {
   background: #0056b3;
   border-color: #0056b3;
 }
 
-.add-comment-form .submit-comment:focus {
+.new-reply-form .publish-reply:focus {
   outline: none;
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
-.add-comment-form .submit-comment i {
+.new-reply-form .publish-reply i {
   margin-right: 0.5rem;
 }
 
-
-
-
-
-
-
-
-
-
-
-
 /* Load More Section */
-.load-more-section {
+.pagination-controls {
   margin: 2rem 0;
 }
 
-.load-more-comments {
+.expand-discussion-section {
   margin-top: 1rem;
 }
 
-#load-more-btn {
+#expand-feed-btn {
   border-radius: 25px;
   padding: 0.75rem 2rem;
   font-weight: 600;
@@ -3129,65 +3117,59 @@ h2 {
   transition: all 0.3s ease;
 }
 
-#load-more-btn:hover {
+#expand-feed-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
 }
 
 /* Loading States */
-.loading-spinner {
+.content-loading-spinner {
   padding: 3rem;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .feed-container {
+  .forum-feed-wrapper {
     padding-top: 1rem;
   }
   
-  .feed-header {
+  .feed-banner {
     padding: 1.5rem;
     margin-bottom: 1rem;
   }
   
-  .post-card {
+  .forum-post-card {
     margin-bottom: 1rem;
   }
   
-  .post-header {
+  .post-meta {
     flex-direction: column;
     align-items: flex-start;
   }
 }
 
 @media (max-width: 576px) {
-  .post-actions-bar {
+  .post-interaction-bar {
     flex-direction: column;
     gap: 0.5rem;
   }
   
-  .post-actions-bar .btn {
+  .post-interaction-bar .btn {
     width: 100%;
   }
   
-  .comment-bubble {
+  .reply-bubble {
     padding: 0.5rem !important;
   }
   
-  .comment-author {
+  .reply-author {
     font-size: 0.8rem;
   }
   
-  .comment-text {
+  .reply-message {
     font-size: 0.85rem;
   }
 }
-
-
-
-
-
-
 
 
 /* Feed Page Styles */
