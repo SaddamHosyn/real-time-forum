@@ -1401,11 +1401,8 @@ h2 {
 /* ===== Chat Base Styles ===== */
 /* ===== Chat Base Styles ===== */
 
-/* Chatbox Layout Styles */  
 
-/* Add these chat styles to your existing CSS */
 
-/* Chat Container */
 #chatbox-container {
     position: fixed;
     right: 20px;
@@ -1885,6 +1882,79 @@ h2 {
 #send-button:disabled:hover {
     background-color: #6c757d;
 }
+
+
+
+
+/* Notification styles */
+.chat-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #007bff;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 10001;
+    max-width: 300px;
+    cursor: pointer;
+    animation: slideInRight 0.3s ease-out;
+}
+
+.chat-notification:hover {
+    background: #0056b3;
+}
+
+.chat-notification .notification-header {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.chat-notification .notification-body {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Unread message indicator */
+.user.has-unread {
+    background-color: #e3f2fd;
+    border-left: 4px solid #007bff;
+}
+
+.user.has-unread .username {
+    font-weight: 700;
+    color: #007bff;
+}
+
+.notification-badge {
+    background: #dc3545;
+    color: white;
+    border-radius: 10px;
+    padding: 2px 6px;
+    font-size: 10px;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+
+
+
+
+
+
+
 
 
 

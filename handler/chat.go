@@ -81,6 +81,9 @@ func init() {
     }()
 }
 
+
+
+
 func WebSocketHandler(w http.ResponseWriter, r *http.Request) {
     log.Printf("🔵 WebSocket connection attempt")
     
@@ -121,6 +124,9 @@ func WebSocketHandler(w http.ResponseWriter, r *http.Request) {
 
     log.Printf("✅ WebSocket: Client created - ID: %s, Username: %s", client.ID, client.Username)
     
+    // ✅ FIXED: Update status immediately before registering
+    websocket.UpdateUserOnlineStatus(userID, true)
+    
     client.Hub.Register <- client
     log.Printf("✅ WebSocket: Client registration sent to hub")
 
@@ -129,6 +135,16 @@ func WebSocketHandler(w http.ResponseWriter, r *http.Request) {
     
     log.Printf("✅ WebSocket: Read/Write pumps started for %s", username)
 }
+
+
+
+
+
+
+
+
+
+
 
 func GetPublicUsersHandler(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "application/json")

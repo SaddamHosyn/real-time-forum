@@ -115,30 +115,39 @@ func saveChatMessage(senderID, receiverID, message string) (*model.ChatMessage, 
 	return chatMessage, nil
 }
 
-func updateUserOnlineStatus(userID string, isOnline bool) {
+func UpdateUserOnlineStatus(userID string, isOnline bool) {
 	log.Printf("🔎 ATTEMPTING to update status for user %s to online=%t", userID, isOnline)
 
-	query := `
-        INSERT OR REPLACE INTO user_online (user_id, is_online, last_activity)
-        VALUES (?, ?, ?)
-    `
-	result, err := database.DB.Exec(query, userID, isOnline, time.Now())
-	if err != nil {
-		// Suppress logging for 'database is locked' error
-		if strings.Contains(err.Error(), "database is locked") {
-			return // Exit silently without logging
+	// ✅ FIXED: Add retry mechanism for database locks
+	maxRetries := 3
+	for attempt := 0; attempt < maxRetries; attempt++ {
+		query := `
+			INSERT OR REPLACE INTO user_online (user_id, is_online, last_activity)
+			VALUES (?, ?, ?)
+		`
+		result, err := database.DB.Exec(query, userID, isOnline, time.Now())
+		if err != nil {
+			if strings.Contains(err.Error(), "database is locked") && attempt < maxRetries-1 {
+				log.Printf("⏳ Database locked, retrying attempt %d for user %s", attempt+1, userID)
+				time.Sleep(time.Duration(50*(attempt+1)) * time.Millisecond) // Exponential backoff
+				continue
+			}
+			log.Printf("❌ ERROR updating online status: %v", err)
+			return
 		}
-		log.Printf("❌ ERROR updating online status: %v", err)
-		return
-	}
 
-	rowsAffected, _ := result.RowsAffected()
-	log.Printf("✅ Online status UPDATED for user %s: online=%t, rows=%d",
-		userID, isOnline, rowsAffected)
+		rowsAffected, _ := result.RowsAffected()
+		log.Printf("✅ Online status UPDATED for user %s: online=%t, rows=%d",
+			userID, isOnline, rowsAffected)
+
+		// ✅ FIXED: Force immediate status broadcast to all connected clients
+		broadcastUserStatusChange(userID, isOnline)
+		break
+	}
 
 	// Verify the update immediately
 	var currentStatus bool
-	err = database.DB.QueryRow("SELECT is_online FROM user_online WHERE user_id = ?",
+	err := database.DB.QueryRow("SELECT is_online FROM user_online WHERE user_id = ?",
 		userID).Scan(&currentStatus)
 	if err != nil {
 		log.Printf("❌ ERROR verifying status: %v", err)
@@ -146,6 +155,52 @@ func updateUserOnlineStatus(userID string, isOnline bool) {
 		log.Printf("✅ VERIFIED database status: User %s is online=%t", userID, currentStatus)
 	}
 }
+
+// ✅ NEW: Add this function to broadcast status changes immediately
+func broadcastUserStatusChange(userID string, isOnline bool) {
+	statusMessage := model.WebSocketMessage{
+		Type: "user_status",
+		Data: map[string]interface{}{
+			"user_id":   userID,
+			"is_online": isOnline,
+		},
+	}
+
+	statusData, _ := json.Marshal(statusMessage)
+	
+	// Broadcast to all connected clients
+	ChatHub.mutex.RLock()
+	for _, client := range ChatHub.Clients {
+		if client.ID != userID { // Don't send to the user themselves
+			select {
+			case client.Send <- statusData:
+				log.Printf("📡 Status update sent to user %s", client.ID)
+			default:
+				log.Printf("⚠️ Failed to send status update to user %s", client.ID)
+			}
+		}
+	}
+	ChatHub.mutex.RUnlock()
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 func updateLastMessage(user1ID, user2ID string, messageID int) {
 	// Ensure consistent ordering

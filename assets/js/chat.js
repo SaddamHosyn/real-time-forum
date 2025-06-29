@@ -2,27 +2,30 @@
 console.log('📦 Chat.js loading...');
 
 class ChatManager {
-    constructor() {
-        console.log('🎯 ChatManager constructor called');
-        this.ws = null;
-        this.currentChatUser = null;
-        this.messageHistory = new Map();
-        this.typingTimer = null;
-        this.isTyping = false;
-        this.messagesContainer = null;
-        this.userListContainer = null;
-        this.messageInput = null;
-        this.sendButton = null;
-        this.loginPrompt = null;
-        this.currentPage = 1;
-        this.hasMoreMessages = true;
-        this.isLoadingMessages = false;
-        this.connectionAttempts = 0;
-        this.maxConnectionAttempts = 5;
-        
-        console.log('🔧 Calling initializeChat...');
-        this.initializeChat();
-    }
+constructor() {
+    console.log('🎯 ChatManager constructor called');
+    this.ws = null;
+    this.currentChatUser = null;
+    this.messageHistory = new Map();
+    this.typingTimer = null;
+    this.isTyping = false;
+    this.messagesContainer = null;
+    this.userListContainer = null;
+    this.messageInput = null;
+    this.sendButton = null;
+    this.loginPrompt = null;
+    this.currentPage = 1;
+    this.hasMoreMessages = true;
+    this.isLoadingMessages = false;
+    this.connectionAttempts = 0;
+    this.maxConnectionAttempts = 5;
+    
+    // Request notification permission
+    this.requestNotificationPermission();
+    
+    console.log('🔧 Calling initializeChat...');
+    this.initializeChat();
+}
 
     initializeChat() {
         console.log('🚀 initializeChat called');
@@ -107,90 +110,81 @@ class ChatManager {
     }
 
     // ✅ UPDATED: Enhanced WebSocket connection with multiple refresh strategy
-    connectWebSocket() {
-        if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-            console.log('🔌 WebSocket already connected');
-            return;
-        }
-        
-        if (this.connectionAttempts >= this.maxConnectionAttempts) {
-            console.error('❌ Max WebSocket connection attempts reached');
-            this.showConnectionError();
-            return;
-        }
-        
-        this.connectionAttempts++;
-        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const wsUrl = `${protocol}//${window.location.host}/ws`;
-        
-        console.log(`🔌 Connecting to WebSocket (attempt ${this.connectionAttempts}):`, wsUrl);
-        console.log('🔍 Current user for WebSocket:', window.appState?.user);
-        
-        try {
-            this.ws = new WebSocket(wsUrl);
-            
-            // ✅ ENHANCED: Updated onopen handler with multiple refresh strategy
-            this.ws.onopen = () => {
-                console.log('✅ WebSocket connected successfully');
-                console.log('👤 User should now be marked online:', window.appState?.user?.username);
-                this.connectionAttempts = 0; // Reset on successful connection
-                
-                // ✅ ENHANCED: Multiple refresh strategy for better sync
-                setTimeout(() => {
-                    if (window.appState?.isAuthenticated) {
-                        console.log('🔄 First refresh after WebSocket connection');
-                        this.loadChatUsers();
-                    }
-                }, 500);
-                
-                // ✅ NEW: Second refresh to catch any missed status updates
-                setTimeout(() => {
-                    if (window.appState?.isAuthenticated) {
-                        console.log('🔄 Second refresh to ensure all online statuses are synced');
-                        this.loadChatUsers();
-                    }
-                }, 1500);
-            };
-            
-            this.ws.onmessage = (event) => {
-                try {
-                    const message = JSON.parse(event.data);
-                    console.log('📨 WebSocket message received:', message);
-                    this.handleWebSocketMessage(message);
-                } catch (error) {
-                    console.error('❌ Error parsing WebSocket message:', error);
-                }
-            };
-            
-            this.ws.onclose = (event) => {
-                console.log('❌ WebSocket disconnected:', event.code, event.reason);
-                console.log('👤 User should now be marked offline:', window.appState?.user?.username);
-                this.ws = null;
-                
-                // ✅ COMBINED FIX: Refresh user list when disconnected
-                if (window.appState?.isAuthenticated) {
-                    setTimeout(() => {
-                        this.loadChatUsers();
-                    }, 500);
-                }
-                
-                // Only reconnect if user is still authenticated and we haven't exceeded max attempts
-                if (window.appState?.isAuthenticated && this.connectionAttempts < this.maxConnectionAttempts) {
-                    console.log('🔄 Attempting to reconnect in 3 seconds...');
-                    setTimeout(() => this.connectWebSocket(), 3000);
-                }
-            };
-            
-            this.ws.onerror = (error) => {
-                console.error('❌ WebSocket error:', error);
-                this.showConnectionError();
-            };
-            
-        } catch (error) {
-            console.error('❌ Error creating WebSocket:', error);
-            this.showConnectionError();
-        }
+// ✅ UPDATED: Enhanced WebSocket connection with better status sync
+connectWebSocket() {
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+        console.log('🔌 WebSocket already connected');
+        return;
     }
+    
+    if (this.connectionAttempts >= this.maxConnectionAttempts) {
+        console.error('❌ Max WebSocket connection attempts reached');
+        this.showConnectionError();
+        return;
+    }
+    
+    this.connectionAttempts++;
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${protocol}//${window.location.host}/ws`;
+    
+    console.log(`🔌 Connecting to WebSocket (attempt ${this.connectionAttempts}):`, wsUrl);
+    console.log('🔍 Current user for WebSocket:', window.appState?.user);
+    
+    try {
+        this.ws = new WebSocket(wsUrl);
+        
+        // ✅ FIXED: Simplified onopen handler with single refresh strategy
+        this.ws.onopen = () => {
+            console.log('✅ WebSocket connected successfully');
+            console.log('👤 User should now be marked online:', window.appState?.user?.username);
+            this.connectionAttempts = 0; // Reset on successful connection
+            
+            // ✅ FIXED: Single refresh with longer delay to ensure status is updated
+            setTimeout(() => {
+                if (window.appState?.isAuthenticated) {
+                    console.log('🔄 Refreshing user list after WebSocket connection');
+                    this.loadChatUsers();
+                }
+            }, 1000); // Single 1-second delay
+        };
+        
+        this.ws.onmessage = (event) => {
+            try {
+                const message = JSON.parse(event.data);
+                console.log('📨 WebSocket message received:', message);
+                this.handleWebSocketMessage(message);
+            } catch (error) {
+                console.error('❌ Error parsing WebSocket message:', error);
+            }
+        };
+        
+        this.ws.onclose = (event) => {
+            console.log('❌ WebSocket disconnected:', event.code, event.reason);
+            console.log('👤 User should now be marked offline:', window.appState?.user?.username);
+            this.ws = null;
+            
+            // ✅ FIXED: Immediate refresh when disconnected
+            if (window.appState?.isAuthenticated) {
+                this.loadChatUsers();
+            }
+            
+            // Only reconnect if user is still authenticated and we haven't exceeded max attempts
+            if (window.appState?.isAuthenticated && this.connectionAttempts < this.maxConnectionAttempts) {
+                console.log('🔄 Attempting to reconnect in 3 seconds...');
+                setTimeout(() => this.connectWebSocket(), 3000);
+            }
+        };
+        
+        this.ws.onerror = (error) => {
+            console.error('❌ WebSocket error:', error);
+            this.showConnectionError();
+        };
+        
+    } catch (error) {
+        console.error('❌ Error creating WebSocket:', error);
+        this.showConnectionError();
+    }
+}
 
     showConnectionError() {
         this.showTemporaryMessage('Chat connection failed. Please refresh the page.');
@@ -290,6 +284,128 @@ class ChatManager {
         }, 3000);
     }
 
+// Request notification permission on initialization
+requestNotificationPermission() {
+    if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission().then(permission => {
+            console.log('🔔 Notification permission:', permission);
+        });
+    }
+}
+
+// Show browser notification
+showBrowserNotification(message) {
+    if ('Notification' in window && Notification.permission === 'granted') {
+        const notification = new Notification(`New message from ${message.sender_name}`, {
+            body: message.message.length > 50 ? message.message.substring(0, 50) + '...' : message.message,
+            tag: `chat-${message.sender_id}`, // Prevents duplicate notifications
+            requireInteraction: false
+        });
+
+        notification.onclick = () => {
+            window.focus();
+            this.openChat(message.sender_id);
+            notification.close();
+        };
+
+        // Auto close after 5 seconds
+        setTimeout(() => {
+            notification.close();
+        }, 5000);
+    }
+}
+
+// Show in-app notification
+showInAppNotification(message) {
+    // Remove any existing notifications
+    const existingNotification = document.querySelector('.chat-notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+
+    const notification = document.createElement('div');
+    notification.className = 'chat-notification';
+    
+    const header = document.createElement('div');
+    header.className = 'notification-header';
+    header.textContent = `New message from ${message.sender_name}`;
+    
+    const body = document.createElement('div');
+    body.className = 'notification-body';
+    body.textContent = message.message.length > 60 ? message.message.substring(0, 60) + '...' : message.message;
+    
+    notification.appendChild(header);
+    notification.appendChild(body);
+    
+    // Click to open chat
+    notification.addEventListener('click', () => {
+        this.openChat(message.sender_id);
+        notification.remove();
+    });
+    
+    document.body.appendChild(notification);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (document.body.contains(notification)) {
+            notification.remove();
+        }
+    }, 5000);
+}
+
+// Check if user should receive notification
+
+
+// Check if user should receive notification
+shouldShowNotification(message) {
+    // Don't show notification for own messages
+    if (message.sender_id === window.appState?.user?.id) {
+        return false;
+    }
+    
+    // Don't show if chat is currently open with this user
+    if (this.currentChatUser && this.currentChatUser.id === message.sender_id) {
+        return false;
+    }
+    
+    // Show notification if:
+    // 1. Page is hidden (user is on another tab/app), OR
+    // 2. Page is visible but user is not chatting with the message sender
+    return true;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Mark user as having unread messages
+markUserAsUnread(userId) {
+    const userElement = document.querySelector(`[data-user-id="${userId}"]`);
+    if (userElement && !userElement.classList.contains('has-unread')) {
+        userElement.classList.add('has-unread');
+        
+        // Add notification badge if not exists
+        const userDetails = userElement.querySelector('.user-details');
+        if (userDetails && !userDetails.querySelector('.notification-badge')) {
+            const badge = document.createElement('span');
+            badge.className = 'notification-badge';
+            badge.textContent = '!';
+            userDetails.appendChild(badge);
+        }
+    }
+}
+
     handleWebSocketMessage(message) {
         console.log('📨 Handling WebSocket message type:', message.type);
         
@@ -314,39 +430,47 @@ class ChatManager {
 
 }
 
-    handleNewMessage(messageData) {
-        console.log('💬 Handling new message:', messageData);
-        console.log('🔍 Current chat user:', this.currentChatUser);
-        console.log('🔍 Message sender:', messageData.sender_id);
-        console.log('🔍 Message receiver:', messageData.receiver_id);
-        console.log('🔍 Current user ID:', window.appState?.user?.id);
-        
-        // Update message history
-        const chatKey = this.getChatKey(messageData.sender_id, messageData.receiver_id);
-        if (!this.messageHistory.has(chatKey)) {
-            this.messageHistory.set(chatKey, []);
-        }
-        this.messageHistory.get(chatKey).push(messageData);
-
-        // If this message is for the current chat, display it
-        if (this.currentChatUser && 
-            (messageData.sender_id === this.currentChatUser.id || 
-             messageData.receiver_id === this.currentChatUser.id)) {
-            console.log('✅ Displaying message in current chat');
-            this.displayMessage(messageData);
-            this.scrollToBottom();
-        } else {
-            console.log('❌ Message not for current chat or no chat open');
-        }
-
-        // Update user list with new message
-        this.updateUserListItem(messageData.sender_id, messageData.message, messageData.created_at);
-        
-        // Show notification if not current chat
-        if (!this.currentChatUser || messageData.sender_id !== this.currentChatUser.id) {
-            this.showNotification(messageData);
-        }
+handleNewMessage(messageData) {
+    console.log('💬 Handling new message:', messageData);
+    console.log('🔍 Current chat user:', this.currentChatUser);
+    console.log('🔍 Message sender:', messageData.sender_id);
+    console.log('🔍 Message receiver:', messageData.receiver_id);
+    console.log('🔍 Current user ID:', window.appState?.user?.id);
+    
+    // Update message history
+    const chatKey = this.getChatKey(messageData.sender_id, messageData.receiver_id);
+    if (!this.messageHistory.has(chatKey)) {
+        this.messageHistory.set(chatKey, []);
     }
+    this.messageHistory.get(chatKey).push(messageData);
+
+    // If this message is for the current chat, display it
+    if (this.currentChatUser && 
+        (messageData.sender_id === this.currentChatUser.id || 
+         messageData.receiver_id === this.currentChatUser.id)) {
+        console.log('✅ Displaying message in current chat');
+        this.displayMessage(messageData);
+        this.scrollToBottom();
+    } else {
+        console.log('❌ Message not for current chat or no chat open');
+    }
+
+    // Update user list with new message
+    this.updateUserListItem(messageData.sender_id, messageData.message, messageData.created_at);
+    
+    // Show notification if conditions are met
+    if (this.shouldShowNotification(messageData)) {
+        console.log('🔔 Showing notification for message from:', messageData.sender_name);
+        this.showBrowserNotification(messageData);
+        this.showInAppNotification(messageData);
+        
+        // ✅ FIXED: Only mark user as unread when showing notifications
+        // This prevents unread badges when you're actively chatting with someone
+        this.markUserAsUnread(messageData.sender_id);
+    } else {
+        console.log('🔕 Not showing notification - user is in active chat or conditions not met');
+    }
+}
 
     handleTypingIndicator(data) {
         if (this.currentChatUser && data.user_id === this.currentChatUser.id) {
@@ -613,32 +737,39 @@ class ChatManager {
         }
     }
 
-    async openChat(userId) {
-        console.log('💬 Opening chat with user:', userId);
-        
-        const userElement = document.querySelector(`[data-user-id="${userId}"]`);
-        if (!userElement) {
-            console.error('❌ User element not found for:', userId);
-            return;
-        }
-
-        const username = userElement.querySelector('.username').textContent;
-        this.currentChatUser = { id: userId, username: username };
-        
-        console.log('✅ Chat opened with:', this.currentChatUser);
-
-        this.updateChatHeader(username);
-        this.clearMessages();
-        this.currentPage = 1;
-        this.hasMoreMessages = true;
-
-        await this.loadMessages(userId, 1);
-        this.clearUnreadIndicator(userId);
-        
-        if (this.messageInput && !this.messageInput.disabled) {
-            this.messageInput.focus();
-        }
+async openChat(userId) {
+    console.log('💬 Opening chat with user:', userId);
+    
+    const userElement = document.querySelector(`[data-user-id="${userId}"]`);
+    if (!userElement) {
+        console.error('❌ User element not found for:', userId);
+        return;
     }
+
+    const username = userElement.querySelector('.username').textContent;
+    this.currentChatUser = { id: userId, username: username };
+    
+    console.log('✅ Chat opened with:', this.currentChatUser);
+
+    // Clear unread status
+    userElement.classList.remove('has-unread');
+    const badge = userElement.querySelector('.notification-badge');
+    if (badge) {
+        badge.remove();
+    }
+
+    this.updateChatHeader(username);
+    this.clearMessages();
+    this.currentPage = 1;
+    this.hasMoreMessages = true;
+
+    await this.loadMessages(userId, 1);
+    this.clearUnreadIndicator(userId);
+    
+    if (this.messageInput && !this.messageInput.disabled) {
+        this.messageInput.focus();
+    }
+}
 
     async loadMessages(userId, page = 1) {
         if (this.isLoadingMessages) return;
@@ -983,14 +1114,7 @@ class ChatManager {
         }
     }
 
-    showNotification(message) {
-        if ('Notification' in window && Notification.permission === 'granted') {
-            new Notification(`New message from ${message.sender_name}`, {
-                body: message.message,
-                icon: '/assets/images/chat-icon.png'
-            });
-        }
-    }
+    // ❌ REMOVED: Old showNotification method - replaced with new notification system above
 
     destroy() {
         this.disconnectWebSocket();
