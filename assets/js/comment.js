@@ -1,12 +1,4 @@
-// Load a single post and its comments
 
-//Make sure your backend has these API endpoints:
-
-//GET /api/posts/:id - Returns a single post
-
-//GET /api/posts/:id/comments - Returns comments for a post
-
-//POST /api/posts/:id/comments - Creates a new comment
 
 
 async function loadSinglePost(postId) {

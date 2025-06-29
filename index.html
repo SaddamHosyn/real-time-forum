@@ -424,11 +424,16 @@
 
 <!-- Comment Form Template -->
 <template id="comment-form-template">
-  <form class="comment-form mb-3">
-    <textarea class="form-control mb-2" placeholder="Write a comment..." rows="3"></textarea>
-    <button type="submit" class="btn btn-primary btn-sm">Post Comment</button>
-  </form>
+  <div class="add-comment-form mt-3">
+    <div class="input-group">
+      <textarea class="form-control comment-input" placeholder="Write a comment..." rows="2"></textarea>
+      <button class="btn btn-primary submit-comment" type="button">
+        <i class="fas fa-paper-plane me-2"></i>Post
+      </button>
+    </div>
+  </div>
 </template>
+
 
 <!-- Individual Comment Template -->
 <template id="comment-item-template">
@@ -993,26 +998,41 @@
 </template>
 
 <!-- Comment Item Template - Simplified -->
-<template id="comment-item-template">
+<template id="comments-items-template">
   <div class="comment-item mb-2">
     <div class="comment-content">
       <div class="comment-bubble p-2 bg-light rounded">
         <div class="comment-header d-flex justify-content-between align-items-start mb-1">
-          <strong class="comment-author"></strong>
-          <small class="comment-date text-muted"></small>
+          <strong class="comment-author">Author Name</strong>
+          <small class="comment-date text-muted">Date</small>
         </div>
-        <div class="comment-text"></div>
+        <p class="comment-text mb-0" id="comment-text-debug">Comment content goes here</p>
       </div>
     </div>
   </div>
 </template>
+
+
+
+<!-- Comment Form Template -->
+<template id="comments-forms-template">
+  <div class="add-comment-form mt-3">
+    <div class="input-group">
+      <textarea class="form-control comment-input" placeholder="Write a comment..." rows="2"></textarea>
+      <button class="btn btn-primary submit-comment" type="button">
+        <i class="fas fa-paper-plane me-2"></i>Post
+      </button>
+    </div>
+  </div>
+</template>
+
 
 <!-- Topic Badge Template -->
 <template id="topic-badge-template">
   <span class="badge bg-primary topic-badge"></span>
 </template>
 
-  <!-- when user login, then feed should be there -->
+  <!-- feed Template -->
 
 
 

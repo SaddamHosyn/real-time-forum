@@ -3015,11 +3015,100 @@ h2 {
 }
 
 .comment-text {
-  color: #495057;
+  color: #495057 !important;
+  font-size: 0.9rem !important;
+  line-height: 1.4 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  min-height: 1.4em !important;
+}
+
+/* Ensure comment bubble content is visible */
+.comment-bubble p {
+  margin-bottom: 0 !important;
+  color: #495057 !important;
+}
+
+/* Debug styles to see if elements exist */
+.comment-text:empty::before {
+  content: "[EMPTY COMMENT]";
+  color: red !important;
+  font-style: italic !important;
+}
+
+
+
+/* Comment Form Styles */
+.add-comment-form {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+}
+
+.add-comment-form .input-group {
+  display: flex;
+  align-items: stretch;
+}
+
+.add-comment-form .comment-input {
+  flex: 1;
+  resize: vertical;
+  min-height: 50px;
+  padding: 0.75rem;
+  border: 1px solid #ced4da;
+  border-radius: 6px 0 0 6px;
   font-size: 0.9rem;
   line-height: 1.4;
-  margin: 0;
 }
+
+.add-comment-form .comment-input:focus {
+  outline: none;
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.add-comment-form .submit-comment {
+  padding: 0.75rem 1rem;
+  background: #007bff;
+  color: white;
+  border: 1px solid #007bff;
+  border-radius: 0 6px 6px 0;
+  border-left: none;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.add-comment-form .submit-comment:hover {
+  background: #0056b3;
+  border-color: #0056b3;
+}
+
+.add-comment-form .submit-comment:focus {
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.add-comment-form .submit-comment i {
+  margin-right: 0.5rem;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 /* Load More Section */
 .load-more-section {
