@@ -1949,9 +1949,34 @@ h2 {
 }
 
 
+.chat-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.loader-spinner {
+  width: 18px;
+  height: 18px;
+  border: 3px solid #bbb;
+  border-top: 3px solid #444;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 
 
-
+.spinner-label {
+  display: inline-block;
+  font-size: 15px;
+  color: #888;
+  vertical-align: middle;
+}
 
 
 

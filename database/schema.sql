@@ -71,8 +71,10 @@ CREATE INDEX IF NOT EXISTS idx_sessions_expiry ON sessions(session_expiry);
 -- Chat_Messages table to store private messages between users
 CREATE TABLE IF NOT EXISTS chat_messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    sender_id TEXT NOT NULL,           -- ✅ Changed to TEXT
-    receiver_id TEXT NOT NULL,         -- ✅ Changed to TEXT
+    sender_id TEXT NOT NULL,
+    -- ✅ Changed to TEXT
+    receiver_id TEXT NOT NULL,
+    -- ✅ Changed to TEXT
     message TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     is_read BOOLEAN DEFAULT 0,
@@ -91,8 +93,10 @@ CREATE TABLE IF NOT EXISTS user_online (
 -- Fix user_chat_last_message table  
 CREATE TABLE IF NOT EXISTS user_chat_last_message (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user1_id TEXT NOT NULL,            -- ✅ Changed to TEXT
-    user2_id TEXT NOT NULL,            -- ✅ Changed to TEXT
+    user1_id TEXT NOT NULL,
+    -- ✅ Changed to TEXT
+    user2_id TEXT NOT NULL,
+    -- ✅ Changed to TEXT
     last_message_id INTEGER NOT NULL,
     FOREIGN KEY(user1_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY(user2_id) REFERENCES users(id) ON DELETE CASCADE,

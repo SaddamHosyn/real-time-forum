@@ -1,37 +1,52 @@
-// Enhanced chat.js - Clean JavaScript without inline CSS
+
+
+
+
+
+// Enhanced chat.js - FIXED: Prevent repeated function calls
 console.log('📦 Chat.js loading...');
 
 class ChatManager {
-constructor() {
-    console.log('🎯 ChatManager constructor called');
-    this.ws = null;
-    this.currentChatUser = null;
-    this.messageHistory = new Map();
-    this.typingTimer = null;
-    this.isTyping = false;
-    this.messagesContainer = null;
-    this.userListContainer = null;
-    this.messageInput = null;
-    this.sendButton = null;
-    this.loginPrompt = null;
-    this.currentPage = 1;
-    this.hasMoreMessages = true;
-    this.isLoadingMessages = false;
-    this.connectionAttempts = 0;
-    this.maxConnectionAttempts = 5;
-    
-    // Request notification permission
-    this.requestNotificationPermission();
-    
-    console.log('🔧 Calling initializeChat...');
-    this.initializeChat();
-}
+    constructor() {
+        console.log('🎯 ChatManager constructor called');
+        this.ws = null;
+        this.currentChatUser = null;
+        this.messageHistory = new Map();
+        this.typingTimer = null;
+        this.isTyping = false;
+        this.messagesContainer = null;
+        this.userListContainer = null;
+        this.messageInput = null;
+        this.sendButton = null;
+        this.loginPrompt = null;
+        this.currentPage = 1;
+        this.hasMoreMessages = true;
+        this.isLoadingMessages = false;
+        this.connectionAttempts = 0;
+        this.maxConnectionAttempts = 5;
+        
+        // ✅ CRITICAL: Add flags to prevent repeated operations
+        this.isUpdating = false;
+        this.isInitialized = false;
+        this.lastAuthStatus = null;
+        this.updateTimeout = null;
+        
+        // Request notification permission
+        this.requestNotificationPermission();
+        
+        console.log('🔧 Calling initializeChat...');
+        this.initializeChat();
+    }
 
     initializeChat() {
+        if (this.isInitialized) {
+            console.log('⚠️ Chat already initialized, skipping...');
+            return;
+        }
+        
         console.log('🚀 initializeChat called');
         console.log('🔍 Current appState:', window.appState);
         console.log('🔍 User authenticated:', window.appState?.isAuthenticated);
-        console.log('🔍 User details:', window.appState?.user);
         
         // Always setup UI elements
         this.setupEventListeners();
@@ -39,23 +54,48 @@ constructor() {
         
         // Update UI based on auth status
         this.updateForAuthStatus();
+        
+        this.isInitialized = true;
+        console.log('✅ Chat initialization complete');
     }
 
-    // ✅ UPDATED: Combined fix for better timing and user list refresh
+    // ✅ FIXED: Enhanced prevention of repeated calls
     updateForAuthStatus() {
-        console.log('🔄 Updating chat for auth status:', window.appState?.isAuthenticated);
+        const currentAuthStatus = !!window.appState?.isAuthenticated;
         
-        if (window.appState?.isAuthenticated) {
+        // ✅ PREVENT: Skip if auth status hasn't changed
+        if (this.lastAuthStatus === currentAuthStatus && this.isInitialized) {
+            console.log('⚠️ Auth status unchanged, skipping update...');
+            return;
+        }
+        
+        // ✅ PREVENT: Multiple simultaneous updates
+        if (this.isUpdating) {
+            console.log('⚠️ Chat update already in progress, skipping...');
+            return;
+        }
+        
+        this.isUpdating = true;
+        this.lastAuthStatus = currentAuthStatus;
+        
+        console.log('🔄 Updating chat for auth status:', currentAuthStatus);
+        
+        // Clear any pending update
+        if (this.updateTimeout) {
+            clearTimeout(this.updateTimeout);
+        }
+        
+        if (currentAuthStatus) {
             console.log('✅ User authenticated, enabling full chat...');
             this.enableChatFunctionality();
-            
-            // ✅ COMBINED FIX: Connect WebSocket first, then load users with delay
             this.connectWebSocket();
             
-            // ✅ COMBINED FIX: Load users with delay to ensure WebSocket connects
-            setTimeout(() => {
-                this.loadChatUsers();
-            }, 1200);
+            // ✅ FIXED: Single delayed user load
+            this.updateTimeout = setTimeout(() => {
+                if (window.appState?.isAuthenticated) {
+                    this.loadChatUsers();
+                }
+            }, 800);
             
         } else {
             console.log('❌ User not authenticated, showing limited chat...');
@@ -63,6 +103,11 @@ constructor() {
             this.disconnectWebSocket();
             this.showAuthRequiredPrompt();
         }
+        
+        // ✅ FIXED: Reset flag after update
+        setTimeout(() => {
+            this.isUpdating = false;
+        }, 100);
     }
 
     enableChatFunctionality() {
@@ -71,16 +116,10 @@ constructor() {
         if (this.messageInput) {
             this.messageInput.disabled = false;
             this.messageInput.placeholder = 'Type a message...';
-            console.log('📝 Message input enabled');
-        } else {
-            console.error('❌ Message input not found!');
         }
         
         if (this.sendButton) {
             this.sendButton.disabled = false;
-            console.log('📤 Send button enabled');
-        } else {
-            console.error('❌ Send button not found!');
         }
         
         if (this.loginPrompt) {
@@ -109,82 +148,76 @@ constructor() {
         this.updateChatHeader('Login to start chatting');
     }
 
-    // ✅ UPDATED: Enhanced WebSocket connection with multiple refresh strategy
-// ✅ UPDATED: Enhanced WebSocket connection with better status sync
-connectWebSocket() {
-    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-        console.log('🔌 WebSocket already connected');
-        return;
-    }
-    
-    if (this.connectionAttempts >= this.maxConnectionAttempts) {
-        console.error('❌ Max WebSocket connection attempts reached');
-        this.showConnectionError();
-        return;
-    }
-    
-    this.connectionAttempts++;
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${protocol}//${window.location.host}/ws`;
-    
-    console.log(`🔌 Connecting to WebSocket (attempt ${this.connectionAttempts}):`, wsUrl);
-    console.log('🔍 Current user for WebSocket:', window.appState?.user);
-    
-    try {
-        this.ws = new WebSocket(wsUrl);
+    // ✅ FIXED: Enhanced WebSocket connection with better state management
+    connectWebSocket() {
+        if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+            console.log('🔌 WebSocket already connected');
+            return;
+        }
         
-        // ✅ FIXED: Simplified onopen handler with single refresh strategy
-        this.ws.onopen = () => {
-            console.log('✅ WebSocket connected successfully');
-            console.log('👤 User should now be marked online:', window.appState?.user?.username);
-            this.connectionAttempts = 0; // Reset on successful connection
-            
-            // ✅ FIXED: Single refresh with longer delay to ensure status is updated
-            setTimeout(() => {
-                if (window.appState?.isAuthenticated) {
-                    console.log('🔄 Refreshing user list after WebSocket connection');
-                    this.loadChatUsers();
-                }
-            }, 1000); // Single 1-second delay
-        };
-        
-        this.ws.onmessage = (event) => {
-            try {
-                const message = JSON.parse(event.data);
-                console.log('📨 WebSocket message received:', message);
-                this.handleWebSocketMessage(message);
-            } catch (error) {
-                console.error('❌ Error parsing WebSocket message:', error);
-            }
-        };
-        
-        this.ws.onclose = (event) => {
-            console.log('❌ WebSocket disconnected:', event.code, event.reason);
-            console.log('👤 User should now be marked offline:', window.appState?.user?.username);
-            this.ws = null;
-            
-            // ✅ FIXED: Immediate refresh when disconnected
-            if (window.appState?.isAuthenticated) {
-                this.loadChatUsers();
-            }
-            
-            // Only reconnect if user is still authenticated and we haven't exceeded max attempts
-            if (window.appState?.isAuthenticated && this.connectionAttempts < this.maxConnectionAttempts) {
-                console.log('🔄 Attempting to reconnect in 3 seconds...');
-                setTimeout(() => this.connectWebSocket(), 3000);
-            }
-        };
-        
-        this.ws.onerror = (error) => {
-            console.error('❌ WebSocket error:', error);
+        if (this.connectionAttempts >= this.maxConnectionAttempts) {
+            console.error('❌ Max WebSocket connection attempts reached');
             this.showConnectionError();
-        };
+            return;
+        }
         
-    } catch (error) {
-        console.error('❌ Error creating WebSocket:', error);
-        this.showConnectionError();
+        this.connectionAttempts++;
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${window.location.host}/ws`;
+        
+        console.log(`🔌 Connecting to WebSocket (attempt ${this.connectionAttempts}):`, wsUrl);
+        
+        try {
+            this.ws = new WebSocket(wsUrl);
+            
+            this.ws.onopen = () => {
+                console.log('✅ WebSocket connected successfully');
+                this.connectionAttempts = 0;
+                
+                // ✅ FIXED: Only load users if not already loaded recently
+                if (window.appState?.isAuthenticated) {
+                    setTimeout(() => {
+                        this.loadChatUsers();
+                    }, 1000);
+                }
+            };
+            
+            this.ws.onmessage = (event) => {
+                try {
+                    const message = JSON.parse(event.data);
+                    this.handleWebSocketMessage(message);
+                } catch (error) {
+                    console.error('❌ Error parsing WebSocket message:', error);
+                }
+            };
+            
+            this.ws.onclose = (event) => {
+                console.log('❌ WebSocket disconnected:', event.code, event.reason);
+                this.ws = null;
+                
+                // ✅ FIXED: Only refresh if authenticated and not already loading
+                if (window.appState?.isAuthenticated && !this.isLoadingMessages) {
+                    setTimeout(() => {
+                        this.loadChatUsers();
+                    }, 1000);
+                }
+                
+                // Reconnect if still authenticated
+                if (window.appState?.isAuthenticated && this.connectionAttempts < this.maxConnectionAttempts) {
+                    setTimeout(() => this.connectWebSocket(), 3000);
+                }
+            };
+            
+            this.ws.onerror = (error) => {
+                console.error('❌ WebSocket error:', error);
+                this.showConnectionError();
+            };
+            
+        } catch (error) {
+            console.error('❌ Error creating WebSocket:', error);
+            this.showConnectionError();
+        }
     }
-}
 
     showConnectionError() {
         this.showTemporaryMessage('Chat connection failed. Please refresh the page.');
@@ -202,30 +235,16 @@ connectWebSocket() {
     setupEventListeners() {
         console.log('🎧 Setting up event listeners...');
         
-        // Get DOM elements with detailed logging
+        // Get DOM elements
         this.messageInput = document.getElementById('message-input');
         this.sendButton = document.getElementById('send-button');
         this.loginPrompt = document.getElementById('login-prompt');
         this.userListContainer = document.querySelector('#user-list .users');
         this.messagesContainer = document.querySelector('.message-history');
         
-        console.log('📝 Message input found:', !!this.messageInput);
-        console.log('📤 Send button found:', !!this.sendButton);
-        console.log('🔐 Login prompt found:', !!this.loginPrompt);
-        console.log('👥 User list container found:', !!this.userListContainer);
-        console.log('💬 Messages container found:', !!this.messagesContainer);
-        
-        // Detailed DOM element debugging
-        if (!this.messageInput) console.error('❌ CRITICAL: message-input element not found in DOM!');
-        if (!this.sendButton) console.error('❌ CRITICAL: send-button element not found in DOM!');
-        if (!this.userListContainer) console.error('❌ CRITICAL: user-list .users element not found in DOM!');
-        if (!this.messagesContainer) console.error('❌ CRITICAL: .message-history element not found in DOM!');
-        
         if (this.messageInput) {
             this.messageInput.addEventListener('keypress', (e) => {
-                console.log('⌨️ Key pressed in message input:', e.key);
                 if (e.key === 'Enter' && !this.messageInput.disabled) {
-                    console.log('📤 Enter pressed, sending message...');
                     this.sendMessage();
                 }
             });
@@ -243,7 +262,6 @@ connectWebSocket() {
 
         if (this.sendButton) {
             this.sendButton.addEventListener('click', (e) => {
-                console.log('🖱️ Send button clicked');
                 e.preventDefault();
                 if (!this.sendButton.disabled) {
                     this.sendMessage();
@@ -256,7 +274,6 @@ connectWebSocket() {
                 const userElement = e.target.closest('.user');
                 if (userElement && window.appState?.isAuthenticated) {
                     const userId = userElement.dataset.userId;
-                    console.log('👤 User clicked:', userId);
                     this.openChat(userId);
                 } else if (userElement && !window.appState?.isAuthenticated) {
                     this.showMainLoginPrompt();
@@ -269,7 +286,6 @@ connectWebSocket() {
         this.showTemporaryMessage('Please login to the website first to start chatting');
     }
 
-    // ✅ CLEAN: No inline CSS, only className
     showTemporaryMessage(message) {
         console.log('💬 Showing temporary message:', message);
         const overlay = document.createElement('div');
@@ -284,193 +300,151 @@ connectWebSocket() {
         }, 3000);
     }
 
-// Request notification permission on initialization
-requestNotificationPermission() {
-    if ('Notification' in window && Notification.permission === 'default') {
-        Notification.requestPermission().then(permission => {
-            console.log('🔔 Notification permission:', permission);
-        });
+    // Request notification permission on initialization
+    requestNotificationPermission() {
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission().then(permission => {
+                console.log('🔔 Notification permission:', permission);
+            });
+        }
     }
-}
 
-// Show browser notification
-showBrowserNotification(message) {
-    if ('Notification' in window && Notification.permission === 'granted') {
-        const notification = new Notification(`New message from ${message.sender_name}`, {
-            body: message.message.length > 50 ? message.message.substring(0, 50) + '...' : message.message,
-            tag: `chat-${message.sender_id}`, // Prevents duplicate notifications
-            requireInteraction: false
-        });
+    // Show browser notification
+    showBrowserNotification(message) {
+        if ('Notification' in window && Notification.permission === 'granted') {
+            const notification = new Notification(`New message from ${message.sender_name}`, {
+                body: message.message.length > 50 ? message.message.substring(0, 50) + '...' : message.message,
+                tag: `chat-${message.sender_id}`,
+                requireInteraction: false
+            });
 
-        notification.onclick = () => {
-            window.focus();
+            notification.onclick = () => {
+                window.focus();
+                this.openChat(message.sender_id);
+                notification.close();
+            };
+
+            setTimeout(() => {
+                notification.close();
+            }, 5000);
+        }
+    }
+
+    // Show in-app notification
+    showInAppNotification(message) {
+        const existingNotification = document.querySelector('.chat-notification');
+        if (existingNotification) {
+            existingNotification.remove();
+        }
+
+        const notification = document.createElement('div');
+        notification.className = 'chat-notification';
+        
+        const header = document.createElement('div');
+        header.className = 'notification-header';
+        header.textContent = `New message from ${message.sender_name}`;
+        
+        const body = document.createElement('div');
+        body.className = 'notification-body';
+        body.textContent = message.message.length > 60 ? message.message.substring(0, 60) + '...' : message.message;
+        
+        notification.appendChild(header);
+        notification.appendChild(body);
+        
+        notification.addEventListener('click', () => {
             this.openChat(message.sender_id);
-            notification.close();
-        };
-
-        // Auto close after 5 seconds
+            notification.remove();
+        });
+        
+        document.body.appendChild(notification);
+        
         setTimeout(() => {
-            notification.close();
+            if (document.body.contains(notification)) {
+                notification.remove();
+            }
         }, 5000);
     }
-}
 
-// Show in-app notification
-showInAppNotification(message) {
-    // Remove any existing notifications
-    const existingNotification = document.querySelector('.chat-notification');
-    if (existingNotification) {
-        existingNotification.remove();
-    }
-
-    const notification = document.createElement('div');
-    notification.className = 'chat-notification';
-    
-    const header = document.createElement('div');
-    header.className = 'notification-header';
-    header.textContent = `New message from ${message.sender_name}`;
-    
-    const body = document.createElement('div');
-    body.className = 'notification-body';
-    body.textContent = message.message.length > 60 ? message.message.substring(0, 60) + '...' : message.message;
-    
-    notification.appendChild(header);
-    notification.appendChild(body);
-    
-    // Click to open chat
-    notification.addEventListener('click', () => {
-        this.openChat(message.sender_id);
-        notification.remove();
-    });
-    
-    document.body.appendChild(notification);
-    
-    // Auto remove after 5 seconds
-    setTimeout(() => {
-        if (document.body.contains(notification)) {
-            notification.remove();
+    // Check if user should receive notification
+    shouldShowNotification(message) {
+        if (message.sender_id === window.appState?.user?.id) {
+            return false;
         }
-    }, 5000);
-}
-
-// Check if user should receive notification
-
-
-// Check if user should receive notification
-shouldShowNotification(message) {
-    // Don't show notification for own messages
-    if (message.sender_id === window.appState?.user?.id) {
-        return false;
-    }
-    
-    // Don't show if chat is currently open with this user
-    if (this.currentChatUser && this.currentChatUser.id === message.sender_id) {
-        return false;
-    }
-    
-    // Show notification if:
-    // 1. Page is hidden (user is on another tab/app), OR
-    // 2. Page is visible but user is not chatting with the message sender
-    return true;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Mark user as having unread messages
-markUserAsUnread(userId) {
-    const userElement = document.querySelector(`[data-user-id="${userId}"]`);
-    if (userElement && !userElement.classList.contains('has-unread')) {
-        userElement.classList.add('has-unread');
         
-        // Add notification badge if not exists
-        const userDetails = userElement.querySelector('.user-details');
-        if (userDetails && !userDetails.querySelector('.notification-badge')) {
-            const badge = document.createElement('span');
-            badge.className = 'notification-badge';
-            badge.textContent = '!';
-            userDetails.appendChild(badge);
+        if (this.currentChatUser && this.currentChatUser.id === message.sender_id) {
+            return false;
+        }
+        
+        return true;
+    }
+
+    // Mark user as having unread messages
+    markUserAsUnread(userId) {
+        const userElement = document.querySelector(`[data-user-id="${userId}"]`);
+        if (userElement && !userElement.classList.contains('has-unread')) {
+            userElement.classList.add('has-unread');
+            
+            const userDetails = userElement.querySelector('.user-details');
+            if (userDetails && !userDetails.querySelector('.notification-badge')) {
+                const badge = document.createElement('span');
+                badge.className = 'notification-badge';
+                badge.textContent = '!';
+                userDetails.appendChild(badge);
+            }
         }
     }
-}
 
     handleWebSocketMessage(message) {
         console.log('📨 Handling WebSocket message type:', message.type);
         
-        // In handleWebSocketMessage method
-    switch (message.type) {
-        case 'new_message':
-            this.handleNewMessage(message.data);
-           break;
-        case 'typing':
-            this.handleTypingIndicator(message.data);
-          break;
-        case 'user_status':
-            this.handleUserStatusChange(message.data);
-          break;
-        case 'force_refresh':
-         console.log('🔄 Force refreshing user list');
-            this.loadChatUsers();
-            break;
-        default:
-        console.log('❓ Unknown message type:', message.type);
+        switch (message.type) {
+            case 'new_message':
+                this.handleNewMessage(message.data);
+                break;
+
+            case 'typing':
+                this.handleTypingIndicator(message.data);
+                break;
+            case 'user_status':
+                this.handleUserStatusChange(message.data);
+                break;
+            case 'force_refresh':
+                console.log('🔄 Force refreshing user list');
+                this.loadChatUsers();
+                break;
+            default:
+                console.log('❓ Unknown message type:', message.type);
+        }
     }
 
-}
-
-handleNewMessage(messageData) {
-    console.log('💬 Handling new message:', messageData);
-    console.log('🔍 Current chat user:', this.currentChatUser);
-    console.log('🔍 Message sender:', messageData.sender_id);
-    console.log('🔍 Message receiver:', messageData.receiver_id);
-    console.log('🔍 Current user ID:', window.appState?.user?.id);
-    
-    // Update message history
-    const chatKey = this.getChatKey(messageData.sender_id, messageData.receiver_id);
-    if (!this.messageHistory.has(chatKey)) {
-        this.messageHistory.set(chatKey, []);
-    }
-    this.messageHistory.get(chatKey).push(messageData);
-
-    // If this message is for the current chat, display it
-    if (this.currentChatUser && 
-        (messageData.sender_id === this.currentChatUser.id || 
-         messageData.receiver_id === this.currentChatUser.id)) {
-        console.log('✅ Displaying message in current chat');
-        this.displayMessage(messageData);
-        this.scrollToBottom();
-    } else {
-        console.log('❌ Message not for current chat or no chat open');
-    }
-
-    // Update user list with new message
-    this.updateUserListItem(messageData.sender_id, messageData.message, messageData.created_at);
-    
-    // Show notification if conditions are met
-    if (this.shouldShowNotification(messageData)) {
-        console.log('🔔 Showing notification for message from:', messageData.sender_name);
-        this.showBrowserNotification(messageData);
-        this.showInAppNotification(messageData);
+    handleNewMessage(messageData) {
+        console.log('💬 Handling new message:', messageData);
         
-        // ✅ FIXED: Only mark user as unread when showing notifications
-        // This prevents unread badges when you're actively chatting with someone
-        this.markUserAsUnread(messageData.sender_id);
-    } else {
-        console.log('🔕 Not showing notification - user is in active chat or conditions not met');
+        // Update message history
+        const chatKey = this.getChatKey(messageData.sender_id, messageData.receiver_id);
+        if (!this.messageHistory.has(chatKey)) {
+            this.messageHistory.set(chatKey, []);
+        }
+        this.messageHistory.get(chatKey).push(messageData);
+
+        // If this message is for the current chat, display it
+        if (this.currentChatUser && 
+            (messageData.sender_id === this.currentChatUser.id || 
+             messageData.receiver_id === this.currentChatUser.id)) {
+            this.displayMessage(messageData);
+            this.scrollToBottom();
+        }
+
+        // Update user list with new message
+        this.updateUserListItem(messageData.sender_id, messageData.message, messageData.created_at);
+        
+        // Show notification if conditions are met
+        if (this.shouldShowNotification(messageData)) {
+            this.showBrowserNotification(messageData);
+            this.showInAppNotification(messageData);
+            this.markUserAsUnread(messageData.sender_id);
+        }
     }
-}
 
     handleTypingIndicator(data) {
         if (this.currentChatUser && data.user_id === this.currentChatUser.id) {
@@ -478,68 +452,70 @@ handleNewMessage(messageData) {
         }
     }
 
-    // ✅ ENHANCED: Better status change handling with forced UI update
     handleUserStatusChange(data) {
         console.log('👤 User status change received:', data);
-        console.log('🔄 Updating online status and refreshing user list');
         
-        // ✅ IMMEDIATE: Update individual user status right away
+        // Update individual user status
         this.updateUserOnlineStatus(data.user_id, data.is_online);
         
-        // ✅ ENHANCED: Force refresh user list with shorter delay
-        if (window.appState?.isAuthenticated) {
+        // ✅ FIXED: Reduce refresh frequency
+        if (window.appState?.isAuthenticated && !this.isLoadingMessages) {
             setTimeout(() => {
-                console.log('🔄 Force refreshing user list due to status change');
                 this.loadChatUsers();
-            }, 200); // Shorter delay for faster updates
+            }, 500);
         }
     }
 
+    // ✅ ADDED: Loading state management
+    isUserListLoading = false;
+
     async loadChatUsers() {
+        // ✅ PREVENT: Multiple simultaneous loads
+        if (this.isUserListLoading) {
+            console.log('⚠️ User list already loading, skipping...');
+            return;
+        }
+        
+        this.isUserListLoading = true;
         console.log('👥 Loading chat users...');
+        
         try {
             const response = await fetch('/api/chat/users', {
                 credentials: 'include'
             });
             
-            console.log('📡 Chat users response status:', response.status);
-            
             if (response.ok) {
                 const responseText = await response.text();
-                console.log('📡 Raw response:', responseText);
-                
                 let users;
                 try {
                     users = JSON.parse(responseText);
-                    console.log('👥 Chat users loaded:', users);
-                    console.log('🔍 Users type:', typeof users, 'Is array:', Array.isArray(users));
                 } catch (parseError) {
                     console.error('❌ JSON parse error:', parseError);
                     users = [];
                 }
                 
-                // ✅ Ensure users is always an array
                 if (!Array.isArray(users)) {
-                    console.warn('⚠️ Backend returned non-array, converting to array');
                     users = [];
                 }
                 
                 this.renderUserList(users);
             } else if (response.status === 401) {
-                console.log('🔒 Unauthorized - showing auth required');
                 this.showAuthRequiredUserList();
             } else {
-                console.error('❌ Failed to load chat users:', response.statusText);
                 this.showAuthRequiredUserList();
             }
         } catch (error) {
             console.error('❌ Error loading chat users:', error);
             this.showAuthRequiredUserList();
+        } finally {
+            // ✅ RESET: Loading flag
+            setTimeout(() => {
+                this.isUserListLoading = false;
+            }, 500);
         }
     }
 
     showAuthRequiredUserList() {
-        console.log('🔐 Showing auth required user list');
         if (!this.userListContainer) return;
 
         while (this.userListContainer.firstChild) {
@@ -585,7 +561,6 @@ handleNewMessage(messageData) {
 
     renderUserList(users) {
         console.log('🎨 Rendering user list with', users?.length || 0, 'users');
-        console.log('🔍 Users data type:', typeof users, 'Value:', users);
         
         if (!this.userListContainer) {
             console.error('❌ User list container not found');
@@ -597,9 +572,7 @@ handleNewMessage(messageData) {
             this.userListContainer.removeChild(this.userListContainer.firstChild);
         }
 
-        // ✅ FIX: Handle null/undefined users gracefully
         if (!users || !Array.isArray(users)) {
-            console.log('⚠️ Users data is null/invalid, showing empty state');
             const noUsersMessage = document.createElement('li');
             noUsersMessage.className = 'no-users-message';
             noUsersMessage.textContent = users === null ? 'No users found' : 'Loading users...';
@@ -619,11 +592,8 @@ handleNewMessage(messageData) {
             const userElement = this.createUserElement(user);
             this.userListContainer.appendChild(userElement);
         });
-        
-        console.log('✅ User list rendered successfully');
     }
 
-    // ✅ ENHANCED createUserElement with better UX
     createUserElement(user) {
         const li = document.createElement('li');
         li.className = `user ${user.is_online ? 'online' : 'offline'}`;
@@ -635,7 +605,6 @@ handleNewMessage(messageData) {
         const userDetails = document.createElement('div');
         userDetails.className = 'user-details';
 
-        // ✅ Show online status more prominently
         if (user.is_online) {
             const onlineIndicator = document.createElement('span');
             onlineIndicator.className = 'online-indicator';
@@ -648,7 +617,6 @@ handleNewMessage(messageData) {
         usernameSpan.textContent = user.username;
         userDetails.appendChild(usernameSpan);
 
-        // ✅ Show unread count badge
         if (user.unread_count > 0) {
             const unreadBadge = document.createElement('span');
             unreadBadge.className = 'unread-badge';
@@ -680,43 +648,24 @@ handleNewMessage(messageData) {
     }
 
     sendMessage() {
-        console.log('📤 sendMessage called');
-        console.log('🔍 Current user authenticated:', window.appState?.isAuthenticated);
-        console.log('🔍 Current chat user:', this.currentChatUser);
-        console.log('🔍 Message input value:', this.messageInput?.value);
-        console.log('🔍 WebSocket state:', this.ws?.readyState);
-        
         if (!window.appState?.isAuthenticated) {
-            console.log('❌ User not authenticated');
             this.showMainLoginPrompt();
             return;
         }
 
         if (!this.currentChatUser) {
-            console.log('❌ No chat user selected');
             this.showTemporaryMessage('Please select a user to chat with');
             return;
         }
 
-        if (!this.messageInput) {
-            console.error('❌ Message input not found');
-            return;
-        }
-
         if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
-            console.error('❌ WebSocket not connected');
             this.showTemporaryMessage('Chat connection lost. Reconnecting...');
             this.connectWebSocket();
             return;
         }
 
         const message = this.messageInput.value.trim();
-        if (!message) {
-            console.log('❌ Empty message');
-            return;
-        }
-
-        console.log('📤 Sending message:', message, 'to user:', this.currentChatUser.id);
+        if (!message) return;
 
         const messageData = {
             type: 'chat_message',
@@ -728,7 +677,6 @@ handleNewMessage(messageData) {
 
         try {
             this.ws.send(JSON.stringify(messageData));
-            console.log('✅ Message sent successfully');
             this.messageInput.value = '';
             this.stopTyping();
         } catch (error) {
@@ -737,45 +685,36 @@ handleNewMessage(messageData) {
         }
     }
 
-async openChat(userId) {
-    console.log('💬 Opening chat with user:', userId);
-    
-    const userElement = document.querySelector(`[data-user-id="${userId}"]`);
-    if (!userElement) {
-        console.error('❌ User element not found for:', userId);
-        return;
+    async openChat(userId) {
+        const userElement = document.querySelector(`[data-user-id="${userId}"]`);
+        if (!userElement) return;
+
+        const username = userElement.querySelector('.username').textContent;
+        this.currentChatUser = { id: userId, username: username };
+
+        // Clear unread status
+        userElement.classList.remove('has-unread');
+        const badge = userElement.querySelector('.notification-badge');
+        if (badge) {
+            badge.remove();
+        }
+
+        this.updateChatHeader(username);
+        this.clearMessages();
+        this.currentPage = 1;
+        this.hasMoreMessages = true;
+
+        await this.loadMessages(userId, 1);
+        this.clearUnreadIndicator(userId);
+        
+        if (this.messageInput && !this.messageInput.disabled) {
+            this.messageInput.focus();
+        }
     }
 
-    const username = userElement.querySelector('.username').textContent;
-    this.currentChatUser = { id: userId, username: username };
-    
-    console.log('✅ Chat opened with:', this.currentChatUser);
-
-    // Clear unread status
-    userElement.classList.remove('has-unread');
-    const badge = userElement.querySelector('.notification-badge');
-    if (badge) {
-        badge.remove();
-    }
-
-    this.updateChatHeader(username);
-    this.clearMessages();
-    this.currentPage = 1;
-    this.hasMoreMessages = true;
-
-    await this.loadMessages(userId, 1);
-    this.clearUnreadIndicator(userId);
-    
-    if (this.messageInput && !this.messageInput.disabled) {
-        this.messageInput.focus();
-    }
-}
-
-    async loadMessages(userId, page = 1) {
-        if (this.isLoadingMessages) return;
-        this.isLoadingMessages = true;
-
-        console.log(`📥 Loading messages for user ${userId}, page ${page}`);
+    async loadMessages(userId, page = 1, showLoaderParam = false) {
+        const loaderStartTime = Date.now();
+        const MINIMUM_LOADER_DURATION = page === 1 ? 500 :3000; // 500ms for initial load, 1s for pagination
 
         try {
             const response = await fetch(`/api/chat/messages/${userId}?page=${page}`, {
@@ -784,25 +723,56 @@ async openChat(userId) {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log('📥 Messages loaded:', data);
-                
-                if (page === 1) {
-                    this.clearMessages();
-                }
-                
-                this.displayMessages(data.messages, page > 1);
-                this.hasMoreMessages = data.has_more;
-                
-                if (page === 1) {
-                    this.scrollToBottom();
-                }
+
+                const elapsedTime = Date.now() - loaderStartTime;
+                const remainingTime = Math.max(0, MINIMUM_LOADER_DURATION - elapsedTime);
+
+                setTimeout(() => {
+                    const prevScrollHeight = this.messagesContainer.scrollHeight;
+                    const prevScrollTop = this.messagesContainer.scrollTop;
+
+                    if (page === 1) {
+                        this.clearMessages();
+                    }
+
+                    this.displayMessages(data.messages, page > 1);
+                    this.hasMoreMessages = data.has_more;
+
+                    if (page === 1) {
+                        this.scrollToBottom();
+                    } else if (data.messages && data.messages.length > 0) {
+                        requestAnimationFrame(() => {
+                            const newScrollHeight = this.messagesContainer.scrollHeight;
+                            const scrollDiff = newScrollHeight - prevScrollHeight;
+                            this.messagesContainer.scrollTop = prevScrollTop + scrollDiff;
+                            this.hideLoader();
+                        });
+                    } else {
+                        this.hideLoader();
+                    }
+
+                    this.isLoadingMessages = false;
+                }, remainingTime);
+
             } else {
-                console.error('❌ Failed to load messages:', response.status);
+                const elapsedTime = Date.now() - loaderStartTime;
+                const remainingTime = Math.max(0, MINIMUM_LOADER_DURATION - elapsedTime);
+                
+                setTimeout(() => {
+                    this.hideLoader();
+                    this.isLoadingMessages = false;
+                }, remainingTime);
             }
         } catch (error) {
             console.error('❌ Error loading messages:', error);
-        } finally {
-            this.isLoadingMessages = false;
+            
+            const elapsedTime = Date.now() - loaderStartTime;
+            const remainingTime = Math.max(0, MINIMUM_LOADER_DURATION - elapsedTime);
+            
+            setTimeout(() => {
+                this.hideLoader();
+                this.isLoadingMessages = false;
+            }, remainingTime);
         }
     }
 
@@ -837,53 +807,58 @@ async openChat(userId) {
     }
 
     // ✅ ENHANCED createMessageElement with better date formatting
-    createMessageElement(message) {
-        const messageDiv = document.createElement('div');
-        const isOwn = message.sender_id === window.appState.user.id;
-        messageDiv.className = `message ${isOwn ? 'sent' : 'received'}`;
-        
-        const messageContent = document.createElement('div');
-        messageContent.className = 'message-content';
+  
 
-        const messageUser = document.createElement('span');
-        messageUser.className = 'message-user';
-        messageUser.textContent = isOwn ? 'You' : message.sender_name;
 
-        const messageText = document.createElement('p');
-        messageText.textContent = message.message;
 
-        const messageDate = document.createElement('span');
-        messageDate.className = 'message-date';
-        
-        // ✅ Enhanced date formatting
-        const messageTime = new Date(message.created_at);
-        const now = new Date();
-        const isToday = messageTime.toDateString() === now.toDateString();
-        
-        let timeString;
-        if (isToday) {
-            timeString = messageTime.toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        } else {
-            timeString = messageTime.toLocaleDateString([], {
-                month: 'short',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
-        
-        messageDate.textContent = timeString;
+// ✅ FIXED: Always show date and time together
+createMessageElement(message) {
+    const messageDiv = document.createElement('div');
+    const isOwn = message.sender_id === window.appState.user.id;
+    messageDiv.className = `message ${isOwn ? 'sent' : 'received'}`;
+    
+    const messageContent = document.createElement('div');
+    messageContent.className = 'message-content';
 
-        messageContent.appendChild(messageUser);
-        messageContent.appendChild(messageText);
-        messageContent.appendChild(messageDate);
-        messageDiv.appendChild(messageContent);
+    const messageUser = document.createElement('span');
+    messageUser.className = 'message-user';
+    messageUser.textContent = isOwn ? 'You' : message.sender_name;
 
-        return messageDiv;
-    }
+    const messageText = document.createElement('p');
+    messageText.textContent = message.message;
+
+    const messageDate = document.createElement('span');
+    messageDate.className = 'message-date';
+    
+    // ✅ FIXED: Always show date and time together
+    const messageTime = new Date(message.created_at);
+    const options = {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+    };
+    messageDate.textContent = new Intl.DateTimeFormat('en-US', options).format(messageTime);
+
+    messageContent.appendChild(messageUser);
+    messageContent.appendChild(messageText);
+    messageContent.appendChild(messageDate);
+    messageDiv.appendChild(messageContent);
+
+    return messageDiv;
+}
+
+
+
+
+
+
+
+
+
+
 
     // ✅ NEW: IMPROVED Debounced typing handler
     handleTyping() {
@@ -929,7 +904,9 @@ async openChat(userId) {
         }
     }
 
-    showTypingIndicator(isTyping, username) {
+
+
+showTypingIndicator(isTyping, username) {
         const indicator = document.getElementById('typing-indicator');
         
         if (isTyping) {
@@ -964,18 +941,114 @@ async openChat(userId) {
     setupScrollPagination() {
         if (!this.messagesContainer) return;
 
-        this.messagesContainer.addEventListener('scroll', 
-            this.throttle(() => {
-                if (this.messagesContainer.scrollTop === 0 && 
-                    this.hasMoreMessages && 
-                    !this.isLoadingMessages &&
-                    this.currentChatUser) {
-                    
-                    this.currentPage++;
-                    this.loadMessages(this.currentChatUser.id, this.currentPage);
-                }
-            }, 200)
-        );
+        // Make sure loader exists at the top of the messages container
+        if (!document.getElementById('chat-loader')) {
+            // Create CSS animation for spinner if it doesn't exist
+            if (!document.getElementById('spinner-animation-style')) {
+                const style = document.createElement('style');
+                style.id = 'spinner-animation-style';
+                style.textContent = `
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+
+            const loader = document.createElement('div');
+            loader.id = 'chat-loader';
+            loader.className = 'chat-loader';
+            
+            // Loader styling
+            loader.style.display = 'none';
+            loader.style.textAlign = 'center';
+            loader.style.padding = '15px 10px';
+            loader.style.color = '#666';
+            loader.style.background = '#f8f9fa';
+            loader.style.borderBottom = '1px solid #dee2e6';
+            loader.style.fontSize = '14px';
+            loader.style.fontWeight = '500';
+
+            // Create container for spinner and text
+            const loaderContent = document.createElement('div');
+            loaderContent.style.display = 'flex';
+            loaderContent.style.alignItems = 'center';
+            loaderContent.style.justifyContent = 'center';
+            loaderContent.style.gap = '8px';
+
+            // Create spinner element
+            const spinner = document.createElement('div');
+            spinner.className = 'spinner';
+            spinner.style.width = '16px';
+            spinner.style.height = '16px';
+            spinner.style.border = '2px solid #dee2e6';
+            spinner.style.borderTop = '2px solid #007bff';
+            spinner.style.borderRadius = '50%';
+            spinner.style.animation = 'spin 1s linear infinite';
+            spinner.style.flexShrink = '0';
+            
+            // Create text element
+            const text = document.createElement('span');
+            text.textContent = 'Loading messages...';
+            text.style.color = '#666';
+            text.style.fontSize = '14px';
+            text.style.fontWeight = '500';
+            
+            loaderContent.appendChild(spinner);
+            loaderContent.appendChild(text);
+            loader.appendChild(loaderContent);
+
+            this.messagesContainer.insertBefore(loader, this.messagesContainer.firstChild);
+            console.log('✅ Loader created');
+        }
+
+        // ✅ UPDATED: Simplified scroll handler with better throttling
+        let isScrollHandling = false;
+        
+        this.messagesContainer.addEventListener('scroll', (e) => {
+            if (isScrollHandling) return;
+            
+            const scrollTop = this.messagesContainer.scrollTop;
+            
+            // ✅ IMMEDIATE: Trigger loading when hitting the top
+            if (scrollTop <= 10 && 
+                this.hasMoreMessages && 
+                !this.isLoadingMessages && 
+                this.currentChatUser) {
+                
+                isScrollHandling = true;
+                
+                // ✅ CRITICAL FIX: Show loader immediately and set loading flag
+                this.showLoader();
+                this.isLoadingMessages = true;
+                
+                // ✅ CRITICAL FIX: Start loading messages immediately
+                this.currentPage++;
+                this.loadMessages(this.currentChatUser.id, this.currentPage);
+                
+                // Reset handling flag after a delay
+                setTimeout(() => {
+                    isScrollHandling = false;
+                }, 500);
+            }
+        });
+    }
+
+    showLoader() {
+        const loader = document.getElementById('chat-loader');
+        if (loader) {
+            loader.style.display = 'block';
+            console.log('👁️ Loader shown');
+        }
+    }
+
+    hideLoader() {
+        const loader = document.getElementById('chat-loader');
+        if (loader) {
+            loader.style.display = 'none';
+            console.log('🙈 Loader hidden');
+        }
     }
 
     updateChatHeader(username) {
@@ -1114,23 +1187,34 @@ async openChat(userId) {
         }
     }
 
-    // ❌ REMOVED: Old showNotification method - replaced with new notification system above
-
     destroy() {
         this.disconnectWebSocket();
         clearTimeout(this.typingTimer);
+        if (this.updateTimeout) {
+            clearTimeout(this.updateTimeout);
+        }
     }
 }
 
 // Global chat manager instance
 window.chatManager = null;
 
+// ✅ FIXED: Add flag to prevent multiple initializations
+let chatInitialized = false;
+
 function initializeChat() {
     console.log('🎯 initializeChat function called');
+    
+    // ✅ PREVENT: Multiple simultaneous initializations
+    if (chatInitialized) {
+        console.log('⚠️ Chat already initialized globally, skipping...');
+        return;
+    }
     
     if (!window.chatManager) {
         console.log('🚀 Creating new ChatManager...');
         window.chatManager = new ChatManager();
+        chatInitialized = true;
     }
     
     if (window.chatManager) {
@@ -1138,14 +1222,25 @@ function initializeChat() {
     }
 }
 
+// ✅ FIXED: Prevent cascading calls with debouncing
+let authUpdateTimeout = null;
+
 function updateChatForAuthStatus() {
     console.log('🔄 updateChatForAuthStatus called - syncing with main app auth');
     
-    if (!window.chatManager) {
-        initializeChat();
-    } else {
-        window.chatManager.updateForAuthStatus();
+    // ✅ DEBOUNCE: Prevent rapid successive calls
+    if (authUpdateTimeout) {
+        clearTimeout(authUpdateTimeout);
     }
+    
+    authUpdateTimeout = setTimeout(() => {
+        if (!window.chatManager) {
+            initializeChat();
+        } else {
+            window.chatManager.updateForAuthStatus();
+        }
+        authUpdateTimeout = null;
+    }, 100);
 }
 
 function destroyChat() {
@@ -1154,12 +1249,18 @@ function destroyChat() {
         console.log('🗑️ Destroying existing ChatManager...');
         window.chatManager.destroy();
         window.chatManager = null;
+        chatInitialized = false;
     }
 }
 
-// Always initialize chat on load
+// ✅ FIXED: Only initialize once on DOM ready
+let domReadyHandled = false;
+
 document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(initializeChat, 100);
+    if (!domReadyHandled) {
+        domReadyHandled = true;
+        setTimeout(initializeChat, 100);
+    }
 });
 
 // Export for use in other modules
@@ -1168,3 +1269,11 @@ window.updateChatForAuthStatus = updateChatForAuthStatus;
 window.destroyChat = destroyChat;
 
 console.log('✅ Chat.js loaded successfully');
+
+
+
+
+
+
+
+

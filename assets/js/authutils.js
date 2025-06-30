@@ -1,42 +1,52 @@
-// authutils.js - ENHANCED CHAT SYNC
+// authutils.js - FIXED: No circular calls
 if (!window.appState) {
   window.appState = { user: null, isAuthenticated: false };
 }
 
+// ✅ ADDED: Prevent multiple simultaneous auth updates
+let isUpdatingAuth = false;
+
 export function saveUserSession(user) {
-  console.log('💾 Saving user session and syncing chat:', user);
+  console.log('💾 Saving user session:', user);
   localStorage.setItem('user', JSON.stringify(user));
   window.appState.user = user;
   window.appState.isAuthenticated = true;
   
-  // Sync chat immediately when user logs in
-  setTimeout(() => {
-    console.log('🔄 Syncing chat after login...');
-    if (window.updateChatForAuthStatus) {
-      window.updateChatForAuthStatus();
-    }
-  }, 200);
+  // ✅ FIXED: Update UI immediately after login
+  updateAuthUI();
+  
+  // ✅ FIXED: Trigger chat update immediately after login
+  if (window.updateChatForAuthStatus) {
+    console.log('🔄 Triggering chat update after login...');
+    window.updateChatForAuthStatus();
+  }
 }
 
+
 export function clearUserSession() {
-  console.log('🗑️ Clearing user session and syncing chat');
+  console.log('🗑️ Clearing user session');
   localStorage.removeItem('user');
   window.appState.user = null;
   window.appState.isAuthenticated = false;
   
-  // Sync chat immediately when user logs out
-  if (window.updateChatForAuthStatus) {
-    console.log('🔄 Syncing chat after logout...');
-    window.updateChatForAuthStatus();
-  }
+  // ✅ FIXED: Single sync call with debounce
+  debouncedSyncChat();
 }
 
 export function isLoggedIn() {
   return !!window.appState.user && window.appState.isAuthenticated;
 }
 
+// ✅ FIXED: Simplified updateAuthUI without circular calls
 export function updateAuthUI() {
-  console.log('🎨 Updating auth UI and syncing chat, isAuthenticated:', window.appState.isAuthenticated);
+  // ✅ PREVENT: Multiple simultaneous updates
+  if (isUpdatingAuth) {
+    console.log('⚠️ Auth update already in progress, skipping...');
+    return;
+  }
+  
+  isUpdatingAuth = true;
+  console.log('🎨 Updating auth UI, isAuthenticated:', window.appState.isAuthenticated);
   
   const accountButtons = document.getElementById('account-buttons');
   const loginButtons = document.getElementById('registerlogin-buttons');
@@ -74,27 +84,24 @@ export function updateAuthUI() {
     }
   });
 
-  // ✅ CRITICAL: Sync chat with auth state changes
+  // ✅ FIXED: Reset flag after UI update
   setTimeout(() => {
-    if (window.updateChatForAuthStatus) {
-      console.log('🔄 Syncing chat from updateAuthUI...');
-      window.updateChatForAuthStatus();
-    }
+    isUpdatingAuth = false;
   }, 100);
 }
 
+// ✅ FIXED: Simplified session check without circular calls
 export async function checkUserSession() {
   console.log('🔍 Checking user session...');
   try {
     const response = await fetch('/api/check-session', {
-      credentials: 'include', // Changed from 'same-origin' to 'include'
+      credentials: 'include',
     });
 
     if (response.ok) {
       const data = await response.json();
       console.log('📡 Session check response:', data);
       if (data.authenticated && data.user) {
-        // Restore user session immediately
         localStorage.setItem('user', JSON.stringify(data.user));
         window.appState.user = data.user;
         window.appState.isAuthenticated = true;
@@ -111,8 +118,25 @@ export async function checkUserSession() {
     clearUserSession();
   }
 
+  // ✅ FIXED: Only update UI once, no chat sync here
   updateAuthUI();
-  return window.appState.isAuthenticated; // Return the auth status
+  
+  // ✅ FIXED: Single chat sync after session check
+  debouncedSyncChat();
+  
+  return window.appState.isAuthenticated;
+}
+
+// ✅ NEW: Debounced chat sync to prevent repeated calls
+let chatSyncTimeout;
+function debouncedSyncChat() {
+  clearTimeout(chatSyncTimeout);
+  chatSyncTimeout = setTimeout(() => {
+    if (window.updateChatForAuthStatus) {
+      console.log('🔄 Syncing chat (debounced)...');
+      window.updateChatForAuthStatus();
+    }
+  }, 200);
 }
 
 // Expose functions globally
