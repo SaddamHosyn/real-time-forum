@@ -132,8 +132,19 @@ function navigateTo(page) {
     return showErrorPage(404, `The page "${page}" does not exist.`);
   }
   
-  window.location.hash = `/${page}`;
+  // ✅ FIXED: Force navigation even if URL is the same
+  const targetHash = `#/${page}`;
+  
+  if (window.location.hash === targetHash) {
+    // If we're already on the target page, force reload it
+    console.log('Already on target page, forcing reload');
+    handleRoute(page);
+  } else {
+    // Normal navigation
+    window.location.hash = `/${page}`;
+  }
 }
+
 
 function injectTemplateContent(template) {
   const container = document.getElementById('app-content');

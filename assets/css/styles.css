@@ -3316,6 +3316,46 @@ h2 {
   padding: 3rem;
 }
 
+
+
+
+/* Back Button Styles */
+.back-button-container {
+  margin-bottom: 1rem;
+}
+
+#back-to-feed-btn {
+  background: #6c757d;
+  border: none;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+#back-to-feed-btn:hover {
+  background: #5a6268;
+  transform: translateY(-1px);
+}
+
+#back-to-feed-btn i {
+  margin-right: 0.5rem;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .forum-feed-wrapper {
@@ -3359,6 +3399,21 @@ h2 {
     font-size: 0.85rem;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /* Feed Page Styles */

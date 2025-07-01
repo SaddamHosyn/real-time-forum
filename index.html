@@ -368,15 +368,15 @@
   </div>
 </template>
 
-  <!-- posts against each Topic Template  -->
-
-
-  <!-- SINGLE COMMENT TEMPLATE aganist each post -->
-   
-  <!-- SINGLE COMMENT TEMPLATE aganist each post -->
-<!-- Single Post Template -->
 <template id="single-post-template">
   <div class="single-post-container">
+<!-- Back Button -->
+    <div class="back-button-container mb-3">
+      <button id="back-to-feed-btn" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back to Feed
+      </button>
+    </div>
+
     <article class="single-post">
       <header class="post-header">
         <h1 class="post-title"></h1>
@@ -1036,17 +1036,7 @@
   </div>
 </template>
 
-<!-- Comment Form Template -->
-<template id="reply-form-template">
-  <div class="new-reply-form mt-3">
-    <div class="input-group">
-      <textarea class="form-control reply-textarea" placeholder="Write a comment..." rows="2"></textarea>
-      <button class="btn btn-primary publish-reply" type="button">
-        <i class="fas fa-paper-plane me-2"></i>Post
-      </button>
-    </div>
-  </div>
-</template>
+
 
 <!-- Topic Badge Template -->
 <template id="category-label-template">

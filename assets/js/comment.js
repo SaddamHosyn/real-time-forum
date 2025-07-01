@@ -48,10 +48,76 @@ async function loadSinglePost(postId) {
         }
       });
     }
- 
-    // 4. Display in app content area
-    document.getElementById('app-content').innerHTML = '';
-    document.getElementById('app-content').appendChild(postElement);
+
+    // 4. Display in app content area FIRST
+    const appContent = document.getElementById('app-content');
+    
+    // Clear app content and append new template
+    while (appContent.firstChild) {
+      appContent.removeChild(appContent.firstChild);
+    }
+    appContent.appendChild(postElement);
+
+    // ✅ FIXED: Multiple approaches to make back button work
+    setTimeout(() => {
+      const backButton = document.getElementById('back-to-feed-btn');
+      console.log('Looking for back button:', backButton);
+      
+      if (backButton) {
+        console.log('Back button found, setting up event listener');
+        
+        // Remove any existing event listeners
+        const newBackButton = backButton.cloneNode(true);
+        backButton.parentNode.replaceChild(newBackButton, backButton);
+        
+        newBackButton.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('Back button clicked!');
+          
+          // ✅ TRY MULTIPLE METHODS
+          console.log('window.navigateTo exists:', typeof window.navigateTo);
+          
+          // Method 1: Try navigateTo
+          if (window.navigateTo && typeof window.navigateTo === 'function') {
+            console.log('Using window.navigateTo');
+            window.navigateTo('feed');
+          } 
+          // Method 2: Direct hash change
+          else {
+            console.log('Using direct hash change');
+            window.location.hash = '#/feed';
+          }
+          
+          // Method 3: Force reload if nothing works
+          setTimeout(() => {
+            if (window.location.hash !== '#/feed') {
+              console.log('Forcing hash change');
+              window.location.hash = '#/feed';
+              window.location.reload();
+            }
+          }, 500);
+        });
+        
+        console.log('Event listener attached to back button');
+      } else {
+        console.error('Back button not found in DOM');
+        
+        // ✅ FALLBACK: Use event delegation on the parent
+        appContent.addEventListener('click', function(e) {
+          if (e.target.id === 'back-to-feed-btn' || e.target.closest('#back-to-feed-btn')) {
+            e.preventDefault();
+            console.log('Back button clicked via delegation');
+            
+            if (window.navigateTo) {
+              window.navigateTo('feed');
+            } else {
+              window.location.hash = '#/feed';
+            }
+          }
+        });
+      }
+    }, 100);
  
     // 5. Load comments immediately from the fetched data
     displayComments(comments);
@@ -62,7 +128,7 @@ async function loadSinglePost(postId) {
   }
 }
 
-// New function to display comments from data
+// Rest of your functions remain the same...
 function displayComments(comments) {
   const commentsList = document.querySelector('.comments-list');
   if (!commentsList) return;
@@ -84,7 +150,6 @@ function displayComments(comments) {
   });
 }
 
-// Load comments for the post (updated to use the correct endpoint)
 async function loadComments(postId) {
   try {
     const response = await fetch(`/api/posts/${postId}`);
@@ -95,7 +160,6 @@ async function loadComments(postId) {
     
     displayComments(comments);
     
-    // Update comment count
     const commentCount = document.querySelector('.comment-count');
     if (commentCount) {
       commentCount.textContent = comments.length;
@@ -105,7 +169,6 @@ async function loadComments(postId) {
   }
 }
 
-// Submit a new comment (updated to use correct endpoint)
 async function addComment(postId, commentText) {
   try {
     const response = await fetch('/api/comments/create', {
@@ -134,5 +197,4 @@ async function addComment(postId, commentText) {
   }
 }
 
-// Make loadSinglePost globally accessible
 window.loadSinglePost = loadSinglePost;
