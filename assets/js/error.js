@@ -51,9 +51,6 @@ document.addEventListener('DOMContentLoaded', function () {
       messageEl.textContent = customMessage || getDefaultMessage(errorCode);
     }
 
-    // REMOVED: Retry button logic for 500 errors
-    // REMOVED: Back button logic
-
     const app = document.getElementById('app-content');
     if (app) {
       app.innerHTML = '';
@@ -67,7 +64,6 @@ document.addEventListener('DOMContentLoaded', function () {
       401: "You need to sign in to access this page.",
       403: "You don't have permission to access this page.",
       404: "The page you are looking for does not exist.",
-     
       500: "Something went wrong on our end. Please try again later."
     };
     return messages[errorCode] || messages[404];
@@ -79,55 +75,57 @@ document.addEventListener('DOMContentLoaded', function () {
     renderErrorPage(Number(errorParam));
   }
 
-
-
-// Global fetch error handler - UPDATED TO EXCLUDE LOGIN AND POSTS
-const originalFetch = window.fetch;
-window.fetch = async function(...args) {
-  try {
-    const response = await originalFetch.apply(this, args);
-    
-    // Handle API errors - BUT EXCLUDE LOGIN AND POSTS ENDPOINTS
-    if (!response.ok && 
-        args[0].includes('/api/') && 
-        !args[0].includes('/api/login') && 
-        !args[0].includes('/api/posts/') &&
-        !args[0].includes('/api/comments/')) {
-      const errorData = await response.json().catch(() => ({}));
-      renderErrorPage(response.status, errorData.message);
-      throw new Error(`HTTP ${response.status}: ${errorData.message || response.statusText}`);
+  // ✅ FIXED: More restrictive global fetch error handler
+  const originalFetch = window.fetch;
+  window.fetch = async function(...args) {
+    try {
+      const response = await originalFetch.apply(this, args);
+      
+      // ✅ ONLY handle specific API errors, NOT network/connection errors
+      if (!response.ok && 
+          args[0].includes('/api/') && 
+          !args[0].includes('/api/login') && 
+          !args[0].includes('/api/posts/') &&
+          !args[0].includes('/api/comments/') &&
+          response.status !== 500) { // ✅ EXCLUDE 500 errors completely
+        const errorData = await response.json().catch(() => ({}));
+        renderErrorPage(response.status, errorData.message);
+        throw new Error(`HTTP ${response.status}: ${errorData.message || response.statusText}`);
+      }
+      
+      return response;
+    } catch (error) {
+      // ✅ REMOVED: Network error handling that shows 500 page
+      // Just log the error and let the application handle it gracefully
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        console.warn('Network connection failed:', error.message);
+        // Don't show error page, just throw the error
+      }
+      throw error;
     }
-    
-    return response;
-  } catch (error) {
-    // Handle network errors
-    if (error.name === 'TypeError' && error.message.includes('fetch')) {
-      renderErrorPage(500, 'Network connection failed. Please check your internet connection.');
-    }
-    throw error;
-  }
-};
+  };
 
+  // ✅ REMOVED: Global window error handler that shows 500 page
+  // window.addEventListener('error', function(event) {
+  //   console.error('Global error caught:', event.error);
+  //   renderErrorPage(500, 'An unexpected error occurred.');
+  // });
 
+  // ✅ REMOVED: Unhandled promise rejection handler that shows 500 page
+  // window.addEventListener('unhandledrejection', function(event) {
+  //   console.error('Unhandled promise rejection:', event.reason);
+  //   renderErrorPage(500, 'A network or processing error occurred.');
+  // });
 
-
-
-
-
-
-
-
-
-  // Handle window errors
+  // ✅ ADDED: Silent error logging instead
   window.addEventListener('error', function(event) {
     console.error('Global error caught:', event.error);
-    renderErrorPage(500, 'An unexpected error occurred.');
+    // Just log, don't show error page
   });
 
-  // Handle unhandled promise rejections
   window.addEventListener('unhandledrejection', function(event) {
     console.error('Unhandled promise rejection:', event.reason);
-    renderErrorPage(500, 'A network or processing error occurred.');
+    // Just log, don't show error page
   });
 
   // Expose globally
