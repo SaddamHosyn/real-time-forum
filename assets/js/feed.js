@@ -24,7 +24,7 @@ class FeedManager {
       this.setupLoadMoreButton();
     } catch (error) {
       console.error('Error loading initial posts:', error);
-      this.showError('Failed to load posts. Please try again later.');
+      this.showError('There’s nothing here yet—be the first to create a post!');
     } finally {
       this.showLoading(false);
     }
