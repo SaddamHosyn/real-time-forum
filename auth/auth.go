@@ -26,7 +26,7 @@ type LoginResponse struct {
 }
 
 func LoginUser(usernameOrEmail, password string) (*LoginResponse, error) {
-	log.Printf("Login attempt with identity: %s", usernameOrEmail)
+	log.Printf("Starting authentication process for identity: %s", usernameOrEmail)
 
 	// Fetch user data
 	user, err := database.GetUserByIdentity(usernameOrEmail)

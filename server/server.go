@@ -32,8 +32,7 @@ func StartServer() {
 	http.HandleFunc("/api/posts/topic/", handler.GetPostsByTopicHandler)
 
 	http.HandleFunc("/api/comments/create", middleware.RequireAuth(handler.CreateCommentHandler))
-
-	http.HandleFunc("/api/posts/", handler.GetCommentsByPostHandler)
+	http.HandleFunc("/api/posts/", middleware.RequireAuth(handler.GetSinglePostHandler))
 
 	http.HandleFunc("/api/feed/posts", middleware.RequireAuth(handler.GetFeedHandler))
 

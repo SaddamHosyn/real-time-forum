@@ -374,10 +374,45 @@
   <!-- SINGLE COMMENT TEMPLATE aganist each post -->
    
   <!-- SINGLE COMMENT TEMPLATE aganist each post -->
+<!-- Single Post Template -->
+<template id="single-post-template">
+  <div class="single-post-container">
+    <article class="single-post">
+      <header class="post-header">
+        <h1 class="post-title"></h1>
+        <div class="post-meta">
+          <span class="post-author"></span>
+          <span class="post-date"></span>
+        </div>
+      </header>
+      
+      <div class="post-content"></div>
+      
+      <section class="comments-section">
+        <h3>Comments (<span class="comment-count">0</span>)</h3>
+        
+        <div class="comments-list">
+          <!-- Comments will be inserted here -->
+        </div>
+        
+        <form class="add-comment-form">
+          <div class="comment-form-group">
+            <textarea placeholder="Write a comment..." required rows="3"></textarea>
+            <button type="submit" class="btn btn-primary">Post Comment</button>
+          </div>
+        </form>
+      </section>
+    </article>
+  </div>
+</template>
+
+<!-- Single Comment Template -->
 <template id="single-comment-template">
   <div class="comment">
-    <div class="comment-author"></div>
-    <div class="comment-date"></div>
+    <div class="comment-header">
+      <span class="comment-author"></span>
+      <span class="comment-date"></span>
+    </div>
     <div class="comment-content"></div>
   </div>
 </template>

@@ -2,9 +2,9 @@ package handler
 
 import (
 	"encoding/json"
-
 	"net/http"
 	"realtimeforum/database"
+	"realtimeforum/model"
 	"strconv"
 	"strings"
 	"time"
@@ -63,6 +63,57 @@ func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
 		"message":    "Comment created successfully",
 		"comment_id": commentID,
 	})
+}
+
+// GetSinglePostHandler handles GET /api/posts/{id}
+func GetSinglePostHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Only GET method is allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Extract post ID from URL path
+	pathParts := strings.Split(r.URL.Path, "/")
+	if len(pathParts) < 4 {
+		http.Error(w, "Invalid URL", http.StatusBadRequest)
+		return
+	}
+
+	postIDStr := pathParts[3] // /api/posts/{id}
+
+	postID, err := strconv.Atoi(postIDStr)
+	if err != nil {
+		http.Error(w, "Invalid post ID", http.StatusBadRequest)
+		return
+	}
+
+	// Get post from database
+	post, err := database.GetPostByID(postID)
+	if err != nil {
+		http.Error(w, "Post not found", http.StatusNotFound)
+		return
+	}
+
+	// Get comments for this post
+	comments, err := database.GetCommentsByPostID(postID)
+	if err != nil {
+		comments = []model.Comment{} // Empty array if error
+	}
+
+	response := map[string]interface{}{
+		"success": true,
+		"post": map[string]interface{}{
+			"id":      post.ID,
+			"title":   post.Title,
+			"content": post.Content,
+			"author":  post.Author,
+			"date":    post.CreatedAt,
+		},
+		"comments": comments,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
 }
 
 // GetCommentsByPostHandler handles GET /api/posts/{postId}/comments

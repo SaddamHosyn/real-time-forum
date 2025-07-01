@@ -53,7 +53,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("Login attempt for identity: %s", loginData.Identity)
+	log.Printf("HTTP login request received for identity: %s", loginData.Identity)
 
 	loginResp, err := auth.LoginUser(loginData.Identity, loginData.Password)
 	if err != nil {

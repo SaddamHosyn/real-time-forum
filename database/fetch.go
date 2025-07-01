@@ -307,3 +307,27 @@ func GetPostCommentsPaginated(postID, limit, offset int) ([]model.FeedComment, e
 
 	return comments, nil
 }
+
+
+// GetPostByID retrieves a single post by its ID
+func GetPostByID(postID int) (*model.Post, error) {
+	query := `
+		SELECT p.id, p.title, p.content, p.user_id, p.created_at, u.username
+		FROM posts p
+		JOIN users u ON p.user_id = u.id
+		WHERE p.id = ?
+	`
+
+	var post model.Post
+	err := DB.QueryRow(query, postID).Scan(
+		&post.ID, &post.Title, &post.Content, &post.UserID, &post.CreatedAt, &post.Author)
+	
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, ErrPostNotFound
+		}
+		return nil, fmt.Errorf("%w: %v", ErrDatabaseError, err)
+	}
+
+	return &post, nil
+}

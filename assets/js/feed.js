@@ -109,6 +109,22 @@ class FeedManager {
     const articleElement = clone.querySelector('.forum-post-card');
     if (articleElement) {
       articleElement.setAttribute('data-post-id', post.id);
+      
+      // Make post clickable
+      articleElement.style.cursor = 'pointer';
+      articleElement.addEventListener('click', (e) => {
+        // Prevent click if user clicked on buttons or interactive elements
+        if (e.target.closest('button, .btn, .show-discussion')) {
+          return;
+        }
+        
+        // Load single post view
+        if (window.loadSinglePost) {
+          window.loadSinglePost(post.id);
+        } else {
+          console.error('loadSinglePost function not found');
+        }
+      });
     }
 
     // Fill post data with null checks
@@ -142,7 +158,7 @@ class FeedManager {
       });
     }
 
-    // Setup comments section
+    // Setup comments section (display only, no form)
     this.setupCommentsSection(clone, post);
 
     // Setup event listeners
@@ -173,90 +189,19 @@ class FeedManager {
     const commentsList = commentsSection.querySelector('.discussion-thread');
     this.clearElement(commentsList);
 
-    const maxVisible = 3;
     const comments = post.comments || [];
     
     console.log(`Setting up comments for post ${post.id}:`, comments.length, 'total comments');
 
-    // Show first 3 comments
-    const visibleComments = comments.slice(0, maxVisible);
-    const hiddenComments = comments.slice(maxVisible);
-
-    // Add visible comments
-    visibleComments.forEach(comment => {
+    // Add all comments (display only)
+    comments.forEach(comment => {
       const commentElement = this.createCommentElement(comment);
       if (commentElement) {
         commentsList.appendChild(commentElement);
       }
     });
 
-    // Add "Read more" button if there are hidden comments
-    if (hiddenComments.length > 0) {
-      const readMoreBtn = document.createElement('button');
-      readMoreBtn.className = 'btn btn-outline-secondary btn-sm mt-2 expand-discussion-btn';
-      readMoreBtn.textContent = `Read ${hiddenComments.length} more comment${hiddenComments.length > 1 ? 's' : ''}`;
-
-      readMoreBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        // Add the hidden comments
-        hiddenComments.forEach(comment => {
-          const commentElement = this.createCommentElement(comment);
-          if (commentElement) {
-            commentsList.appendChild(commentElement);
-          }
-        });
-        
-        // Remove the "Read more" button
-        readMoreBtn.remove();
-      });
-
-      commentsList.appendChild(readMoreBtn);
-    }
-
-    // Add comment form
-    this.addCommentForm(commentsSection, post.id, postElement);
-  }
-
-  addCommentForm(commentsSection, postId, postElement) {
-    const template = document.getElementById('reply-form-template');
-    if (!template) {
-      console.error('Comment form template not found');
-      return;
-    }
-
-    const clone = document.importNode(template.content, true);
-    
-    // Append the clone first
-    commentsSection.appendChild(clone);
-    
-    // Now query for the elements from the actual DOM after they've been appended
-    const submitBtn = commentsSection.querySelector('.publish-reply');
-    const commentInput = commentsSection.querySelector('.reply-textarea');
-
-    // Add null checks and event listeners
-    if (submitBtn && commentInput) {
-      submitBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        this.handlePostComment(postId, commentInput, postElement);
-      });
-
-      commentInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-          e.preventDefault();
-          this.handlePostComment(postId, commentInput, postElement);
-        }
-      });
-
-      // Focus the textarea when form is added
-      setTimeout(() => {
-        commentInput.focus();
-      }, 100);
-    } else {
-      console.error('Comment form elements not found:', { submitBtn, commentInput });
-    }
+    // ❌ REMOVED: Comment form functionality
   }
 
   createCommentElement(comment) {
@@ -271,7 +216,7 @@ class FeedManager {
 
     const clone = document.importNode(template.content, true);
     
-    // Set comment text - CRITICAL: Make sure this works
+    // Set comment text
     const commentText = clone.querySelector('.reply-message');
     if (commentText) {
       const content = comment.content || '';
@@ -326,83 +271,9 @@ class FeedManager {
     }
   }
 
-  // Add this helper method to find the actual DOM element
-  findPostElementInDOM(postId) {
-    return document.querySelector(`.forum-post-card[data-post-id="${postId}"]`);
-  }
-
-  async handlePostComment(postId, commentInput, postElement) {
-    const content = commentInput.value.trim();
-    if (!content) return;
-
-    console.log('=== POSTING COMMENT ===');
-    console.log('Post ID:', postId);
-    console.log('Content:', content);
-
-    try {
-      const response = await fetch('/api/comments/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ post_id: postId, content })
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to post comment');
-      }
-
-      const result = await response.json();
-      console.log('API Result:', result);
-
-      if (result.success) {
-        const newComment = {
-          id: result.comment_id,
-          content: content,
-          author: window.appState?.user?.username || 'Current User',
-          created_at: new Date().toISOString()
-        };
-
-        console.log('New comment object:', newComment);
-
-        // FIXED: Find the actual DOM element, not the document fragment
-        const actualPostElement = this.findPostElementInDOM(postId);
-        
-        if (actualPostElement) {
-          const commentsList = actualPostElement.querySelector('.discussion-thread');
-          console.log('Comments list found:', !!commentsList);
-          
-          if (commentsList) {
-            console.log('Current comments in list:', commentsList.children.length);
-            
-            const commentElement = this.createCommentElement(newComment);
-            console.log('Comment element created:', !!commentElement);
-            
-            if (commentElement) {
-              commentsList.appendChild(commentElement);
-              console.log('Comment appended. New count:', commentsList.children.length);
-            }
-          }
-
-          // Update comment count
-          const commentCountElement = actualPostElement.querySelector('.discussion-count .total');
-          if (commentCountElement) {
-            const currentCount = parseInt(commentCountElement.textContent) || 0;
-            commentCountElement.textContent = currentCount + 1;
-            console.log('Comment count updated to:', currentCount + 1);
-          }
-        } else {
-          console.error('Could not find actual post element in DOM for post ID:', postId);
-        }
-
-        commentInput.value = '';
-        console.log('=== COMMENT POSTING COMPLETE ===');
-      }
-
-    } catch (error) {
-      console.error('Error posting comment:', error);
-      alert('Failed to post comment. Please try again.');
-    }
-  }
+  // ❌ REMOVED: addCommentForm method
+  // ❌ REMOVED: handlePostComment method
+  // ❌ REMOVED: findPostElementInDOM method (no longer needed for comments)
 
   setupLoadMoreButton() {
     const loadMoreBtn = document.getElementById('expand-feed-btn');
@@ -508,10 +379,12 @@ class FeedManager {
       const date = new Date(dateString);
       const now = new Date();
       const diffTime = Math.abs(now - date);
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-      if (diffDays === 1) {
+      if (diffDays === 0) {
         return 'today';
+      } else if (diffDays === 1) {
+        return '1 day ago';
       } else if (diffDays < 7) {
         return `${diffDays} days ago`;
       } else {

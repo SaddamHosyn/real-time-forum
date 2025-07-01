@@ -79,28 +79,44 @@ document.addEventListener('DOMContentLoaded', function () {
     renderErrorPage(Number(errorParam));
   }
 
-  // Global fetch error handler - UPDATED TO EXCLUDE LOGIN
-  const originalFetch = window.fetch;
-  window.fetch = async function(...args) {
-    try {
-      const response = await originalFetch.apply(this, args);
-      
-      // Handle API errors - BUT EXCLUDE LOGIN ENDPOINT
-      if (!response.ok && args[0].includes('/api/') && !args[0].includes('/api/login')) {
-        const errorData = await response.json().catch(() => ({}));
-        renderErrorPage(response.status, errorData.message);
-        throw new Error(`HTTP ${response.status}: ${errorData.message || response.statusText}`);
-      }
-      
-      return response;
-    } catch (error) {
-      // Handle network errors
-      if (error.name === 'TypeError' && error.message.includes('fetch')) {
-        renderErrorPage(500, 'Network connection failed. Please check your internet connection.');
-      }
-      throw error;
+
+
+// Global fetch error handler - UPDATED TO EXCLUDE LOGIN AND POSTS
+const originalFetch = window.fetch;
+window.fetch = async function(...args) {
+  try {
+    const response = await originalFetch.apply(this, args);
+    
+    // Handle API errors - BUT EXCLUDE LOGIN AND POSTS ENDPOINTS
+    if (!response.ok && 
+        args[0].includes('/api/') && 
+        !args[0].includes('/api/login') && 
+        !args[0].includes('/api/posts/') &&
+        !args[0].includes('/api/comments/')) {
+      const errorData = await response.json().catch(() => ({}));
+      renderErrorPage(response.status, errorData.message);
+      throw new Error(`HTTP ${response.status}: ${errorData.message || response.statusText}`);
     }
-  };
+    
+    return response;
+  } catch (error) {
+    // Handle network errors
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      renderErrorPage(500, 'Network connection failed. Please check your internet connection.');
+    }
+    throw error;
+  }
+};
+
+
+
+
+
+
+
+
+
+
 
   // Handle window errors
   window.addEventListener('error', function(event) {
