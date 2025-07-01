@@ -67,6 +67,7 @@ function setupLoginForm() {
 }
 
 // ADD THIS LOGIN HANDLER FUNCTION
+// ADD THIS LOGIN HANDLER FUNCTION
 async function handleLogin(form, errorElementId) {
   const formData = new FormData(form);
   const identity = formData.get('identity');
@@ -107,8 +108,15 @@ async function handleLogin(form, errorElementId) {
         window.appState.isAuthenticated = true;
       }
 
+      // ✅ FIXED: Update auth UI immediately
       if (window.updateAuthUI) {
         window.updateAuthUI();
+      }
+
+      // ✅ FIXED: Trigger chat update immediately after login
+      if (window.updateChatForAuthStatus) {
+        console.log('🔄 Triggering chat update after login...');
+        window.updateChatForAuthStatus();
       }
 
       // ✅ Safe redirect logic
@@ -144,6 +152,7 @@ async function handleLogin(form, errorElementId) {
     }
   }
 }
+
 
 // Global exposure
 window.initializeSignInPage = initializeSignInPage;

@@ -60,32 +60,39 @@ class ChatManager {
     }
 
     // ✅ FIXED: Enhanced prevention of repeated calls
-    updateForAuthStatus() {
-        const currentAuthStatus = !!window.appState?.isAuthenticated;
-        
-        // ✅ PREVENT: Skip if auth status hasn't changed
-        if (this.lastAuthStatus === currentAuthStatus && this.isInitialized) {
-            console.log('⚠️ Auth status unchanged, skipping update...');
-            return;
-        }
-        
-        // ✅ PREVENT: Multiple simultaneous updates
-        if (this.isUpdating) {
-            console.log('⚠️ Chat update already in progress, skipping...');
-            return;
-        }
-        
-        this.isUpdating = true;
-        this.lastAuthStatus = currentAuthStatus;
-        
-        console.log('🔄 Updating chat for auth status:', currentAuthStatus);
-        
-        // Clear any pending update
-        if (this.updateTimeout) {
-            clearTimeout(this.updateTimeout);
-        }
-        
-        if (currentAuthStatus) {
+
+
+
+// ✅ FIXED: Enhanced prevention of repeated calls with better timing
+updateForAuthStatus() {
+    const currentAuthStatus = !!window.appState?.isAuthenticated;
+    
+    // ✅ PREVENT: Skip if auth status hasn't changed
+    if (this.lastAuthStatus === currentAuthStatus && this.isInitialized) {
+        console.log('⚠️ Auth status unchanged, skipping update...');
+        return;
+    }
+    
+    // ✅ PREVENT: Multiple simultaneous updates
+    if (this.isUpdating) {
+        console.log('⚠️ Chat update already in progress, skipping...');
+        return;
+    }
+    
+    this.isUpdating = true;
+    this.lastAuthStatus = currentAuthStatus;
+    
+    console.log('🔄 Updating chat for auth status:', currentAuthStatus);
+    console.log('🔍 Current user in appState:', window.appState?.user);
+    
+    // Clear any pending update
+    if (this.updateTimeout) {
+        clearTimeout(this.updateTimeout);
+    }
+    
+    // ✅ FIXED: Add delay to ensure auth state is fully established
+    setTimeout(() => {
+        if (window.appState?.isAuthenticated && window.appState?.user) {
             console.log('✅ User authenticated, enabling full chat...');
             this.enableChatFunctionality();
             this.connectWebSocket();
@@ -108,7 +115,28 @@ class ChatManager {
         setTimeout(() => {
             this.isUpdating = false;
         }, 100);
-    }
+        
+    }, 300); // Add 300ms delay to ensure auth state is ready
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     enableChatFunctionality() {
         console.log('✅ Enabling chat functionality...');
