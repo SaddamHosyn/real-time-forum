@@ -1428,6 +1428,57 @@ h2 {
     flex-direction: column;
 }
 
+
+
+
+#chatbox-container {
+    position: fixed;
+    right: 20px;
+    top: 100px;
+    width: 400px;
+    height: 600px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: row;
+    z-index: 1000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+    /* --- Safari flexbox bug fix --- */
+    min-width: 0;
+    min-height: 0;
+    -webkit-flex-direction: row;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -webkit-display: flex;
+    -webkit-flex: 1 1 auto;
+    flex: 1 1 auto;
+    box-sizing: border-box;
+}
+
+#user-list, #message-area {
+    /* your existing styles ... */
+    min-width: 0;
+    min-height: 0;
+    box-sizing: border-box;
+    /* (keep your existing width, background, etc.) */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .user-list-header {
     padding: 15px 10px;
     background: #007bff;
@@ -1435,7 +1486,15 @@ h2 {
     font-weight: 600;
     font-size: 14px;
     text-align: center;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
 }
+
+
+
+
+
+
 
 .users {
     list-style: none;
@@ -1443,6 +1502,9 @@ h2 {
     padding: 0;
     overflow-y: auto;
     flex: 1;
+
+  
+ 
 }
 
 .user {
@@ -1677,7 +1739,7 @@ h2 {
 }
 
 #send-button {
-    padding: 8px 16px;
+    padding: 8px 10px;
     background: #007bff;
     color: white;
     border: none;
@@ -1980,6 +2042,49 @@ h2 {
 
 
 
+
+
+/* Responsive chatbox for tablets and below */
+@media (max-width: 1024px) {
+    #chatbox-container {
+        width: 90vw;
+        height: 70vh;
+        right: 5vw;
+        top: 80px;
+        left: auto;
+        bottom: auto;
+        min-width: 250px;
+        min-height: 300px;
+        border-radius: 10px;
+    }
+    #user-list {
+        width: 100px;
+    }
+}
+
+/* Responsive chatbox for mobile and very small screens */
+@media (max-width: 600px) {
+    #chatbox-container {
+        width: 100vw;
+        height: 60vh;
+        left: 0;
+        right: 0;
+        top: auto;
+        bottom: 0;
+        border-radius: 0;
+        max-width: 100vw;
+        max-height: 70vh;
+        z-index: 1000;
+    }
+    #user-list {
+        width: 70px;
+        font-size: 12px;
+    }
+    .message-header, .message-input-area {
+        font-size: 13px;
+        padding: 8px;
+    }
+}
 
 
 
