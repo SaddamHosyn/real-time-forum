@@ -3,16 +3,21 @@ DB_NAME := mydatabase.db
 SCHEMA_FILE := database/schema.sql
 SEED_FILE := database/seed.go
 
-# Default target (run the application with fresh DB)
-run: db-clean prepare-db
+# Default target (run the application with existing DB)
+run:
 	@echo "Starting application..."
 	go run main.go
 
-# Prepare the DB: always create fresh
+# Prepare the DB: create schema if needed (does NOT delete existing DB)
 prepare-db:
-	@echo "Creating fresh $(DB_NAME)..."
-	@sqlite3 $(DB_NAME) < $(SCHEMA_FILE)
-	@echo "Database schema initialized."
+	@echo "Preparing $(DB_NAME)..."
+	@if [ ! -f $(DB_NAME) ]; then \
+		echo "Creating new database..."; \
+		sqlite3 $(DB_NAME) < $(SCHEMA_FILE); \
+		echo "Database schema initialized."; \
+	else \
+		echo "Database already exists. Skipping schema creation."; \
+	fi
 
 # Seed the database
 db-seed: prepare-db

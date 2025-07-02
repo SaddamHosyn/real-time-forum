@@ -1,4 +1,3 @@
-# Start from the official Go image
 FROM golang:1.20-alpine
 
 # Set working directory
@@ -16,7 +15,7 @@ COPY . .
 # Build the Go app
 RUN go build -o main .
 
-# Expose the port your app runs on (change if needed)
+# Expose the port your app runs on
 EXPOSE 8080
 
 # Run the app
