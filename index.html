@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <title>Forum - Home</title>
+     <!-- Favicon -->
+  <link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon" />
+ 
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap"
+      rel="stylesheet"
+    />
+
+
+
+
+
+
+  </head>
+  <body>
+   
+   
+
+
+
+
+
+        <!-- Header with Navigation menu bar-->
+       <!-- Header with Navigation menu bar-->
+        <!-- Header with Navigation menu bar-->
+      <header>
+      <nav class="navbar navbar-expand-lg navbar-custom">
+       <div class="container">
+         <a class="navbar-brand nav-link" href="#" role="button" tabindex="0" data-page="home">
+        <span class="brand-text">Budget</span>
+        <span class="brand-buzz">Buzz</span>
+        <span class="brand-icon">💰</span>
+        </a>
+      <!-- Hamburger Button -->
+      <button class="navbar-toggler" type="button" id="navbarToggle">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+
+      <div class="navbar-collapse">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-page="home" data-type="page">Home</a>
+          </li>
+
+         <li class="nav-item">
+            <a class="nav-link" href="#" data-page="feed" data-type="page">Feed</a>
+          </li>
+
+
+
+          <li class="nav-item">
+            <a class="nav-link" href="#store" data-page="store" data-type="page" >Find a Store</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-page="topicsbar" data-type="page">Topics</a>
+          </li>
+          <li class="nav-item">
+  <a class="nav-link" href="#/create-post">Create Post</a>
+</li>
+
+        </ul>
+
+          <!-- Register Button and Sign in Button -->
+
+          <div class="registerlogin-buttons d-flex gap-2 logout-required" id="registerlogin-buttons">
+          <button type="button" class="btn btn-register" id="open-register-page">Register</button>
+          <button type="button" class="btn btn-light" id="open-signin-page">Sign In</button>
+        </div>
+            <!-- when login after that it should have these buttons -->
+ <div class="d-none login-required" id="account-buttons">
+          <!-- logout success message -->
+          <div id="logout-message" class="alert alert-success d-none mb-2"></div>
+          <a href="#/my-account" class="btn btn-light">My Account</a>
+          <button type="button" class="btn btn-secondary" id="logout-btn">Logout</button>
+        </div>
+
+          
+
+          </div>
+         </div>
+      </nav>
+    </header>
+ <!-- Header with Navigation menu bar-->
+
+
+
+  <!-- Main App Container - This wraps both content and chat -->
+<div class="app-container">
+    <!-- Main Content Area - This holds all your existing content -->
+  <div class="main-content">
+
+
+
+
+
+
+    <!-- Main Content - This will be dynamically replaced by router -->
+   
+      <main class="container my-4" id="app-content">
+      <!-- Initial content will be loaded from home-template -->
+
+          
+      
+
+
+
+
+
+      </main>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <!-- Chat container -->
+  
+ <!--  chat container -->
+
+<div id="chatbox-container">
+  <div id="user-list">
+      <div class="user-list-header">
+          Online Users
+      </div>
+      <ul class="users">
+          <!-- Users loaded dynamically -->
+      </ul>
+  </div>
+  <div id="message-area">
+      <div class="message-header">
+          <span id="chat-with-user">Select a user to chat</span>
+      </div>
+      <div class="message-history">
+          <!-- Messages loaded dynamically -->
+      </div>
+      <div id="login-prompt" class="login-prompt d-none">
+          <p>Please <a href="#/signin">sign in</a> to start chatting</p>
+      </div>
+      <div class="message-input-area">
+          <input type="text" id="message-input" placeholder="Sign in to send messages..." disabled>
+          <button id="send-button" disabled>Send</button>
+      </div>
+  </div>
+</div>
+
+<!--  chat container -->
+
+
+
+
+
+
+
+
+
+
+
+<!-- Store Page Template -->
+<!-- Store Page Template (for router) -->
+<template id="store-template">
+  <div class="container my-4">
+    <h2 class="mb-4">Available Stores</h2>
+    <div id="storesList" class="row"></div>
+  </div>
+</template>
+
+<!-- Individual Store Card Template (for rendering) -->
+<template id="store-card-template">
+  <div class="col-12 col-md-4 mb-4">
+    <div class="store-card">
+      <h3 class="store-name"></h3>
+      <p class="store-address-line">
+        <i class="fas fa-map-marker-alt"></i>
+        <span class="store-address"></span>
+      </p>
+      <p class="store-phone-line">
+        <i class="fas fa-phone"></i>
+        <span class="store-phone"></span>
+      </p>
+      <p class="store-hours-line">
+        <i class="fas fa-clock"></i>
+        <span class="store-hours"></span>
+      </p>
+    </div>
+  </div>
+</template>
+
+
+
+
+
+
+    <!-- ===== TEMPLATES ===== -->
+    <!-- Topics Grid Template (Shows ALL topics with icons) -->
+    <!-- ===== TEMPLATES ===== -->
+    <!-- Topics Grid Template (Shows ALL topics with icons) -->
+   
+    <template id="topicsbar-template">
+  <section class="forum-topics">
+    <h2 class="text-center mb-5 fw-bold">Explore Topics</h2>
+    <div class="row justify-content-center">
+    <div class="container">
+      <div class="row g-2">
+        <!-- Topic 1 - Daily Essentials -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="topic-card h-100" onclick="navigateToTopic('daily-essentials')">
+            <i class="fas fa-shopping-basket"></i>
+            <h3>Daily Essentials</h3>
+            <p>Discuss everyday must-haves</p>
+          </div>
+        </div>
+
+        <!-- Topic 2 - Home & Lifestyle -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="topic-card h-100" onclick="navigateToTopic('home-lifestyle')">
+            <i class="fas fa-home"></i>
+            <h3>Home & Lifestyle</h3>
+            <p>Home decor, organization tips</p>
+          </div>
+        </div>
+
+        <!-- Topic 3 - Personal Well-being -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="topic-card h-100" onclick="navigateToTopic('personal-well-being')">
+            <i class="fas fa-heartbeat"></i>
+            <h3>Personal Well-being</h3>
+            <p>Health, fitness, and mindfulness</p>
+          </div>
+        </div>
+
+        <!-- Topic 4 - Technology & Innovation -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="topic-card h-100" onclick="navigateToTopic('technology-innovation')">
+            <i class="fas fa-microchip"></i>
+            <h3>Technology & Innovation</h3>
+            <p>Gadgets, software, and future tech</p>
+          </div>
+        </div>
+
+        <!-- Topic 5 - Leisure & Entertainment -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="topic-card h-100" onclick="navigateToTopic('leisure-entertainment')">
+            <i class="fas fa-gamepad"></i>
+            <h3>Leisure & Entertainment</h3>
+            <p>Games, movies, and hobbies</p>
+          </div>
+        </div>
+
+        <!-- Topic 6 - Commerce & Shopping -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="topic-card h-100" onclick="navigateToTopic('commerce-shopping')">
+            <i class="fas fa-store"></i>
+            <h3>Commerce & Shopping</h3>
+            <p>Deals, reviews, and shopping guides</p>
+          </div>
+        </div>
+
+        <!-- Topic 7 - Mobility & Transportation -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="topic-card h-100" onclick="navigateToTopic('mobility-transportation')">
+            <i class="fas fa-car"></i>
+            <h3>Mobility & Transportation</h3>
+            <p>Vehicles, public transit, and travel solutions</p>
+          </div>
+        </div>
+
+        <!-- Topic 8 - Services & Support -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="topic-card h-100" onclick="navigateToTopic('services-support')">
+            <i class="fas fa-hands-helping"></i>
+            <h3>Services & Support</h3>
+            <p>Professional services and community help</p>
+          </div>
+        </div>
+
+        <!-- Topic 9 - Culture & Community -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="topic-card h-100" onclick="navigateToTopic('culture-community')">
+            <i class="fas fa-globe-americas"></i>
+            <h3>Culture & Community</h3>
+            <p>Local events, traditions, and social groups</p>
+          </div>
+        </div>
+
+        <!-- Topic 10 - Information & Learning -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="topic-card h-100" onclick="navigateToTopic('information-learning')">
+            <i class="fas fa-graduation-cap"></i>
+            <h3>Information & Learning</h3>
+            <p>Education, tutorials, and knowledge sharing</p>
+          </div>
+        </div>
+
+        <!-- Topic 11 - Quick Recipes -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="topic-card h-100" onclick="navigateToTopic('quick-recipes')">
+            <i class="fas fa-utensils fa-2x text-danger"></i>
+            <h3>Quick Recipes</h3>
+            <p>Make food quickly</p>
+          </div>
+        </div>
+
+        <!-- Topic 12 - Nutrition Insights -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="topic-card h-100" onclick="navigateToTopic('nutrition-insights')">
+            <i class="fas fa-apple-alt fa-2x text-success"></i>
+            <h3>Nutrition Insights</h3>
+            <p>Healthy eating tips</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+</template>
+
+    <!-- Topics Grid Template (Shows ALL topics with icons) -->
+
+
+
+
+
+ <!-- posts against each Topic Template  -->
+  <!-- posts against each Topic Template  -->
+
+<template id="topic-posts-template">
+  <div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="fw-bold topic-posts-title">Posts in: Topic Name</h2>
+      <button class="btn btn-secondary btn-back-to-topics">← Back to Topics</button>
+    </div>
+    <div class="topic-posts-content">
+      <!-- Posts will be rendered here -->
+    </div>
+  </div>
+</template>
+
+<template id="single-post-template">
+  <div class="single-post-container">
+<!-- Back Button -->
+    <div class="back-button-container mb-3">
+      <button id="back-to-feed-btn" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Back to Feed
+      </button>
+    </div>
+
+    <article class="single-post">
+      <header class="post-header">
+        <h1 class="post-title"></h1>
+        <div class="post-meta">
+          <span class="post-author"></span>
+          <span class="post-date"></span>
+        </div>
+      </header>
+      
+      <div class="post-content"></div>
+      
+      <section class="comments-section">
+        <h3>Comments (<span class="comment-count">0</span>)</h3>
+        
+        <div class="comments-list">
+          <!-- Comments will be inserted here -->
+        </div>
+        
+        <form class="add-comment-form">
+          <div class="comment-form-group">
+            <textarea placeholder="Write a comment..." required rows="3"></textarea>
+            <button type="submit" class="btn btn-primary">Post Comment</button>
+          </div>
+        </form>
+      </section>
+    </article>
+  </div>
+</template>
+
+<!-- Single Comment Template -->
+<template id="single-comment-template">
+  <div class="comment">
+    <div class="comment-header">
+      <span class="comment-author"></span>
+      <span class="comment-date"></span>
+    </div>
+    <div class="comment-content"></div>
+  </div>
+</template>
+
+  <!-- SINGLE COMMENT TEMPLATE aganist each post -->
+
+
+<!-- Post Card Template (with comments section) -->
+<template id="post-card-template">
+  <div class="post-card mb-3">
+    <div class="post-header">
+      <h5 class="post-title"></h5>
+      <div class="post-meta">
+        <span class="post-author"></span>
+        <span class="post-date"></span>
+      </div>
+    </div>
+    <div class="post-content">
+      <p class="post-text"></p>
+    </div>
+    <div class="post-topics"></div>
+    
+    <!-- Comments Section -->
+    <div class="comments-section mt-3">
+      <div class="comments-header d-flex justify-content-between align-items-center mb-2">
+        <h6 class="mb-0">Comments</h6>
+        <button class="btn btn-sm btn-outline-primary toggle-comments">Show Comments</button>
+      </div>
+      <div class="comments-container" style="display: none;"></div>
+    </div>
+  </div>
+</template>
+
+<!-- Comment Form Template -->
+<template id="comment-form-template">
+  <div class="add-comment-form mt-3">
+    <div class="input-group">
+      <textarea class="form-control comment-input" placeholder="Write a comment..." rows="2"></textarea>
+      <button class="btn btn-primary submit-comment" type="button">
+        <i class="fas fa-paper-plane me-2"></i>Post
+      </button>
+    </div>
+  </div>
+</template>
+
+
+<!-- Individual Comment Template -->
+<template id="comment-item-template">
+  <div class="comment mb-2 p-2 border-start border-3">
+    <div class="comment-header d-flex justify-content-between align-items-center mb-1">
+      <small class="text-muted fw-bold comment-author"></small>
+      <small class="text-muted comment-date"></small>
+    </div>
+    <p class="comment-content mb-0"></p>
+  </div>
+</template>
+
+<!-- Login Prompt Template -->
+<template id="login-prompt-template">
+  <p class="text-muted">Please log in to post comments.</p>
+</template>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- main Page Templates -->
+    <!-- main Page Templates -->
+
+    <template id="home-template">
+        <!-- 💡 Decorative Top-Left Image -->
+
+
+<section class="main-announcement">
+  <!-- 🔔 Announcement Section -->
+  <div class="announcement">
+    <h2>👋 Welcome to Budget Buzz!</h2>
+    <p>We're your go-to forum for sharing cost-effective living tips and budget-friendly hacks.</p>
+    <ul>
+      <li>📍 Post your <strong>city</strong> and <strong>budget</strong> to find relevant discussions.</li>
+      <li>🆕 New feature: <strong>Group Travel Budgeting</strong> – collaborate and save together!</li>
+    </ul>
+  </div>
+
+  <!-- 📢 Community Prompts / Ads Section -->
+  <div class="prompts">
+    <div class="prompt-box prompt-blue">
+      <img src="assets/images/bulb.svg" alt="Lightbulb Icon" class="icon"> Looking for budget ideas? <a href="#" onclick="event.preventDefault(); navigateToTips()">Check our Top Tips section</a>.
+
+    </div>
+    <div class="prompt-box prompt-pink">
+      🧮 Try our <a href="#" onclick="event.preventDefault(); navigateToCalculator()">Budgeting Calculator</a>
+ and see where your money goes!
+    </div>
+  </div>
+
+<!-- 🧾 Budget Digest Highlights -->
+<div class="budget-digest">
+  <h2 class="digest-heading">🧾 Budget Digest Highlights</h2>
+  <div class="digest-grid">
+    <div class="digest-item">
+      <img src="assets/images/rocketchat-brands.svg" alt="Chat Icon" class="icon">
+      <h4>Community Voices</h4>
+      <p>See what people are saying about saving while studying abroad.</p>
+    </div>
+    <div class="digest-item">
+      <img src="assets/images/money-bill-trend-up-solid.svg" alt="Trending Icon" class="icon">
+      <h4>Weekly Buzz</h4>
+      <p>This week's hot topics: €5 meal challenge, rent under €300, and more.</p>
+    </div>
+    <div class="digest-item">
+      <img src="assets/images/house-solid.svg" alt="Home Icon" class="icon">
+      <h4>Category Highlights</h4>
+      <p>From student housing to weekend getaways—top-rated budget tips in each area.</p>
+    </div>
+  </div>
+</div>
+
+
+
+</section>
+    
+  </template>
+
+
+<template id="tips-template">
+  <section class="top-tips">
+    <button class="close-button" onclick="navigateToHome()">×</button>
+    <h1>💡 Top Budget Tips from Budget Buzz</h1>
+    <ul>
+      <li><strong>🍽️ Cook in bulk:</strong> Save time and money by meal-prepping a few days at a time.</li>
+      <li><strong>🛒 Compare store prices:</strong> Check deals at local stores like Sparhallen, S-Market Jomala, or Kantarellen before buying.</li>
+      <li><strong>🚲 Skip the bus:</strong> If it's walkable or bikeable, save your bus fare and get some fresh air!</li>
+      <li><strong>🎁 Look for second-hand:</strong> Emmaus and local facebook groups often have high-quality used goods.</li>
+      <li><strong>🖥️ Budget tech purchases:</strong> Compare tech prices at Multitronic Åland for sales or open-box deals.</li>
+      <li><strong>📦 Share subscriptions:</strong> Team up with friends for shared streaming or software subscriptions.</li>
+      <li><strong>🏠 Roommate boards:</strong> Save rent by checking local forums or housing boards for room-shares.</li>
+    </ul>
+  </section>
+</template>
+
+
+
+
+
+
+<template id="calculator-template">
+  <section class="budget-calculator">
+    <button class="close-button" onclick="navigateToHome()">×</button>
+    <h1>🧮 Budgeting Calculator</h1>
+    <form id="budget-form">
+      <label>Monthly Income:</label>
+      <input type="number" id="income" min="0" required><br>
+
+      <label>Rent:</label>
+      <input type="number" id="rent" min="0"><br>
+
+      <label>Groceries:</label>
+      <input type="number" id="groceries" min="0"><br>
+
+      <label>Transport:</label>
+      <input type="number" id="transport" min="0"><br>
+
+      <label>Other Expenses:</label>
+      <input type="number" id="other" min="0"><br>
+
+      <button type="submit">Calculate</button>
+    </form>
+    <div id="calc-result"></div>
+  </section>
+</template>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- main Page slider Templates -->
+
+ 
+
+
+    <!-- create post topics will be loaded here -->
+    <!-- create post topics will be loaded here -->
+    <!-- create post topics all here-->
+    <!-- create post topics all here-->
+  <template id="template-create-post">
+  <div class="create-post-content">
+    <button type="button" class="btn-close-create-post" style="float: right;">&times;</button>
+    <h2>Create New Post</h2>
+    <form id="form-create-post">
+      <div class="validation-errors" style="display: none;"></div>
+
+      <div class="create-post-form-group">
+        <label for="input-create-post-title">Title:</label>
+        <input type="text" id="input-create-post-title" required />
+      </div>
+
+      <div class="create-post-form-group">
+        <label>Topics (select at least 3):</label>
+        <div class="create-post-topics-container">
+
+          <div class="create-post-topics-column">
+            <label>
+              <input type="checkbox" name="create-post-topic" value="1" />
+              <span class="create-post-topic-icon icon-daily"></span>
+              Daily Essentials
+            </label>
+
+            <label>
+              <input type="checkbox" name="create-post-topic" value="2" />
+              <span class="create-post-topic-icon icon-home"></span>
+              Home & Lifestyle
+            </label>
+
+            <label>
+              <input type="checkbox" name="create-post-topic" value="3" />
+              <span class="create-post-topic-icon icon-personal"></span>
+              Personal Well-being
+            </label>
+          </div>
+
+          <div class="create-post-topics-column">
+            <label>
+              <input type="checkbox" name="create-post-topic" value="5" />
+              <span class="create-post-topic-icon icon-leisure"></span>
+              Leisure & Entertainment
+            </label>
+
+            <label>
+              <input type="checkbox" name="create-post-topic" value="6" />
+              <span class="create-post-topic-icon icon-commerce"></span>
+              Commerce & Shopping
+            </label>
+
+            <label>
+              <input type="checkbox" name="create-post-topic" value="7" />
+              <span class="create-post-topic-icon icon-mobility"></span>
+              Mobility & Transportation
+            </label>
+          </div>
+
+          <div class="create-post-topics-column">
+            <label>
+              <input type="checkbox" name="create-post-topic" value="8" />
+              <span class="create-post-topic-icon icon-services"></span>
+              Services & Support
+            </label>
+
+            <label>
+              <input type="checkbox" name="create-post-topic" value="9" />
+              <span class="create-post-topic-icon icon-culture"></span>
+              Culture & Community
+            </label>
+
+            <label>
+              <input type="checkbox" name="create-post-topic" value="4" />
+              <span class="create-post-topic-icon icon-technology"></span>
+              Technology & Innovation
+            </label>
+          </div>
+
+          <div class="create-post-topics-column">
+            <label>
+              <input type="checkbox" name="create-post-topic" value="10" />
+              <span class="create-post-topic-icon icon-information"></span>
+              Information & Learning
+            </label>
+
+            <label>
+              <input type="checkbox" name="create-post-topic" value="11" />
+              <span class="create-post-topic-icon icon-recipes"></span>
+              Quick Recipes
+            </label>
+
+            <label>
+              <input type="checkbox" name="create-post-topic" value="12" />
+              <span class="create-post-topic-icon icon-nutrition"></span>
+              Nutrition Insights
+            </label>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="create-post-form-group">
+        <label for="textarea-create-post-content">Content:</label>
+        <textarea id="textarea-create-post-content" rows="6" required></textarea>
+      </div>
+
+      <button type="submit" class="btn-submit-create-post">Submit Post</button>
+    </form>
+  </div>
+</template>
+
+     <!-- post topics all here-->
+    <!-- post topics will be loaded here-->
+    
+   
+
+
+
+    <!-- my account details( posts, my comments) -->
+    <!-- my account details( posts, my comments) -->
+
+<!-- My Account Page Template -->
+
+<template id="account-page-template">
+  <div class="container-fluid my-4 account-page">
+    <div class="row">
+      <div class="col-12">
+        <h2 class="mb-4 text-center account-title">My Account</h2>
+      </div>
+    </div>
+    
+    <div class="row g-4">
+      <!-- Profile Column -->
+      <div class="col-lg-4 col-md-12">
+        <div class="profile-column">
+          <div class="card profile-card">
+            <div class="card-header profile-header">
+              <h4><i class="fas fa-user-circle me-2"></i>Profile Information</h4>
+            </div>
+            <div class="card-body profile-body">
+              <div class="profile-item">
+                <label>Username:</label>
+                <span id="account-username" class="profile-value">Loading...</span>
+              </div>
+              <div class="profile-item">
+                <label>Email:</label>
+                <span id="account-email" class="profile-value">Loading...</span>
+              </div>
+              <div class="profile-stats">
+                <div class="stat-item">
+                  <span class="stat-number" id="posts-count">0</span>
+                  <span class="stat-label">Posts</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-number" id="comments-count">0</span>
+                  <span class="stat-label">Comments</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Posts Column -->
+      <div class="col-lg-4 col-md-6 col-sm-12">
+        <div class="posts-column">
+          <div class="card posts-card">
+            <div class="card-header posts-header">
+              <h4><i class="fas fa-edit me-2"></i>My Posts</h4>
+            </div>
+            <div class="card-body posts-body">
+              <div id="user-posts-list" class="content-list">
+                <div class="text-center loading-spinner">
+                  <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comments Column -->
+      <div class="col-lg-4 col-md-6 col-sm-12">
+        <div class="comments-column">
+          <div class="card comments-card">
+            <div class="card-header comments-header">
+              <h4><i class="fas fa-comments me-2"></i>My Comments</h4>
+            </div>
+            <div class="card-body comments-body">
+              <div id="user-comments-list" class="content-list">
+                <div class="text-center loading-spinner">
+                  <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+
+
+
+
+
+
+
+
+    <!-- my account details( posts,  my comments) -->
+
+
+
+    
+
+    <!-- log in pop up page -->
+    <!-- log in pop up page -->
+      <template id="signin-template">
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="signin-card">
+          <div class="signin-card-header">
+            <h5 class="signin-card-title mb-0">Sign In</h5>
+            <button type="button" id="close-signin" class="btn btn-light">×</button>
+          </div>
+          <div class="signin-card-body">
+            <!-- ✅ Only ONE error message div -->
+      
+
+
+
+            <form id="login-form" novalidate>
+              <div class="mb-3">
+                <label class="form-label">Email or Username</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="login-identity"
+                  name="identity"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="login-password"
+                  name="password"
+                  required
+                />
+              </div>
+                <div id="login-error-message"></div>
+
+
+
+
+
+
+
+              <button type="submit" class="btn btn-primary w-100">
+                Sign In
+              </button>
+            </form>
+
+            <div class="text-center mt-3">
+              <p>
+                New user? <a href="#" id="show-register">Create account</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+      
+
+    <!-- log in pop up page -->
+
+    <!-- Registration page Template -->
+    <!-- Registration  page Template -->
+   
+     
+     
+
+
+  <!-- when user login, then feed should be there -->
+    <!-- when user login, then feed should be there -->
+
+  <!-- Feed Template -->
+<template id="forum-feed-template">
+  <div class="container-fluid forum-feed-wrapper">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 col-md-10 col-12">
+        <div class="feed-banner">
+          <h2 class="forum-feed-title">Forum Feed</h2>
+          <p class="forum-feed-description">Stay updated with the latest posts and discussions</p>
+        </div>
+        
+        <!-- Posts Container -->
+        <div id="forum-posts-wrapper" class="forum-posts-wrapper">
+          <!-- Loading spinner -->
+          <div id="initial-loading" class="text-center content-loading-spinner">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading posts...</p>
+          </div>
+        </div>
+        
+        <!-- Load More Section -->
+        <div id="pagination-controls" class="pagination-controls text-center d-none">
+          <button id="expand-feed-btn" class="btn btn-primary btn-lg">
+            <i class="fas fa-plus-circle me-2"></i>Load More Posts
+          </button>
+          <div id="pagination-loading" class="d-none mt-3">
+            <div class="spinner-border spinner-border-sm" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <span class="ms-2">Loading more posts...</span>
+          </div>
+        </div>
+        
+        <!-- End of Posts Message -->
+        <div id="feed-end-message" class="text-center mt-4 d-none">
+          <p class="text-muted">You've reached the end of the feed</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<!-- Post Item Template -->
+<template id="forum-post-template">
+  <article class="forum-post-card card mb-4" data-post-id="">
+    <div class="card-body">
+      <!-- Post Header -->
+      <div class="post-meta mb-3">
+        <div class="creator-info d-flex align-items-center">
+          <div class="user-avatar-placeholder">
+            <i class="fas fa-user-circle fa-2x text-primary"></i>
+          </div>
+          <div class="ms-3">
+            <h6 class="post-creator-name mb-0"></h6>
+            <small class="post-timestamp text-muted"></small>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Post Content -->
+      <div class="post-main-content">
+        <h5 class="post-heading mb-3"></h5>
+        <div class="post-description mb-3"></div>
+        <div class="post-categories d-flex flex-wrap gap-1 mb-3"></div>
+      </div>
+      
+      <!-- Post Stats -->
+      <div class="post-metrics d-flex justify-content-between align-items-center mb-3">
+        <div class="metrics-left d-flex gap-3">
+          <span class="discussion-count">
+            <i class="fas fa-comments text-primary"></i>
+            <span class="total">0</span> comments
+          </span>
+        </div>
+      </div>
+      
+      <!-- Post Actions -->
+      <div class="post-interaction-bar d-flex gap-2 mb-3">
+        <button class="btn btn-outline-primary btn-sm show-discussion">
+          <i class="fas fa-comments me-1"></i>Comments
+        </button>
+      </div>
+      
+      <!-- Comments Section - Simplified -->
+      <div class="discussion-area d-none">
+        <!-- Comments List Only -->
+        <div class="discussion-thread">
+          <!-- Comments will be inserted here -->
+        </div>
+        
+        <!-- Load More Comments -->
+        <div class="expand-discussion-section text-center d-none">
+          <button class="btn btn-outline-primary btn-sm">Load More Comments</button>
+        </div>
+      </div>
+    </div>
+  </article>
+</template>
+
+<!-- Comment Item Template - Simplified -->
+<template id="reply-item-template">
+  <div class="reply-wrapper mb-2">
+    <div class="reply-content">
+      <div class="reply-bubble p-2 bg-light rounded">
+        <div class="reply-meta d-flex justify-content-between align-items-start mb-1">
+          <strong class="reply-author">Author Name</strong>
+          <small class="reply-timestamp text-muted">Date</small>
+        </div>
+        <p class="reply-message mb-0" id="reply-message-debug">Comment content goes here</p>
+      </div>
+    </div>
+  </div>
+</template>
+
+
+
+<!-- Topic Badge Template -->
+<template id="category-label-template">
+  <span class="badge bg-primary category-tag"></span>
+</template>
+
+
+  <!-- feed Template -->
+
+
+
+
+
+
+
+
+
+  <template id="register-template">
+    <div id="register-page" class="register-page-container">
+       <div class="register-page-content">
+           <div class="register-page-header d-flex justify-content-between align-items-center">
+                <h2>Create Your Account</h2>
+                <button type="button" class="btn-close" aria-label="Close" id="close-register"></button>
+            </div>
+            <div class="register-page-body">
+
+  <!-- ✅ Success message container -->
+        <div id="registerSuccessMessage" class="alert alert-success d-none" role="alert">
+          Registration successful!
+        </div>
+
+
+                <form id="registerForm" class="needs-validation" novalidate>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="firstNameInput" placeholder="First Name" required minlength="2">
+                                <label for="firstNameInput">First Name</label>
+                                <div class="invalid-feedback">
+                                    Please enter a valid first name (at least 2 characters).
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="lastNameInput" placeholder="Last Name" required minlength="2">
+                                <label for="lastNameInput">Last Name</label>
+                                <div class="invalid-feedback">
+                                    Please enter a valid last name (at least 2 characters).
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">@</span>
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="usernameInput" placeholder="Username" required minlength="4" pattern="[a-zA-Z0-9_]+">
+                                    <label for="usernameInput">Username</label>
+                                </div>
+                            </div>
+                            <div class="invalid-feedback">
+                                Username must be at least 4 characters and contain only letters, numbers, or underscores.
+                            </div>
+                            <small class="form-text text-muted" id="usernameAvailability"></small>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="email" class="form-control" id="emailInput" placeholder="Email" required>
+                                <label for="emailInput">Email</label>
+                                <div class="invalid-feedback">
+                                    Please enter a valid email address.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-floating">
+                                <input type="number" class="form-control" id="ageInput" placeholder="Age" min="13" max="120" required>
+                                <label for="ageInput">Age</label>
+                                <div class="invalid-feedback">
+                                    You must be at least 13 years old to register.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label">Gender</label>
+                            <div class="d-flex gap-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="gender" id="maleRadio" value="male" checked>
+                                    <label class="form-check-label" for="maleRadio">Male</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="gender" id="femaleRadio" value="female">
+                                    <label class="form-check-label" for="femaleRadio">Female</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="gender" id="otherRadio" value="other">
+                                    <label class="form-check-label" for="otherRadio">Other</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group mb-3 password-input-group">
+                                <div class="form-floating flex-grow-1">
+                                    <input type="password" class="form-control" id="passwordInput" placeholder="Password" required minlength="8" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}">
+                                    <label for="passwordInput">Password</label>
+                                </div>
+                                <button class="btn btn-outline-secondary password-toggle-btn" type="button">Show</button>
+                            </div>
+                            <div class="invalid-feedback">
+                                Password must be at least 8 characters with at least one uppercase, one lowercase, and one number.
+                            </div>
+                            <div class="progress mb-2 password-strength-wrapper">
+                                <div id="passwordStrength" class="progress-bar" role="progressbar"></div>
+                            </div>
+                            <small class="form-text text-muted" id="passwordStrengthText"></small>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group mb-3">
+                                <div class="form-floating">
+                                    <input type="password" class="form-control" id="confirmPasswordInput" placeholder="Confirm Password" autocomplete="new-password" required>
+                                    <label for="confirmPasswordInput">Confirm Password</label>
+                                </div>
+                                <div class="invalid-feedback" id="confirmPasswordFeedback">
+                                    Passwords must match.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="termsCheckbox" required>
+                                <label class="form-check-label" for="termsCheckbox">
+                                    I agree to the <a href="#termsModal">Terms and Conditions</a>
+                                </label>
+                                <div class="invalid-feedback">
+                                    You must agree before submitting.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="register-page-buttons">
+                        <div class="register-account-footer">
+                            <button type="submit" class="btn btn-primary">Create Account</button>
+                        </div>
+                        <div class="register-cancel-footer">
+                            <button type="button" class="btn btn-secondary" data-page="home" class="nav-link">Cancel</button>
+                        </div>
+                    </div>
+                    <div class="auth-redirect mt-3">
+                        <p class="mb-0">
+                            Already have an account?
+                            <a href="#/signin" data-page="signin" class="nav-link" id="show-login">Sign In</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</template>
+     <!-- Registration page Template -->
+    
+
+
+
+
+
+
+
+
+
+ <!-- Errors page Template -->
+   <!-- Errors page Template -->
+
+<!-- 400 Bad Request Template -->
+<template id="error-400-template">
+  <div class="error-page">
+    <div class="error-icon" id="error-icon">⚠️</div>
+    <h1 class="error-code" id="error-code">400</h1>
+    <h2 class="error-title" id="error-title">Bad Request</h2>
+    <p class="error-message" id="error-message">The server could not understand your request.</p>
+    <div class="error-actions">
+      <a href="#/home" class="error-home-btn nav-link" data-page="home"><i class="fas fa-home"></i> Home</a>
+    </div>
+  </div>
+</template>
+
+<!-- 401 Unauthorized Template -->
+<template id="error-401-template">
+  <div class="error-page">
+    <div class="error-icon" id="error-icon">🔒</div>
+    <h1 class="error-code" id="error-code">401</h1>
+    <h2 class="error-title" id="error-title">Unauthorized</h2>
+    <p class="error-message" id="error-message">You need to sign in to access this page.</p>
+    <div class="error-actions">
+      <a href="#/home" class="error-home-btn nav-link" data-page="home"><i class="fas fa-home"></i> Home</a>
+    </div>
+  </div>
+</template>
+
+<!-- 403 Forbidden Template -->
+<template id="error-403-template">
+  <div class="error-page">
+    <div class="error-icon" id="error-icon">🚫</div>
+    <h1 class="error-code" id="error-code">403</h1>
+    <h2 class="error-title" id="error-title">Forbidden</h2>
+    <p class="error-message" id="error-message">You don't have permission to access this page.</p>
+    <div class="error-actions">
+      <a href="#/home" class="error-home-btn nav-link" data-page="home"><i class="fas fa-home"></i> Home</a>
+    </div>
+  </div>
+</template>
+
+<!-- 404 Not Found Template -->
+<template id="error-404-template">
+  <div class="error-page">
+    <div class="error-icon" id="error-icon">🔍</div>
+    <h1 class="error-code" id="error-code">404</h1>
+    <h2 class="error-title" id="error-title">Page Not Found</h2>
+    <p class="error-message" id="error-message">The page you are looking for does not exist.</p>
+    <div class="error-actions">
+      <a href="#/home" class="error-home-btn nav-link" data-page="home"><i class="fas fa-home"></i> Home</a>
+    </div>
+  </div>
+</template>
+
+<!-- 500 Server Error Template -->
+<template id="error-500-template">
+  <div class="error-page">
+    <div class="error-icon" id="error-icon">💥</div>
+    <h1 class="error-code" id="error-code">500</h1>
+    <h2 class="error-title" id="error-title">Server Error</h2>
+    <p class="error-message" id="error-message">Something went wrong on our end. Please try again later.</p>
+    <div class="error-actions">
+      <a href="#/home" class="error-home-btn nav-link" data-page="home"><i class="fas fa-home"></i> Home</a>
+    </div>
+  </div>
+</template>
+   
+
+ <!-- Errors page Template -->
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="/assets/js/chat.js"></script>
+
+<script type="module" src="/assets/js/authutils.js" defer></script>
+<script type="module" src="/assets/js/auth.js" defer></script>
+<script type="module" src="/assets/js/loginlogout.js" defer></script>
+<script type="module" src="/assets/js/registerfront.js" defer></script>
+<script type="module" src="/assets/js/home.js" defer></script>
+<script type="module" src="/assets/js/findastore.js" defer></script>
+<script type="module" src="/assets/js/topicsbar.js" defer></script>
+<script type="module" src="/assets/js/account.js" defer></script>
+<script type="module" src="/assets/js/feed.js" defer></script>
+<script type="module" src="/assets/js/comment.js" defer></script>
+<script type="module" src="/assets/js/createpost.js" defer></script>
+<script type="module" src="/assets/js/error.js" defer></script>
+<script type="module" src="/assets/js/app.js" defer></script>
+<script type="module" src="/assets/js/router.js" defer></script>
+
+<script src="/assets/js/signinpage.js"></script>
+
+
+
+
+
+ 
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+
+    <footer class="py-0 mt-5 my-custom-footer">
+      <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+          <!-- Left side - Creators -->
+          <div class="creator-credits">
+            Created by
+            <a
+              href="https://github.com/SaddamHosyn"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="footer-link"
+              >Saddam</a
+            >
+            and
+            <a
+              href="https://github.com/Richard-AungKhantMin"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="footer-link"
+              >Richard</a
+            >
+          </div>
+
+          <!-- Right side - Copyright -->
+          <div class="copyright">
+            <span class="copyright-symbol">&copy;</span>
+            <span id="current-year">2025</span> BudgetBuzz - All Rights Reserved
+          </div>
+          
+        </div>
+      </div>
+    </footer>
+
+    <!-- Footer -->
+
+  </body>
+</html>
