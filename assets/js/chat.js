@@ -1,8 +1,3 @@
-
-
-
-
-
 // Enhanced chat.js - FIXED: Prevent repeated function calls
 console.log('📦 Chat.js loading...');
 
@@ -1305,3 +1300,43 @@ console.log('✅ Chat.js loaded successfully');
 
 
 
+
+
+// ── Chat toggle (collapse / expand) ─────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function () {
+  var FAB        = document.getElementById('chat-toggle-fab');
+  var BOX        = document.getElementById('chatbox-container');
+  var COLLAPSE   = document.getElementById('chat-collapse-btn');
+  var UNREAD_DOT = document.getElementById('chat-fab-unread');
+
+  if (!FAB || !BOX) return; // guard: elements must exist
+
+  var OPEN_KEY = 'chat_open';
+  var isOpen = sessionStorage.getItem(OPEN_KEY) === 'true';
+
+  function setOpen(open) {
+    isOpen = open;
+    sessionStorage.setItem(OPEN_KEY, open);
+    if (open) {
+      BOX.style.display = 'flex';
+      FAB.classList.add('chat-fab--open');
+      if (UNREAD_DOT) UNREAD_DOT.classList.add('d-none');
+    } else {
+      BOX.style.display = 'none';
+      FAB.classList.remove('chat-fab--open');
+    }
+  }
+
+  // Restore previous state on load
+  setOpen(isOpen);
+
+  FAB.addEventListener('click', function () { setOpen(!isOpen); });
+  if (COLLAPSE) {
+    COLLAPSE.addEventListener('click', function () { setOpen(false); });
+  }
+
+  // Expose helper so other code can light up the unread dot on the FAB
+  window.showChatFabUnread = function () {
+    if (!isOpen && UNREAD_DOT) { UNREAD_DOT.classList.remove('d-none'); }
+  };
+});

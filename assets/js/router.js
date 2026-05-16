@@ -92,7 +92,7 @@ function handleTopicRoute(topicSlug) {
     if (typeof window.renderPostsForTopic === 'function') window.renderPostsForTopic(topicSlug);
     updateAuthUI();
     isNavigating = false;
-  }, 100);
+  }, 100); 
 }
 
 function loadPage(page, routeConfig = routes[page]) {

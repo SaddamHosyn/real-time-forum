@@ -1,6 +1,3 @@
-
-
-
 /* Base Styles */
 body {
 
@@ -3709,4 +3706,93 @@ h2 {
 .my-custom-footer {
   flex-shrink: 0;
   margin-top: auto; /* This pushes footer to bottom */
+}
+
+
+/* ===== Chat Toggle FAB & Collapse ===== */
+
+/* Floating action button */
+#chat-toggle-fab {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 1100;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #4f46e5;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(79,70,229,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+#chat-toggle-fab:hover {
+  background: #4338ca;
+  transform: scale(1.08);
+  box-shadow: 0 6px 18px rgba(79,70,229,0.5);
+}
+
+/* Rotate icon slightly when chat is open */
+#chat-toggle-fab.chat-fab--open {
+  background: #6366f1;
+}
+
+/* Unread notification dot on the FAB */
+.chat-fab-unread {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 12px;
+  height: 12px;
+  background: #ef4444;
+  border-radius: 50%;
+  border: 2px solid #fff;
+}
+
+/* Collapse (–) button inside chat header */
+#chat-collapse-btn {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+  margin-left: auto;
+  opacity: 0.75;
+  transition: opacity 0.15s;
+}
+#chat-collapse-btn:hover { opacity: 1; }
+
+/* Make the message-header a flex row so the collapse btn sits at the right */
+.message-header {
+  display: flex !important;
+  align-items: center;
+}
+
+/* Reposition chatbox above the FAB when open */
+#chatbox-container {
+  bottom: 96px;
+  top: auto !important;
+  right: 20px;
+}
+
+/* Small screens: full-width chat */
+@media (max-width: 480px) {
+  #chatbox-container {
+    right: 0;
+    left: 0;
+    width: 100% !important;
+    bottom: 80px;
+    border-radius: 12px 12px 0 0;
+  }
+  #chat-toggle-fab {
+    bottom: 16px;
+    right: 16px;
+  }
 }
