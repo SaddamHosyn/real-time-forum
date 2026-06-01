@@ -62,13 +62,24 @@ function handleRoute(route) {
   const routeConfig = routes[page];
   if (!routeConfig) return showErrorPage(404, `The page "${page}" was not found.`);
 
+  console.log(`[ROUTE] Navigating to: ${page}, authRequired: ${routeConfig.authRequired}, isLoggedIn: ${isLoggedIn()}`);
+
   if (routeConfig.authRequired && !isLoggedIn()) {
+    console.log(`[AUTH] Access denied to ${page} - user not logged in`);
     localStorage.setItem('redirectAfterLogin', page);
+    
+    // CRITICAL: Clear app content immediately to prevent form from showing
+    const appContent = document.getElementById('app-content');
+    if (appContent) {
+      appContent.innerHTML = '';
+    }
+    
     alert('Please sign in to access this page.');
     isNavigating = false;
     return navigateTo('signin');
   }
 
+  console.log(`[AUTH] Access granted to ${page}`);
   loadPage(page, routeConfig)
     .then(() => isNavigating = false)
     .catch(err => {
@@ -96,6 +107,14 @@ function handleTopicRoute(topicSlug) {
 }
 
 function loadPage(page, routeConfig = routes[page]) {
+  // Safety guard: prevent loading auth-required pages when not authenticated
+  if (routeConfig.authRequired && !isLoggedIn()) {
+    console.error(`[GUARD] Attempted to load auth-required page "${page}" without authentication!`);
+    return Promise.reject(new Error('User not authenticated'));
+  }
+  
+  console.log(`[LOADPAGE] Loading page: ${page}`);
+  
   return new Promise((resolve, reject) => {
     const template = document.getElementById(routeConfig.template);
     if (!template) return reject(new Error(`Template not found: ${routeConfig.template}`));
@@ -131,6 +150,8 @@ function navigateTo(page) {
   if (!routes[page] && !page.startsWith('topic/')) {
     return showErrorPage(404, `The page "${page}" does not exist.`);
   }
+  
+  console.log(`[NAV] Navigating to: ${page}`);
   
   // ✅ FIXED: Force navigation even if URL is the same
   const targetHash = `#/${page}`;
@@ -239,27 +260,10 @@ window.initializeRouterAfterAuth = function () {
     } else if (accountLink && accountLink.getAttribute('href') === '#/my-account') {
       e.preventDefault();
       navigateTo('my-account');
-       } else if (createPostLink) {
+    } else if (createPostLink) {
+      console.log('[CLICK] Create Post link clicked');
       e.preventDefault();
-
-      if (isLoggedIn()) {
-        navigateTo('create-post');
-      } else {
-        loadPage('create-post').then(() => {
-          const appContent = document.getElementById('app-content');
-          if (appContent) appContent.classList.add('blurred');
-
-          localStorage.setItem('redirectAfterLogin', 'create-post');
-
-          setTimeout(() => {
-            alert('You must be logged in to create a post.');
-
-            if (appContent) appContent.classList.remove('blurred');
-
-            navigateTo('signin');
-          }, 50);
-        });
-      }
+      navigateTo('create-post');
     }
 
   });

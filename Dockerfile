@@ -1,22 +1,43 @@
-FROM golang:1.20-alpine
+# ─── Stage 1: Builder ──────────────────────────────────────────────────────
+FROM golang:1.20-alpine AS builder
 
-# Set working directory
+# gcc & musl-dev required for CGO (SQLite uses cgo via mattn/go-sqlite3)
+RUN apk add --no-cache gcc musl-dev
+
 WORKDIR /app
 
-# Copy go.mod and go.sum files
+# Copy dependency files first (layer cache optimization)
 COPY go.mod go.sum ./
-
-# Download dependencies
 RUN go mod download
 
-# Copy the rest of the project files
+# Copy the rest of the source
 COPY . .
 
-# Build the Go app
-RUN go build -o main .
+# CGO_ENABLED=1 needed for SQLite; strip debug info to shrink binary
+RUN CGO_ENABLED=1 GOOS=linux go build \
+    -ldflags="-w -s" \
+    -o main .
 
-# Expose the port your app runs on
+# ─── Stage 2: Runtime ──────────────────────────────────────────────────────
+FROM alpine:3.18
+
+# ca-certificates: HTTPS outbound calls
+# tzdata: named timezone support
+RUN apk add --no-cache ca-certificates tzdata
+
+WORKDIR /app
+
+# Copy binary from builder
+COPY --from=builder /app/main .
+
+# Copy static assets served directly by the Go server
+COPY --from=builder /app/assets ./assets
+COPY --from=builder /app/index.html .
+
 EXPOSE 8080
 
-# Run the app
+# Non-root user for security
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
+
 CMD ["./main"]

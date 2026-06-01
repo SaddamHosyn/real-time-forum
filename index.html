@@ -7,11 +7,9 @@
      <!-- Favicon -->
   <link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon" />
  
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <!-- Custom CSS -->
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom CSS for animations and overrides -->
     <link rel="stylesheet" href="/assets/css/styles.css" />
     <link
       rel="stylesheet"
@@ -28,7 +26,7 @@
 
 
   </head>
-  <body>
+  <body class="flex flex-col min-h-screen bg-cover bg-center bg-fixed" style="background-image: url('/assets/images/hlk2.webp'); background-color: rgb(56, 84, 92);">
    
    
 
@@ -40,61 +38,56 @@
        <!-- Header with Navigation menu bar-->
         <!-- Header with Navigation menu bar-->
       <header>
-      <nav class="navbar navbar-expand-lg navbar-custom">
-       <div class="container">
-         <a class="navbar-brand nav-link" href="#" role="button" tabindex="0" data-page="home">
-        <span class="brand-text">Budget</span>
-        <span class="brand-buzz">Buzz</span>
-        <span class="brand-icon">💰</span>
-        </a>
-      <!-- Hamburger Button -->
-      <button class="navbar-toggler" type="button" id="navbarToggle">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+      <nav class="navbar-custom bg-opacity-10 backdrop-blur-md px-4 py-2 z-10 flex items-center justify-between" style="background-color: rgba(0, 255, 72, 0.1);">
+       <div class="w-full">
+         <div class="flex items-center justify-between">
+           <a class="navbar-brand font-bold text-2xl brand-text mr-8" href="#" role="button" tabindex="0" data-page="home" style="background: linear-gradient(90deg, #6190e8, #087d58); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+            <span>Budget</span>
+            <span>Buzz</span>
+            <span>💰</span>
+           </a>
+           <!-- Hamburger Button -->
+           <button class="navbar-toggler hidden lg:hidden flex flex-col gap-1" type="button" id="navbarToggle">
+             <span class="block w-6 h-0.5 bg-gray-700"></span>
+             <span class="block w-6 h-0.5 bg-gray-700"></span>
+             <span class="block w-6 h-0.5 bg-gray-700"></span>
+           </button>
 
+           <div class="navbar-collapse hidden lg:flex flex-1 items-center justify-between">
+             <ul class="navbar-nav flex items-center gap-8 flex-1">
+               <li class="nav-item">
+                 <a class="nav-link text-white font-medium hover:text-cyan-400 transition-colors" href="#" data-page="home" data-type="page">Home</a>
+               </li>
+              <li class="nav-item">
+                 <a class="nav-link text-white font-medium hover:text-cyan-400 transition-colors" href="#" data-page="feed" data-type="page">Feed</a>
+               </li>
 
-      <div class="navbar-collapse">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="#" data-page="home" data-type="page">Home</a>
-          </li>
+               <li class="nav-item">
+                 <a class="nav-link text-white font-medium hover:text-cyan-400 transition-colors" href="#store" data-page="store" data-type="page" >Find a Store</a>
+               </li>
+               <li class="nav-item">
+                 <a class="nav-link text-white font-medium hover:text-cyan-400 transition-colors" href="#" data-page="topicsbar" data-type="page">Topics</a>
+               </li>
+               <li class="nav-item">
+                 <a class="nav-link text-white font-medium hover:text-cyan-400 transition-colors" href="#/create-post">Create Post</a>
+               </li>
+             </ul>
 
-         <li class="nav-item">
-            <a class="nav-link" href="#" data-page="feed" data-type="page">Feed</a>
-          </li>
-
-
-
-          <li class="nav-item">
-            <a class="nav-link" href="#store" data-page="store" data-type="page" >Find a Store</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#" data-page="topicsbar" data-type="page">Topics</a>
-          </li>
-          <li class="nav-item">
-  <a class="nav-link" href="#/create-post">Create Post</a>
-</li>
-
-        </ul>
-
-          <!-- Register Button and Sign in Button -->
-
-          <div class="registerlogin-buttons d-flex gap-2 logout-required" id="registerlogin-buttons">
-          <button type="button" class="btn btn-register" id="open-register-page">Register</button>
-          <button type="button" class="btn btn-light" id="open-signin-page">Sign In</button>
-        </div>
-            <!-- when login after that it should have these buttons -->
- <div class="d-none login-required" id="account-buttons">
-          <!-- logout success message -->
-          <div id="logout-message" class="alert alert-success d-none mb-2"></div>
-          <a href="#/my-account" class="btn btn-light">My Account</a>
-          <button type="button" class="btn btn-secondary" id="logout-btn">Logout</button>
-        </div>
-
-          
-
-          </div>
+               <!-- Register Button and Sign in Button -->
+               <div class="registerlogin-buttons flex gap-2 logout-required" id="registerlogin-buttons">
+                 <button type="button" class="btn-register px-3 py-2 bg-teal-600 text-white font-bold rounded hover:bg-teal-700 transition-all" id="open-register-page">Register</button>
+                 <button type="button" class="btn-light px-3 py-2 bg-blue-600 text-white font-bold rounded hover:bg-blue-700 transition-all" id="open-signin-page">Sign In</button>
+               </div>
+                   <!-- when login after that it should have these buttons -->
+            <div class="d-none login-required hidden" id="account-buttons">
+                   <!-- logout success message -->
+                   <div id="logout-message" class="alert alert-success d-none mb-2 hidden"></div>
+                   <a href="#/my-account" class="btn btn-light px-3 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">My Account</a>
+                   <button type="button" class="btn btn-secondary px-3 py-2 bg-gray-700 text-white rounded hover:bg-gray-800" id="logout-btn">Logout</button>
+                 </div>
+           </div>
          </div>
+       </div>
       </nav>
     </header>
  <!-- Header with Navigation menu bar-->
@@ -102,9 +95,9 @@
 
 
   <!-- Main App Container - This wraps both content and chat -->
-<div class="app-container">
+<div class="app-container flex flex-col flex-1">
     <!-- Main Content Area - This holds all your existing content -->
-  <div class="main-content">
+  <div class="main-content flex-1 flex flex-col">
 
 
 
@@ -113,7 +106,7 @@
 
     <!-- Main Content - This will be dynamically replaced by router -->
    
-      <main class="container my-4" id="app-content">
+      <main class="container my-4 flex-1" id="app-content">
       <!-- Initial content will be loaded from home-template -->
 
           
@@ -124,6 +117,8 @@
 
 
       </main>
+    </div>
+  </div>
 
 
 
@@ -201,7 +196,6 @@
 <!-- Store Page Template (for router) -->
 <template id="store-template">
   <div class="container my-4">
-    <h2 class="mb-4">Available Stores</h2>
     <div id="storesList" class="row"></div>
   </div>
 </template>
@@ -856,58 +850,45 @@
     <!-- log in pop up page -->
     <!-- log in pop up page -->
       <template id="signin-template">
-  <div class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-md-6">
-        <div class="signin-card">
-          <div class="signin-card-header">
-            <h5 class="signin-card-title mb-0">Sign In</h5>
-            <button type="button" id="close-signin" class="btn btn-light">×</button>
-          </div>
-          <div class="signin-card-body">
-            <!-- ✅ Only ONE error message div -->
-      
-
-
-
+  <div class="signin-page-container">
+    <div class="signin-page-content">
+      <div class="signin-card">
+        <div class="signin-card-header">
+          <h5 class="signin-card-title mb-0">Sign In</h5>
+          <button type="button" id="close-signin" class="signin-close-btn">×</button>
+        </div>
+        <div class="signin-card-body">
             <form id="login-form" novalidate>
-              <div class="mb-3">
-                <label class="form-label">Email or Username</label>
+              <div class="signin-field">
+                <label class="signin-label" for="login-identity">Email or Username</label>
                 <input
                   type="text"
-                  class="form-control"
+                  class="signin-input"
                   id="login-identity"
                   name="identity"
+                  placeholder="Enter your email or username"
                   required
                 />
               </div>
-              <div class="mb-3">
-                <label class="form-label">Password</label>
+              <div class="signin-field">
+                <label class="signin-label" for="login-password">Password</label>
                 <input
                   type="password"
-                  class="form-control"
+                  class="signin-input"
                   id="login-password"
                   name="password"
+                  placeholder="Enter your password"
                   required
                 />
               </div>
-                <div id="login-error-message"></div>
-
-
-
-
-
-
-
-              <button type="submit" class="btn btn-primary w-100">
+              <div id="login-error-message"></div>
+              <button type="submit" class="signin-submit-btn">
                 Sign In
               </button>
             </form>
 
-            <div class="text-center mt-3">
-              <p>
-                New user? <a href="#" id="show-register">Create account</a>
-              </p>
+            <div class="signin-redirect">
+              New user? <a href="#" id="show-register">Create account</a>
             </div>
           </div>
         </div>
@@ -1066,19 +1047,17 @@
   <template id="register-template">
     <div id="register-page" class="register-page-container">
        <div class="register-page-content">
-           <div class="register-page-header d-flex justify-content-between align-items-center">
+           <div class="register-page-header">
                 <h2>Create Your Account</h2>
-                <button type="button" class="btn-close" aria-label="Close" id="close-register"></button>
+                <button type="button" class="register-close-btn" aria-label="Close" id="close-register">&times;</button>
             </div>
             <div class="register-page-body">
 
-  <!-- ✅ Success message container -->
-        <div id="registerSuccessMessage" class="alert alert-success d-none" role="alert">
+        <div id="registerSuccessMessage" class="register-success-msg d-none" role="alert">
           Registration successful!
         </div>
 
-
-                <form id="registerForm" class="needs-validation" novalidate>
+                <form id="registerForm" class="register-form" novalidate>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-floating">
@@ -1185,20 +1164,17 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Buttons -->
                     <div class="register-page-buttons">
-                        <div class="register-account-footer">
-                            <button type="submit" class="btn btn-primary">Create Account</button>
-                        </div>
-                        <div class="register-cancel-footer">
-                            <button type="button" class="btn btn-secondary" data-page="home" class="nav-link">Cancel</button>
-                        </div>
+                        <button type="submit" class="reg-btn-primary">Create Account</button>
+                        <button type="button" class="reg-btn-secondary" data-page="home">Cancel</button>
                     </div>
-                    <div class="auth-redirect mt-3">
-                        <p class="mb-0">
-                            Already have an account?
-                            <a href="#/signin" data-page="signin" class="nav-link" id="show-login">Sign In</a>
-                        </p>
+
+                    <div class="auth-redirect">
+                        Already have an account?
+                        <a href="#/signin" data-page="signin" id="show-login">Sign In</a>
                     </div>
+
                 </form>
             </div>
         </div>
@@ -1349,8 +1325,8 @@
 
     <footer class="py-0 mt-5 my-custom-footer">
       <div class="container">
-        <div class="d-flex justify-content-between align-items-center">
-          <!-- Left side - Creators -->
+        <div class="footer-inner">
+          <!-- Creators -->
           <div class="creator-credits">
             Created by
             <a
@@ -1370,12 +1346,11 @@
             >
           </div>
 
-          <!-- Right side - Copyright -->
+          <!-- Copyright -->
           <div class="copyright">
             <span class="copyright-symbol">&copy;</span>
             <span id="current-year">2025</span> BudgetBuzz - All Rights Reserved
           </div>
-          
         </div>
       </div>
     </footer>

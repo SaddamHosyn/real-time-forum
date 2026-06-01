@@ -1,1 +1,61 @@
-study.md
+ # ─── Go ────────────────────────────────────────────────────────────────────
+
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+go.work
+go.work.sum
+
+# ─── SQLite ────────────────────────────────────────────────────────────────
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+mydatabase.db
+
+# ─── Docker ────────────────────────────────────────────────────────────────
+docker-compose.override.yml
+
+# ─── Environment / Secrets ────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+secrets/
+
+# ─── IDEs & Editors ────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ─── OS ────────────────────────────────────────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride
+desktop.ini
+Thumbs.db
+
+# ─── Logs ──────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ─── Test / Coverage ───────────────────────────────────────────────────────
+coverage.out
+coverage.html
+*.coverprofile
+
+# ─── Build artifacts ───────────────────────────────────────────────────────
+dist/
+build/
+bin/
+ 
+ study.md
