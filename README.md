@@ -25,6 +25,27 @@ A modern, single-page forum application built with **Go**, **SQLite**, and **Van
 - Click a user to view chat history
 - Real-time updates via WebSocket
 - Messages include sender, date, and content
+- Typing indicators
+- Scroll-based pagination for older messages
+
+### Home Page
+
+- Welcome announcement with community prompts
+- Budget Digest Highlights section
+- Quick links to Top Tips and Budgeting Calculator
+
+### Top Tips & Budgeting Calculator
+
+- Curated budget tips accessible from the home page
+- In-page budgeting calculator (income vs. expenses breakdown)
+
+### Find a Store
+
+- Dedicated store finder section (`findastore.js`)
+
+### Account Management
+
+- User account page with profile details (`account.js`, `account.go`)
 
 ### SPA (Single Page Application)
 
@@ -41,7 +62,7 @@ A modern, single-page forum application built with **Go**, **SQLite**, and **Van
 | Backend  | Go (Golang), Gorilla WebSocket, SQLite3, bcrypt, uuid |
 | Frontend | HTML, CSS, Vanilla JavaScript (no frameworks)         |
 | Database | SQLite (file-based)                                   |
-| DevOps   | Docker                                                |
+| DevOps   | Docker, Docker Compose                                |
 
 ---
 
@@ -49,30 +70,87 @@ A modern, single-page forum application built with **Go**, **SQLite**, and **Van
 
 ```
 .
-├── assets/          # Static files (CSS, JS, images)
-├── auth/            # Authentication logic (Go)
-├── database/        # DB schema, seed, and access logic (Go)
-├── handler/         # HTTP route handlers (Go)
-├── middleware/       # Middleware (Go)
-├── model/           # Data models (Go)
-├── server/          # Server setup (Go)
-├── utils/           # Utility functions (Go)
-├── websocket/       # Real-time chat logic (Go)
-├── index.html       # SPA entry point
-├── main.go          # Main entry point
-├── Dockerfile       # Docker build instructions
-├── .dockerignore    # Docker ignore rules
-├── go.mod / go.sum  # Go dependencies
-└── mydatabase.db    # SQLite database (local/dev only)
+├── assets/
+│   ├── css/
+│   │   └── styles.css          # Global styles
+│   ├── images/                 # SVG, WebP, AVIF, and favicon assets
+│   └── js/
+│       ├── account.js          # Account page logic
+│       ├── app.js              # App bootstrap
+│       ├── auth.js             # Auth state management
+│       ├── authutils.js        # Auth helper utilities
+│       ├── chat.js             # Real-time chat UI
+│       ├── comment.js          # Comment rendering
+│       ├── createpost.js       # Post creation form
+│       ├── error.js            # Error page handling
+│       ├── feed.js             # Post feed rendering
+│       ├── findastore.js       # Store finder
+│       ├── home.js             # Home page logic
+│       ├── loginlogout.js      # Login/logout flow
+│       ├── registerfront.js    # Registration form
+│       ├── router.js           # Hash-based SPA router
+│       ├── signinpage.js       # Sign-in page
+│       └── topicsbar.js        # Topics/category bar
+├── auth/
+│   ├── auth.go                 # Authentication logic
+│   └── session.go              # Session management
+├── database/
+│   ├── createdb.go             # DB initialisation
+│   ├── fetch.go                # DB query helpers
+│   ├── schema.sql              # Table definitions
+│   └── seed.sql                # Seed data
+├── handler/
+│   ├── account.go              # Account handler
+│   ├── chat.go                 # Chat HTTP handler
+│   ├── comment.go              # Comment handler
+│   ├── createpost.go           # Post creation handler
+│   ├── error.go                # Error handler
+│   ├── feed.go                 # Feed handler
+│   ├── login.go                # Login handler
+│   ├── logout.go               # Logout handler
+│   ├── register.go             # Registration handler
+│   ├── submitpost.go           # Post submit handler
+│   └── topicposts.go           # Topic-filtered posts handler
+├── middleware/
+│   └── middleware.go           # HTTP middleware (auth guards, etc.)
+├── model/
+│   └── model.go                # Shared data models / structs
+├── server/
+│   └── server.go               # HTTP server setup and route registration
+├── utils/
+│   └── utils.go                # Shared utility functions
+├── websocket/
+│   ├── hub.go                  # WebSocket hub (connection registry)
+│   └── websocket.go            # WebSocket upgrade and message handling
+├── index.html                  # SPA entry point
+├── main.go                     # Application entry point
+├── makefile                    # Dev workflow commands
+├── Dockerfile                  # Docker build instructions
+├── docker-compose.yml          # Docker Compose configuration
+├── .dockerignore               # Docker ignore rules
+├── go.mod                      # Go module definition
+├── go.sum                      # Go dependency checksums
+└── mydatabase.db               # SQLite database (local/dev only — not committed)
 ```
 
 ---
 
 ## Getting Started
 
+### Prerequisites
+
+- [Go 1.20+](https://go.dev/dl/)
+- [SQLite3](https://www.sqlite.org/download.html)
+- [Docker](https://www.docker.com/) (optional, for containerised runs)
+
 ### Local Development (without Docker)
 
-1. **Install Go and SQLite3**
+1. **Clone the repository:**
+
+   ```bash
+   git clone <your-repo-url>
+   cd real-time-forum
+   ```
 
 2. **Prepare the database:**
 
@@ -87,6 +165,18 @@ A modern, single-page forum application built with **Go**, **SQLite**, and **Van
    ```
 
 4. Visit [http://localhost:8080](http://localhost:8080)
+
+### Other Make Commands
+
+| Command             | Description                               |
+| ------------------- | ----------------------------------------- |
+| `make run`          | Fresh database + start server             |
+| `make run-existing` | Start server with existing database       |
+| `make run-seeded`   | Fresh database + seed data + start server |
+| `make fresh-db`     | Drop and recreate database only           |
+| `make db-seed`      | Seed the database                         |
+| `make db-clean`     | Delete the database file                  |
+| `make clean`        | Full cleanup                              |
 
 ### Run with Docker
 
@@ -103,9 +193,22 @@ A modern, single-page forum application built with **Go**, **SQLite**, and **Van
    ```
 
 3. **With a persistent database:**
+
    ```bash
    docker run -p 8080:8080 -v $(pwd)/mydatabase.db:/app/mydatabase.db realtimeforum
    ```
+
+### Run with Docker Compose
+
+```bash
+docker compose up --build
+```
+
+To stop and remove volumes:
+
+```bash
+docker compose down -v
+```
 
 ---
 
@@ -128,6 +231,7 @@ A modern, single-page forum application built with **Go**, **SQLite**, and **Van
 - Go routines, channels, and WebSockets (Go & JS)
 - SQL and database manipulation
 - Real-time web application architecture
+- Docker and containerised deployment
 
 ---
 
@@ -135,6 +239,7 @@ A modern, single-page forum application built with **Go**, **SQLite**, and **Van
 
 - For the best real-time experience, open two browsers and log in as different users
 - Test on both desktop and mobile for responsive design
+- Use `make run-seeded` to start with pre-populated data for testing
 
 ---
 
