@@ -1,6 +1,12 @@
 /* ===== Tailwind Custom Utilities & Animations ===== */
 
 /* Base Styles */
+html,
+body {
+   margin: 0;
+   width: 100%;
+}
+
 body {
    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -48,18 +54,26 @@ body {
 
 /* ===== Custom Footer Styles ===== */
 .my-custom-footer {
+   width: 100%;
    background-color: #393c3f;
    color: #ebe1e1;
    border-top: 2px solid #948e96;
-   padding: 3rem 0 2rem 0; 
+   padding: 1rem 0;
    font-weight: 500;
    margin-top: auto;
    z-index: 0;
    position: relative;
 }
 
+.my-custom-footer .container {
+   width: 100%;
+   max-width: 100%;
+   margin: 0 auto;
+   padding: 0;
+}
+
 .copyright-symbol {
-   color: #090000;
+   color: #ebe1e1;
 }
 
 .my-custom-footer a {
@@ -2378,13 +2392,24 @@ body {
    =================================================== */
 
 .footer-inner {
+   width: 100%;
    display: flex;
-   flex-direction: column;
+   flex-direction: row;
    align-items: center;
    justify-content: center;
    text-align: center;
-   gap: 0.4rem;
+   gap: 0.6rem;
    padding: 0.5rem 0;
+   flex-wrap: nowrap;
+}
+
+.creator-credits,
+.copyright {
+   margin: 0;
+   text-align: center;
+}
+.footer-separator {
+   color: #b0aaaa;
 }
 
 .creator-credits {
@@ -2840,7 +2865,7 @@ body {
 
 #chat-toggle-fab {
     position: fixed;
-    bottom: 28px;
+    bottom: 90px;
     right: 28px;
     z-index: 2000;
     width: 56px;
