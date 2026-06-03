@@ -31,32 +31,34 @@
        <!-- Header with Navigation menu bar-->
         <!-- Header with Navigation menu bar-->
       <header>
-      <nav class="navbar-custom bg-opacity-10 backdrop-blur-md px-4 py-2 z-10 flex items-center justify-between" style="background-color: rgba(0, 255, 72, 0.1);">
+      <nav class="navbar-custom bg-opacity-10 backdrop-blur-md px-4 py-2 z-10" style="background-color: rgba(0, 255, 72, 0.1);">
        <div class="w-full">
+         <!-- Top row: brand + hamburger -->
          <div class="flex items-center justify-between">
            <a class="navbar-brand font-bold text-2xl brand-text mr-8" href="#" role="button" tabindex="0" data-page="home" style="background: linear-gradient(90deg, #6190e8, #087d58); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
             <span>Budget</span>
             <span>Buzz</span>
             <span>💰</span>
            </a>
-           <!-- Hamburger Button -->
-           <button class="navbar-toggler hidden lg:hidden flex flex-col gap-1" type="button" id="navbarToggle">
-             <span class="block w-6 h-0.5 bg-gray-700"></span>
-             <span class="block w-6 h-0.5 bg-gray-700"></span>
-             <span class="block w-6 h-0.5 bg-gray-700"></span>
+           <!-- Hamburger Button (mobile only) -->
+           <button class="navbar-toggler lg:hidden flex flex-col gap-1" type="button" id="navbarToggle">
+             <span class="block w-6 h-0.5 bg-gray-300"></span>
+             <span class="block w-6 h-0.5 bg-gray-300"></span>
+             <span class="block w-6 h-0.5 bg-gray-300"></span>
            </button>
+         </div>
 
-           <div class="navbar-collapse hidden lg:flex flex-1 items-center justify-between">
-             <ul class="navbar-nav flex items-center gap-8 flex-1">
+         <!-- Collapsible menu: drops below on mobile, inline on desktop -->
+         <div class="navbar-collapse hidden lg:flex lg:items-center lg:justify-between lg:mt-0 mt-2 pb-2 lg:pb-0">
+           <ul class="navbar-nav flex flex-col lg:flex-row items-start lg:items-center gap-3 lg:gap-8 flex-1 w-full lg:w-auto">
                <li class="nav-item">
                  <a class="nav-link text-white font-medium hover:text-cyan-400 transition-colors" href="#" data-page="home" data-type="page">Home</a>
                </li>
               <li class="nav-item">
                  <a class="nav-link text-white font-medium hover:text-cyan-400 transition-colors" href="#" data-page="feed" data-type="page">Feed</a>
                </li>
-
                <li class="nav-item">
-                 <a class="nav-link text-white font-medium hover:text-cyan-400 transition-colors" href="#store" data-page="store" data-type="page" >Find a Store</a>
+                 <a class="nav-link text-white font-medium hover:text-cyan-400 transition-colors" href="#store" data-page="store" data-type="page">Find a Store</a>
                </li>
                <li class="nav-item">
                  <a class="nav-link text-white font-medium hover:text-cyan-400 transition-colors" href="#" data-page="topicsbar" data-type="page">Topics</a>
@@ -65,20 +67,16 @@
                  <a class="nav-link text-white font-medium hover:text-cyan-400 transition-colors" href="#/create-post">Create Post</a>
                </li>
              </ul>
-
                <!-- Register Button and Sign in Button -->
-               <div class="registerlogin-buttons flex gap-2 logout-required" id="registerlogin-buttons">
+               <div class="registerlogin-buttons flex gap-2 logout-required mt-2 lg:mt-0" id="registerlogin-buttons">
                  <button type="button" class="btn-register px-3 py-2 bg-teal-600 text-white font-bold rounded hover:bg-teal-700 transition-all" id="open-register-page">Register</button>
                  <button type="button" class="btn-light px-3 py-2 bg-blue-600 text-white font-bold rounded hover:bg-blue-700 transition-all" id="open-signin-page">Sign In</button>
                </div>
-                   <!-- when login after that it should have these buttons -->
             <div class="d-none login-required hidden" id="account-buttons">
-                   <!-- logout success message -->
                    <div id="logout-message" class="alert alert-success d-none mb-2 hidden"></div>
                    <a href="#/my-account" class="btn btn-light px-3 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">My Account</a>
                    <button type="button" class="btn btn-secondary px-3 py-2 bg-gray-700 text-white rounded hover:bg-gray-800" id="logout-btn">Logout</button>
                  </div>
-           </div>
          </div>
        </div>
       </nav>
@@ -1184,6 +1182,46 @@
 <script type="module" src="/assets/js/router.js" defer></script>
 
 <script src="/assets/js/signinpage.js"></script>
+
+<script>
+  // Hamburger menu toggle
+  (function () {
+    var toggle = document.getElementById('navbarToggle');
+    var collapse = document.querySelector('.navbar-collapse');
+    if (toggle && collapse) {
+      toggle.addEventListener('click', function () {
+        collapse.classList.toggle('hidden');
+        collapse.classList.toggle('flex');
+      });
+    }
+  })();
+
+  // Hide FAB when chat is open on mobile (prevents overlap)
+  (function () {
+    var fab = document.getElementById('chat-toggle-fab');
+    if (!fab) return;
+    var observer = new MutationObserver(function () {
+      var chatbox = document.getElementById('chatbox-container');
+      if (!chatbox) return;
+      var isVisible = chatbox.style.display === 'flex' || chatbox.style.display === '';
+      var isMobile = window.innerWidth <= 768;
+      if (isMobile && isVisible && chatbox.style.display !== 'none') {
+        document.body.classList.add('chat-open');
+      } else {
+        document.body.classList.remove('chat-open');
+      }
+    });
+    var chatbox = document.getElementById('chatbox-container');
+    if (chatbox) {
+      observer.observe(chatbox, { attributes: true, attributeFilter: ['style'] });
+    }
+    window.addEventListener('resize', function () {
+      if (!chatbox) return;
+      var isMobile = window.innerWidth <= 768;
+      if (!isMobile) document.body.classList.remove('chat-open');
+    });
+  })();
+</script>
 
 
 
