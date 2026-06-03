@@ -776,7 +776,8 @@ body {
 #chatbox-container {
     position: fixed;
     right: 20px;
-    top: 100px;
+    bottom: 170px;
+    top: auto !important;
     width: 400px;
     height: 600px;
     background: white;
@@ -2210,9 +2211,9 @@ body {
         width: 90vw;
         height: 70vh;
         right: 5vw;
-        top: 80px;
+        top: auto;
         left: auto;
-        bottom: auto;
+        bottom: 100px;
         min-width: 250px;
         min-height: 300px;
         border-radius: 10px;
