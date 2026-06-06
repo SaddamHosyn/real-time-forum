@@ -49,7 +49,7 @@
          </div>
 
          <!-- Collapsible menu: drops below on mobile, inline on desktop -->
-         <div class="navbar-collapse hidden lg:flex lg:items-center lg:justify-between lg:mt-0 mt-2 pb-2 lg:pb-0">
+         <div class="navbar-collapse hidden flex-col lg:flex-row lg:flex lg:items-center lg:justify-between lg:mt-0 mt-2 pb-2 lg:pb-0">
            <ul class="navbar-nav flex flex-col lg:flex-row items-start lg:items-center gap-3 lg:gap-8 flex-1 w-full lg:w-auto">
                <li class="nav-item">
                  <a class="nav-link text-white font-medium hover:text-cyan-400 transition-colors" href="#" data-page="home" data-type="page">Home</a>
@@ -68,14 +68,14 @@
                </li>
              </ul>
                <!-- Register Button and Sign in Button -->
-               <div class="registerlogin-buttons flex gap-2 logout-required mt-2 lg:mt-0" id="registerlogin-buttons">
-                 <button type="button" class="btn-register px-3 py-2 bg-teal-600 text-white font-bold rounded hover:bg-teal-700 transition-all" id="open-register-page">Register</button>
-                 <button type="button" class="btn-light px-3 py-2 bg-blue-600 text-white font-bold rounded hover:bg-blue-700 transition-all" id="open-signin-page">Sign In</button>
+               <div class="registerlogin-buttons flex items-center gap-3 logout-required mt-4 lg:mt-0 w-full lg:w-auto" id="registerlogin-buttons">
+                 <button type="button" class="btn-register flex-1 lg:flex-none px-4 py-2 bg-teal-600 text-white font-bold rounded-lg hover:bg-teal-700 active:scale-95 transition-all text-center shadow-sm text-sm md:text-base" id="open-register-page">Register</button>
+                 <button type="button" class="btn-light flex-1 lg:flex-none px-4 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 active:scale-95 transition-all text-center shadow-sm text-sm md:text-base" id="open-signin-page">Sign In</button>
                </div>
-            <div class="d-none login-required hidden" id="account-buttons">
+            <div class="d-none login-required flex items-center gap-3 mt-4 lg:mt-0 w-full lg:w-auto" id="account-buttons">
                    <div id="logout-message" class="alert alert-success d-none mb-2 hidden"></div>
-                   <a href="#/my-account" class="btn btn-light px-3 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">My Account</a>
-                   <button type="button" class="btn btn-secondary px-3 py-2 bg-gray-700 text-white rounded hover:bg-gray-800" id="logout-btn">Logout</button>
+                   <a href="#/my-account" class="btn btn-light flex-1 lg:flex-none px-4 py-2 bg-gray-600 text-white font-bold rounded-lg hover:bg-gray-700 active:scale-95 transition-all text-center shadow-sm text-sm md:text-base">My Account</a>
+                   <button type="button" class="btn btn-secondary flex-1 lg:flex-none px-4 py-2 bg-gray-700 text-white font-bold rounded-lg hover:bg-gray-800 active:scale-95 transition-all text-center shadow-sm text-sm md:text-base" id="logout-btn">Logout</button>
                  </div>
          </div>
        </div>
@@ -94,7 +94,7 @@
 
     <!-- Main Content - This will be dynamically replaced by router -->
    
-      <main class="container my-4 flex-1" id="app-content">
+      <main class="container mx-auto px-4 my-4 flex-1" id="app-content">
       <!-- Initial content will be loaded from home-template -->
 
           
@@ -130,7 +130,7 @@
   <div id="message-area">
       <div class="message-header">
           <span id="chat-with-user">Select a user to chat</span>
-          <button id="chat-collapse-btn" aria-label="Collapse chat" title="Minimise">&#x2212;</button>
+          <button id="chat-collapse-btn" aria-label="Collapse chat" title="Minimise"><i class="fas fa-times"></i></button>
       </div>
       <div class="message-history">
           <!-- Messages loaded dynamically -->
@@ -185,7 +185,7 @@
    
     <template id="topicsbar-template">
   <section class="forum-topics">
-    <h2 class="text-center mb-5 fw-bold">Explore Topics</h2>
+    <h2 class="text-center mb-5 fw-bold text-white text-3xl font-extrabold tracking-tight">Explore Topics</h2>
     <div class="row justify-content-center">
     <div class="container">
       <div class="row g-2">
@@ -314,7 +314,7 @@
 <template id="topic-posts-template">
   <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="fw-bold topic-posts-title">Posts in: Topic Name</h2>
+      <h2 class="fw-bold topic-posts-title text-white text-3xl font-extrabold tracking-tight">Posts in: Topic Name</h2>
       <button class="btn btn-secondary btn-back-to-topics">← Back to Topics</button>
     </div>
     <div class="topic-posts-content">
